@@ -1,4 +1,4 @@
-import 'package:breaking_project/business_logic/cubit/items_cubit.dart';
+import 'package:breaking_project/business_logic/ItemsCubit/items_cubit.dart';
 import 'package:breaking_project/constants/colors.dart';
 import 'package:breaking_project/data/models/items.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
@@ -56,10 +56,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.yellow,
-        title: const Text("My Items"),
-      ),
       body: buildBlocWidget(),
     );
   }
