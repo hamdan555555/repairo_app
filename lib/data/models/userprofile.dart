@@ -1,11 +1,11 @@
-class User {
+class UserProfile {
   bool? success;
   String? message;
   Data? data;
 
-  User({this.success, this.message, this.data});
+  UserProfile({this.success, this.message, this.data});
 
-  User.fromJson(Map<String, dynamic> json) {
+  UserProfile.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -26,25 +26,15 @@ class Data {
   String? id;
   String? name;
   String? phone;
-  String? accessToken;
-  String? tokenType;
-  int? expiresIn;
+  String? image;
 
-  Data(
-      {this.id,
-      this.name,
-      this.phone,
-      this.accessToken,
-      this.tokenType,
-      this.expiresIn});
+  Data({this.id, this.name, this.phone, this.image});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     phone = json['phone'];
-    accessToken = json['access_token'];
-    tokenType = json['token_type'];
-    expiresIn = json['expires_in'];
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,9 +42,7 @@ class Data {
     data['id'] = this.id;
     data['name'] = this.name;
     data['phone'] = this.phone;
-    data['access_token'] = this.accessToken;
-    data['token_type'] = this.tokenType;
-    data['expires_in'] = this.expiresIn;
+    data['image'] = this.image;
     return data;
   }
 }

@@ -23,7 +23,7 @@ class BreakingBadApp extends StatelessWidget {
               cursorColor: Color.fromARGB(255, 124, 155, 207))),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      initialRoute: 'profile',
+      initialRoute: 'login',
     );
   }
 }

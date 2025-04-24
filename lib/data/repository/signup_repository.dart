@@ -2,7 +2,7 @@ import 'package:breaking_project/data/models/signupUserModel.dart';
 import 'package:breaking_project/data/web_services/login_webservice.dart';
 import 'package:breaking_project/data/web_services/signup_webservices.dart';
 
-import '../models/user_model.dart';
+import '../models/userlog_model.dart';
 
 class SignupRepository {
   final SignupWebservices signupWebService;

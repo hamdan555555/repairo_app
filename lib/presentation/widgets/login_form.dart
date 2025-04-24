@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
 import 'package:breaking_project/business_logic/LoginCubit/login_states.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:breaking_project/presentation/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -43,8 +47,17 @@ class LoginForm extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  SvgPicture.asset(
+                    'assets/images/svg/User.svg',
+                    width: 100,
+                    height: 100,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+
                   const Text(
-                    "Hello Amit !",
+                    "Hello User !",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
@@ -77,24 +90,26 @@ class LoginForm extends StatelessWidget {
                   const SizedBox(
                     height: 30,
                   ),
-                  CustomTextFormField(
-                    isPass: context.read<LoginCubit>().hide,
-                    controller: context.read<LoginCubit>().passwordController,
-                    hinttext: "Password",
-                    suffixicon: IconButton(
-                      onPressed: context.read<LoginCubit>().togglePassHide,
-                      icon: !context.read<LoginCubit>().hide
-                          ? const Icon(Icons.remove_red_eye_outlined)
-                          : const Icon(Icons.visibility_off_outlined),
-                    ),
-                    keybordtype: TextInputType.visiblePassword,
-                    valid: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your phone';
-                      }
-                      return null;
-                    },
-                  ),
+
+                  // CustomTextFormField(
+                  //   isPass: context.read<LoginCubit>().hide,
+                  //   controller: context.read<LoginCubit>().passwordController,
+                  //   hinttext: "Password",
+                  //   suffixicon: IconButton(
+                  //     onPressed: context.read<LoginCubit>().togglePassHide,
+                  //     icon: !context.read<LoginCubit>().hide
+                  //         ? const Icon(Icons.remove_red_eye_outlined)
+                  //         : const Icon(Icons.visibility_off_outlined),
+                  //   ),
+                  //   keybordtype: TextInputType.visiblePassword,
+                  //   valid: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Please enter your phone';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
@@ -106,7 +121,7 @@ class LoginForm extends StatelessWidget {
                                 .read<LoginCubit>()
                                 .toggleRememberMe(newValue ?? false);
                           },
-                          activeColor: Colors.blueAccent,
+                          activeColor: const Color.fromRGBO(95, 96, 185, 1),
                           checkColor: Colors.white,
                         ),
                         const Text("Remember Me"),
@@ -119,7 +134,7 @@ class LoginForm extends StatelessWidget {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
-                                color: Colors.blueAccent),
+                                color: const Color.fromRGBO(95, 96, 185, 1)),
                           ),
                         )
                       ],
@@ -129,13 +144,9 @@ class LoginForm extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 32),
                     child: CustomElevatedButton(
                         text: 'Login',
-                        onpressed: () {
+                        onpressed: () async {
                           context.read<LoginCubit>().login(
-                              context.read<LoginCubit>().phoneController.text,
-                              context
-                                  .read<LoginCubit>()
-                                  .passwordController
-                                  .text);
+                              context.read<LoginCubit>().phoneController.text);
                         }),
                   ),
                   if (state is LoginError)

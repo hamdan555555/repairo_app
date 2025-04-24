@@ -1,7 +1,7 @@
 import 'package:breaking_project/business_logic/LoginCubit/login_states.dart';
 import 'package:breaking_project/business_logic/SignupCubit/signup_states.dart';
 import 'package:breaking_project/data/repository/signup_repository.dart';
-import 'package:breaking_project/data/repository/user_repository.dart';
+import 'package:breaking_project/data/repository/login_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

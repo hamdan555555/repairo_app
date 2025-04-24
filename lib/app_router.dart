@@ -1,11 +1,18 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
+import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/SignupCubit/signup_cubit.dart';
+import 'package:breaking_project/business_logic/VerifyCubit/verification_cubit.dart';
+import 'package:breaking_project/data/repository/profile_repository.dart';
 import 'package:breaking_project/data/repository/signup_repository.dart';
-import 'package:breaking_project/data/repository/user_repository.dart';
+import 'package:breaking_project/data/repository/login_repository.dart';
+import 'package:breaking_project/data/repository/verification_repository.dart';
 import 'package:breaking_project/data/web_services/Items_webservices.dart';
 import 'package:breaking_project/data/web_services/login_webservice.dart';
+import 'package:breaking_project/data/web_services/profile_webservices.dart';
 import 'package:breaking_project/data/web_services/signup_webservices.dart';
+import 'package:breaking_project/data/web_services/verification_webservices.dart';
+import 'package:breaking_project/presentation/screens/edit_profile.dart';
 import 'package:breaking_project/presentation/screens/home_screen.dart';
 import 'package:breaking_project/presentation/screens/login_screen.dart';
 import 'package:breaking_project/presentation/screens/main_screen.dart';
@@ -69,6 +76,9 @@ class AppRouter {
       case 'service':
         return MaterialPageRoute(builder: (_) => ServiceWidget());
 
+      case 'editprofile':
+        return MaterialPageRoute(builder: (_) => EditProfileScreen());
+
       case 'homepage':
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
@@ -76,17 +86,38 @@ class AppRouter {
                   child: HomePage(),
                 ));
 
+      case 'login':
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: LoginCubit(AuthRepository(AuthWebService())),
+                  child: LoginScreen(),
+                ));
+
       // case 'mainscreen':
       //   return MaterialPageRoute(builder: (_) => MainScreen());
-
-      case 'profile':
-        return MaterialPageRoute(builder: (_) => ProfileScreen());
 
       case 'home':
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (context) => itemsCubit..getAllItems(),
                   child: BannerSlider(),
+                ));
+
+      case 'profile':
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (context) =>
+                      ProfileCubit(ProfileRepository(ProfileWebservices()))
+                        ..getUserData('anytoken'),
+                  child: ProfileScreen(),
+                ));
+
+      case 'verify':
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+                  create: (context) => VerificationCubit(
+                      VerificationRepository(VerificationWebservices())),
+                  child: Verification(),
                 ));
     }
   }
