@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:breaking_project/business_logic/ItemsCubit/items_cubit.dart';
+import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
 import 'package:breaking_project/data/models/items.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:breaking_project/presentation/widgets/service_widget.dart';
@@ -9,19 +9,19 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class BannerSlider extends StatefulWidget {
-  const BannerSlider({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<BannerSlider> createState() => _BannerSliderState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _BannerSliderState extends State<BannerSlider> {
+class _HomeScreenState extends State<HomeScreen> {
   final PageController _controller = PageController();
   int currentPage = 0;
 
-  late List<Items> allitems;
-  late List<Items> searcheditems;
+  late List<Services> allitems;
+  late List<Services> searcheditems;
   bool isSearching = false;
   final searchTextController = TextEditingController();
 
@@ -258,10 +258,11 @@ class _BannerSliderState extends State<BannerSlider> {
   }
 
   Widget buildBlocWidget() {
-    return BlocBuilder<ItemsCubit, ItemsStates>(builder: (context, state) {
-      if (state is ItemsLoaded) {
+    return BlocBuilder<ServicesCubit, ServicesStates>(
+        builder: (context, state) {
+      if (state is ServicesLoaded) {
         print("34434343434");
-        allitems = (state).items;
+        allitems = (state).services;
         return buildLoadedListWidget();
       } else {
         return showloadingindicator();

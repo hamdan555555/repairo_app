@@ -1,4 +1,4 @@
-import 'package:breaking_project/business_logic/ItemsCubit/items_cubit.dart';
+import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
 import 'package:breaking_project/constants/colors.dart';
 import 'package:breaking_project/data/models/items.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
@@ -13,8 +13,8 @@ class ItemsScreen extends StatefulWidget {
 }
 
 class _ItemsScreenState extends State<ItemsScreen> {
-  late List<Items> allitems;
-  late List<Items> searcheditems;
+  late List<Services> allitems;
+  late List<Services> searcheditems;
   bool isSearching = false;
   final searchTextController = TextEditingController();
 
@@ -49,7 +49,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
   @override
   void initState() {
-    BlocProvider.of<ItemsCubit>(context).getAllItems();
+    BlocProvider.of<ServicesCubit>(context).getAllItems();
     super.initState();
   }
 
@@ -61,9 +61,10 @@ class _ItemsScreenState extends State<ItemsScreen> {
   }
 
   Widget buildBlocWidget() {
-    return BlocBuilder<ItemsCubit, ItemsStates>(builder: (context, state) {
-      if (state is ItemsLoaded) {
-        allitems = (state).items;
+    return BlocBuilder<ServicesCubit, ServicesStates>(
+        builder: (context, state) {
+      if (state is ServicesLoaded) {
+        allitems = (state).services;
         return buildLoadedListWidget();
       } else {
         return showloadingindicator();

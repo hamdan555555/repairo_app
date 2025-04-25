@@ -1,14 +1,14 @@
 class UserProfile {
   bool? success;
   String? message;
-  Data? data;
+  PData? data;
 
   UserProfile({this.success, this.message, this.data});
 
   UserProfile.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? new PData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -22,18 +22,20 @@ class UserProfile {
   }
 }
 
-class Data {
+class PData {
   String? id;
   String? name;
   String? phone;
+  String? address;
   String? image;
 
-  Data({this.id, this.name, this.phone, this.image});
+  PData({this.id, this.name, this.phone, this.address, this.image});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  PData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     phone = json['phone'];
+    address = json['address'];
     image = json['image'];
   }
 
@@ -42,6 +44,7 @@ class Data {
     data['id'] = this.id;
     data['name'] = this.name;
     data['phone'] = this.phone;
+    data['address'] = this.address;
     data['image'] = this.image;
     return data;
   }

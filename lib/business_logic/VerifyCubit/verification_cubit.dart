@@ -23,7 +23,8 @@ class VerificationCubit extends Cubit<VerificationStates> {
       var user = await verificationRepository.verifyNumber(phone, code);
       emit(VerificationSuccess(user));
       Get.back();
-      Get.toNamed('profile');
+      //Get.toNamed('mainscreen');
+      Get.offAllNamed('mainscreen');
     } catch (e) {
       emit(VerificationError(e.toString()));
     }

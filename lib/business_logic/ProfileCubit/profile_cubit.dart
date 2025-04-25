@@ -2,6 +2,7 @@ import 'package:breaking_project/business_logic/ProfileCubit/profile_states.dart
 import 'package:breaking_project/data/repository/profile_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileCubit extends Cubit<ProfileStates> {
   final ProfileRepository profileRepository;
@@ -9,10 +10,12 @@ class ProfileCubit extends Cubit<ProfileStates> {
   ProfileCubit(this.profileRepository) : super(ProfileInitial());
 
   void getUserData(String token) async {
-    print("asasasasasasasassssss");
     emit(ProfileLoading());
     try {
-      final user = await profileRepository.getUserData(token);
+      final prefs = await SharedPreferences.getInstance();
+      var tokenn = prefs.getString('auth_token');
+
+      final user = await profileRepository.getUserData(tokenn!);
       emit(ProfileSuccess(user));
       //Get.back();
       //Get.toNamed('verify');

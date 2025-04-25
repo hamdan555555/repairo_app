@@ -34,7 +34,7 @@ class LoginCubit extends Cubit<LoginState> {
       final userlog = await authRepository.login(phone);
       emit(LoginSuccess(userlog));
       Get.back();
-      Get.toNamed('verify');
+      Get.toNamed('verification');
       //await Future.delayed(const Duration(seconds: 2));
     } catch (e) {
       emit(LoginError(e.toString()));

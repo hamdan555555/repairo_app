@@ -18,48 +18,25 @@ import 'package:breaking_project/presentation/screens/login_screen.dart';
 import 'package:breaking_project/presentation/screens/main_screen.dart';
 import 'package:breaking_project/presentation/screens/profile.dart';
 import 'package:breaking_project/presentation/screens/signup_screen.dart';
-import 'package:breaking_project/presentation/screens/test.dart';
 import 'package:breaking_project/presentation/screens/verification.dart';
-import 'package:breaking_project/presentation/widgets/service_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:breaking_project/business_logic/ItemsCubit/items_cubit.dart';
-import 'package:breaking_project/constants/strings.dart';
+import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
 import 'package:breaking_project/data/repository/items_repository.dart';
-import 'package:breaking_project/presentation/screens/items_details_screen.dart';
-import 'package:breaking_project/presentation/screens/items_screen.dart';
 
 class AppRouter {
-  late ItemsRepository itemsRepository;
-  late ItemsCubit itemsCubit;
+  late ServicesRepository servicesRepository;
+  late ServicesCubit servicesCubit;
 
   AppRouter() {
-    itemsRepository = ItemsRepository(itemsWebservices: ItemsWebservices());
-    itemsCubit = ItemsCubit(itemsRepository);
+    servicesRepository =
+        ServicesRepository(servicesWebservices: ServicesWebservices());
+    servicesCubit = ServicesCubit(servicesRepository);
   }
 
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      // case charecters_screen:
-      //   return MaterialPageRoute(
-      //       builder: (_) => BlocProvider(
-      //             create: (context) => itemsCubit,
-      //             child: ItemsScreen(),
-      //           ));
-
-      case charecters_details_screen:
-        return MaterialPageRoute(builder: (_) => ItemsDetailsScreen());
-
-      // case '/':
-      //   return MaterialPageRoute(
-      //     builder: (_) => BlocProvider.value(
-      //       value: LoginCubit(AuthRepository(AuthWebService())),
-      //       child: LoginScreen(),
-      //     ),
-      //   );
-
-      case '/':
+      case 'signup':
         return MaterialPageRoute(
           builder: (_) => BlocProvider.value(
             value: SignupCubit(SignupRepository(SignupWebservices())),
@@ -67,23 +44,14 @@ class AppRouter {
           ),
         );
 
-      case 'verification':
-        return MaterialPageRoute(builder: (_) => Verification());
-
-      case 'banner':
-        return MaterialPageRoute(builder: (_) => BannerSlider());
-
-      case 'service':
-        return MaterialPageRoute(builder: (_) => ServiceWidget());
-
       case 'editprofile':
         return MaterialPageRoute(builder: (_) => EditProfileScreen());
 
-      case 'homepage':
+      case 'mainscreen':
         return MaterialPageRoute(
             builder: (_) => BlocProvider.value(
                   value: SignupCubit(SignupRepository(SignupWebservices())),
-                  child: HomePage(),
+                  child: MainScreen(),
                 ));
 
       case 'login':
@@ -93,14 +61,11 @@ class AppRouter {
                   child: LoginScreen(),
                 ));
 
-      // case 'mainscreen':
-      //   return MaterialPageRoute(builder: (_) => MainScreen());
-
       case 'home':
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                  create: (context) => itemsCubit..getAllItems(),
-                  child: BannerSlider(),
+                  create: (context) => servicesCubit..getAllItems(),
+                  child: const HomeScreen(),
                 ));
 
       case 'profile':
@@ -112,7 +77,7 @@ class AppRouter {
                   child: ProfileScreen(),
                 ));
 
-      case 'verify':
+      case 'verification':
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
                   create: (context) => VerificationCubit(

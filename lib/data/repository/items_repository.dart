@@ -1,13 +1,13 @@
 import 'package:breaking_project/data/models/items.dart';
 import 'package:breaking_project/data/web_services/Items_webservices.dart';
 
-class ItemsRepository {
-  final ItemsWebservices itemsWebservices;
+class ServicesRepository {
+  final ServicesWebservices servicesWebservices;
 
-  ItemsRepository({required this.itemsWebservices});
+  ServicesRepository({required this.servicesWebservices});
 
-  Future<List<Items>> getAllItems() async {
-    final items = await itemsWebservices.getItems();
-    return items.map((item) => Items.fromjson(item)).toList();
+  Future<List<Services>> getAllItems() async {
+    final items = await servicesWebservices.getItems();
+    return items.map((item) => Services.fromjson(item)).toList();
   }
 }

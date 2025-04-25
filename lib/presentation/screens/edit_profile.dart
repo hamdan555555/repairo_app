@@ -1,7 +1,46 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:io';
 
-class EditProfileScreen extends StatelessWidget {
-  const EditProfileScreen({super.key});
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
+class EditProfileScreen extends StatefulWidget {
+  EditProfileScreen({super.key});
+
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  final namecontroller = TextEditingController();
+
+  final phonecontroller = TextEditingController();
+
+  final addresscontroller = TextEditingController();
+
+  File? imageFile;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    try {
+      final XFile? pickedFile =
+          await _picker.pickImage(source: ImageSource.camera);
+
+      if (pickedFile != null) {
+        setState(() {
+          imageFile = File(pickedFile.path);
+        });
+      } else {
+        print('لم يتم اختيار صورة');
+      }
+    } catch (e) {
+      print('حدث خطأ أثناء اختيار الصورة: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,31 +74,36 @@ class EditProfileScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 55,
-                  backgroundImage: AssetImage('assets/images/jpg/hamdan.jpg'),
+                  backgroundImage: imageFile != null
+                      ? FileImage(imageFile!) as ImageProvider
+                      : AssetImage('assets/images/jpg/hamdan.jpg'),
                 ),
                 CircleAvatar(
                   radius: 16,
                   backgroundColor: Color(0xFF6B52AE),
-                  child: Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                  child: IconButton(
+                      onPressed: _pickImage,
+                      icon: Icon(Icons.camera_alt,
+                          color: Colors.white, size: 16)),
                 )
               ],
             ),
             SizedBox(height: 30),
-            buildTextField(Icons.person_outline, 'Full Name'),
+            buildTextField(Icons.person_outline, 'Full Name',
+                controller: namecontroller),
             SizedBox(height: 16),
             buildTextField(
               Icons.mail_outline,
               'Email',
             ),
             SizedBox(height: 16),
-            buildTextField(Icons.phone_outlined, 'Contact Number'),
+            buildTextField(Icons.phone_outlined, 'Contact Number',
+                controller: phonecontroller),
             SizedBox(height: 16),
             buildDropdownField('Select Country'),
             SizedBox(height: 16),
-            buildTextField(
-              Icons.location_on_outlined,
-              'Address',
-            ),
+            buildTextField(Icons.location_on_outlined, 'Address',
+                controller: addresscontroller),
             SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
@@ -71,7 +115,70 @@ class EditProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  var token = prefs.getString('auth_token');
+
+                  var request = http.MultipartRequest('POST',
+                      Uri.parse('http://172.20.10.5:8000/api/user/profile'));
+                  request.headers['Authorization'] = 'Bearer $token';
+
+                  request.fields['_method'] = 'put';
+                  request.fields['name'] = namecontroller.text;
+                  request.fields['address'] = addresscontroller.text;
+
+                  if (imageFile != null) {
+                    request.files.add(await http.MultipartFile.fromPath(
+                      'image',
+                      imageFile!.path,
+                    ));
+                  }
+
+                  try {
+                    var response = await request.send();
+                    var body = await response.stream.bytesToString();
+
+                    if (response.statusCode == 200) {
+                      print(' تم التحديث بنجاح');
+                      print(' الرد: $body');
+                      Get.offNamed('profile');
+                    } else {
+                      print(' فشل التحديث: ${response.statusCode}');
+                      print(' الرد: $body');
+                    }
+                  } catch (e) {
+                    print(' خطأ أثناء الإرسال: $e');
+                  }
+
+                  // var header = {
+                  //   'Authorization': 'Bearer $token',
+                  //   'Content-Type': 'application/json',
+                  // };
+
+                  // request.fields.addAll({
+                  //   '_method': 'put',
+                  //   'name': namecontroller.text,
+                  //   'address': addresscontroller.text
+                  // });
+                  // print("hereeeeeee");
+
+                  // request.files.add(await http.MultipartFile.fromPath(
+                  //     'image', _imageFile!.path));
+
+                  // request.headers.addAll(header);
+                  // http.StreamedResponse response = await request.send();
+
+                  // if (response.statusCode == 200) {
+                  //   print("edittttttt successssss");
+                  //   Get.offNamed('profile');
+                  //   //final data = jsonDecode(response.).toString();
+                  //   //print(data.toString());
+                  //   // return data;
+                  // } else {
+                  //   print('Failed to get user info: ${response.statusCode}');
+                  //   throw Exception('edit profile failed');
+                  // }
+                },
                 child: Text('Save',
                     style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
@@ -82,8 +189,10 @@ class EditProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget buildTextField(IconData icon, String hint, {String? initialValue}) {
+  Widget buildTextField(IconData icon, String hint,
+      {String? initialValue, TextEditingController? controller}) {
     return TextFormField(
+      controller: controller,
       initialValue: initialValue,
       decoration: InputDecoration(
         hintText: hint,

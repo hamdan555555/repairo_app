@@ -3,7 +3,6 @@ import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 
 class ServiceWidget extends StatelessWidget {
   const ServiceWidget({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -83,79 +82,5 @@ class ServiceWidget extends StatelessWidget {
         ],
       ),
     );
-
-    // Container(
-    //   decoration: const BoxDecoration(
-    //       borderRadius: BorderRadius.only(topLeft: Radius.circular(10))),
-    //   width: 335,
-    //   height: 160,
-    //   child: Image.asset(
-    //     'assets/images/jpg/worker2.jpg',
-    //     fit: BoxFit.fill,
-    //   ),
-    // ),
-    // Container(
-    //   width: 335,
-    //   height: 120,
-    //   decoration: const BoxDecoration(
-    //       color: Color.fromARGB(255, 236, 233, 233),
-    //       borderRadius: BorderRadius.only(
-    //           bottomLeft: Radius.circular(10),
-    //           bottomRight: Radius.circular(10))),
-    //   child: Padding(
-    //     padding: const EdgeInsets.all(8.0),
-    //     child: const Column(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: [
-    //           Row(
-    //             children: [
-    //               RatingStars(
-    //                 starSize: 16,
-    //                 starSpacing: 6,
-    //                 starCount: 5,
-    //                 starColor: Colors.amber,
-    //                 starOffColor: Colors.amber,
-    //                 valueLabelVisibility: false,
-    //               ),
-    //               SizedBox(
-    //                 width: 10,
-    //               ),
-    //               Text(
-    //                 '4.3',
-    //                 style: TextStyle(
-    //                     fontSize: 16, fontWeight: FontWeight.bold),
-    //               )
-    //             ],
-    //           ),
-    //           Text(
-    //             "Fixing Anroid Smart Devices Around",
-    //             style: TextStyle(fontSize: 20),
-    //           ),
-    //           Text(
-    //             "Interior And Wiring",
-    //             textAlign: TextAlign.start,
-    //             style: TextStyle(fontSize: 20),
-    //           ),
-    //           SizedBox(
-    //             height: 5,
-    //           ),
-    //           Row(
-    //             children: [
-    //               CircleAvatar(
-    //                 radius: 14,
-    //                 backgroundColor: Colors.black,
-    //               ),
-    //               SizedBox(
-    //                 width: 12,
-    //               ),
-    //               Text(
-    //                 "Mohamed Yousef",
-    //                 style: TextStyle(fontSize: 14, color: Colors.grey),
-    //               )
-    //             ],
-    //           ),
-    //         ]),
-    //   ),
-    // ),
   }
 }

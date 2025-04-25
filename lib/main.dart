@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void main() {
-  runApp(BreakingBadApp(
+  runApp(MyApp(
     appRouter: AppRouter(),
   ));
 }
 
-class BreakingBadApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   final AppRouter appRouter;
-
-  const BreakingBadApp({super.key, required this.appRouter});
+  const MyApp({super.key, required this.appRouter});
 
   @override
   Widget build(BuildContext context) {

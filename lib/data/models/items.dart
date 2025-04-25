@@ -1,4 +1,4 @@
-class Items {
+class Services {
   late int item_id;
   late String title;
   late String description;
@@ -6,7 +6,7 @@ class Items {
   late String image;
   late double price;
 
-  Items.fromjson(Map<String, dynamic> json) {
+  Services.fromjson(Map<String, dynamic> json) {
     item_id = json['id'];
     title = json['title'];
     description = json['description'];

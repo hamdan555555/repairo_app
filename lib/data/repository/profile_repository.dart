@@ -6,8 +6,8 @@ class ProfileRepository {
 
   ProfileRepository(this.profileWebservices);
 
-  Future<UserProfile> getUserData(String token) async {
+  Future<PData> getUserData(String token) async {
     final data = await profileWebservices.getUserInfo(token);
-    return UserProfile.fromJson(data);
+    return PData.fromJson(data);
   }
 }

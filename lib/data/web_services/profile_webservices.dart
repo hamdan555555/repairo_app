@@ -22,7 +22,9 @@ class ProfileWebservices {
 
     if (response.statusCode == 200) {
       print('User info: ${response.body}');
-      final data = jsonDecode(response.body);
+      final dataa = jsonDecode(response.body);
+      final data = dataa['data'];
+
       print(data.toString());
       return data;
     } else {

@@ -9,8 +9,9 @@ class ProfileInitial extends ProfileStates {}
 class ProfileLoading extends ProfileStates {}
 
 class ProfileSuccess extends ProfileStates {
-  final UserProfile userProfile;
-  ProfileSuccess(this.userProfile);
+  //final UserProfile userProfile;
+  final PData userdata;
+  ProfileSuccess(this.userdata);
 }
 
 class ProfileError extends ProfileStates {

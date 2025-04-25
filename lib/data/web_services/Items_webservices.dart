@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class ItemsWebservices {
+class ServicesWebservices {
   Future<List<dynamic>> getItems() async {
     final response =
         await http.get(Uri.parse('https://fakestoreapi.com/products'));
