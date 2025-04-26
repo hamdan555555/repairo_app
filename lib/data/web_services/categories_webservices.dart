@@ -1,12 +1,12 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileWebservices {
-  Future<Map<String, dynamic>> getUserInfo(String token) async {
+class CategoriesWebservices {
+  Future<List<Map<String, dynamic>>> getAllCategories() async {
     final prefs = await SharedPreferences.getInstance();
-    final url = Uri.parse('http://172.20.10.5:8000/api/user/profile');
     var token = prefs.getString('auth_token');
+    final url = Uri.parse('http://172.20.10.5:8000/api/category');
     final response = await http.get(
       url,
       headers: {
@@ -18,8 +18,8 @@ class ProfileWebservices {
     if (response.statusCode == 200) {
       print('User info: ${response.body}');
       final dataa = jsonDecode(response.body);
-      final data = dataa['data'];
-
+      final List<Map<String, dynamic>> data =
+          List<Map<String, dynamic>>.from(dataa['data']['data']);
       print(data.toString());
       return data;
     } else {

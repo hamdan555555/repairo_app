@@ -1,4 +1,4 @@
-import 'package:breaking_project/data/models/userprofile.dart';
+import 'package:breaking_project/data/models/userprofile_model.dart';
 import 'package:breaking_project/data/web_services/profile_webservices.dart';
 
 class ProfileRepository {

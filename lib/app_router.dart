@@ -1,17 +1,21 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
 import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/SignupCubit/signup_cubit.dart';
 import 'package:breaking_project/business_logic/VerifyCubit/verification_cubit.dart';
+import 'package:breaking_project/data/repository/categories_repository.dart';
 import 'package:breaking_project/data/repository/profile_repository.dart';
 import 'package:breaking_project/data/repository/signup_repository.dart';
 import 'package:breaking_project/data/repository/login_repository.dart';
 import 'package:breaking_project/data/repository/verification_repository.dart';
 import 'package:breaking_project/data/web_services/Items_webservices.dart';
+import 'package:breaking_project/data/web_services/categories_webservices.dart';
 import 'package:breaking_project/data/web_services/login_webservice.dart';
 import 'package:breaking_project/data/web_services/profile_webservices.dart';
 import 'package:breaking_project/data/web_services/signup_webservices.dart';
 import 'package:breaking_project/data/web_services/verification_webservices.dart';
+import 'package:breaking_project/presentation/screens/allcategories.dart';
 import 'package:breaking_project/presentation/screens/edit_profile.dart';
 import 'package:breaking_project/presentation/screens/home_screen.dart';
 import 'package:breaking_project/presentation/screens/login_screen.dart';
@@ -59,6 +63,14 @@ class AppRouter {
             builder: (_) => BlocProvider.value(
                   value: LoginCubit(AuthRepository(AuthWebService())),
                   child: LoginScreen(),
+                ));
+
+      case 'allcategories':
+        return MaterialPageRoute(
+            builder: (_) => BlocProvider.value(
+                  value: AllcategoriesCubit(CategoriesRepository(
+                      categoriesWebservices: CategoriesWebservices())),
+                  child: const Allcategories(),
                 ));
 
       case 'home':

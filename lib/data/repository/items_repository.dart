@@ -1,4 +1,4 @@
-import 'package:breaking_project/data/models/items.dart';
+import 'package:breaking_project/data/models/items_model.dart';
 import 'package:breaking_project/data/web_services/Items_webservices.dart';
 
 class ServicesRepository {

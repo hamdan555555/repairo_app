@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
-import 'package:breaking_project/data/models/items.dart';
+import 'package:breaking_project/data/models/items_model.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:breaking_project/presentation/widgets/service_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -62,11 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // bottomNavigationBar: BottomNavigationBar(items: [
-      //   BottomNavigationBarItem(icon: Icon(Icons.ac_unit_sharp), label: 'Any'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.ac_unit_sharp), label: 'Any'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.ac_unit_sharp), label: 'Any')
-      // ]),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -129,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           )),
                     ],
                   ),
-                  //Expanded(child: buildBlocWidget()),
                   SizedBox(
                     height: 40,
                   ),
@@ -145,7 +140,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 180),
-                          child: GestureDetector(child: Text("View All")),
+                          child: GestureDetector(
+                              onTap: () {
+                                Get.toNamed('allcategories');
+                              },
+                              child: Text("View All")),
                         )
                       ],
                     ),
@@ -153,7 +152,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 20,
                   ),
-
                   buildBlocWidget(),
                   Container(
                     decoration: BoxDecoration(

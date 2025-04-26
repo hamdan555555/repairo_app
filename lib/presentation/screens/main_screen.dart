@@ -1,16 +1,11 @@
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
-import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
 import 'package:breaking_project/data/repository/items_repository.dart';
-import 'package:breaking_project/data/repository/login_repository.dart';
 import 'package:breaking_project/data/repository/profile_repository.dart';
 import 'package:breaking_project/data/web_services/Items_webservices.dart';
-import 'package:breaking_project/data/web_services/login_webservice.dart';
 import 'package:breaking_project/data/web_services/profile_webservices.dart';
 import 'package:breaking_project/presentation/screens/home_screen.dart';
-import 'package:breaking_project/presentation/screens/login_screen.dart';
 import 'package:breaking_project/presentation/screens/profile.dart';
-import 'package:breaking_project/presentation/screens/verification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,7 +16,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-
   final List<Widget> _pages = [
     BlocProvider(
       create: (context) => ServicesCubit(
@@ -29,9 +23,6 @@ class _MainScreenState extends State<MainScreen> {
         ..getAllItems(),
       child: HomeScreen(),
     ),
-    // BlocProvider(
-    //     create: (context) => LoginCubit(AuthRepository(AuthWebService())),
-    //     child: LoginScreen()),
     BlocProvider(
         create: (context) =>
             ProfileCubit(ProfileRepository(ProfileWebservices())),
@@ -58,10 +49,6 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.search),
-          //   label: 'Search',
-          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',

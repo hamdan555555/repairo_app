@@ -12,7 +12,7 @@ class ProductsScreen extends StatelessWidget {
           ServicesRepository(servicesWebservices: ServicesWebservices()))
         ..getAllItems(),
       child: Scaffold(
-        appBar: AppBar(title: Text("Items")),
+        appBar: AppBar(title: const Text("Items")),
         body: Column(
           children: [
             Padding(
@@ -22,7 +22,7 @@ class ProductsScreen extends StatelessWidget {
                     context.read<ServicesCubit>().searchProducts(query),
                 decoration: InputDecoration(
                   labelText: 'Search',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -32,7 +32,7 @@ class ProductsScreen extends StatelessWidget {
               child: BlocBuilder<ServicesCubit, ServicesStates>(
                 builder: (context, state) {
                   if (state is ServicesInitial)
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   if (state is ServicesLoaded) {
                     return ListView.builder(
                       itemCount: state.services.length,
@@ -42,7 +42,7 @@ class ProductsScreen extends StatelessWidget {
                     );
                   }
                   if (state is ServicesFailed)
-                    return Center(child: Text("error happened"));
+                    return const Center(child: Text("error happened"));
                   return Container();
                 },
               ),

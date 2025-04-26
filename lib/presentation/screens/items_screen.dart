@@ -1,6 +1,6 @@
 import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
 import 'package:breaking_project/constants/colors.dart';
-import 'package:breaking_project/data/models/items.dart';
+import 'package:breaking_project/data/models/items_model.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

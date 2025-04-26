@@ -1,12 +1,13 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileWebservices {
-  Future<Map<String, dynamic>> getUserInfo(String token) async {
+class ServiceWebservices {
+  Future<List<Map<String, dynamic>>> getServices(String id) async {
     final prefs = await SharedPreferences.getInstance();
-    final url = Uri.parse('http://172.20.10.5:8000/api/user/profile');
     var token = prefs.getString('auth_token');
+    final url = Uri.parse('http://172.20.10.5:8000/api/services/$id');
+
     final response = await http.get(
       url,
       headers: {
@@ -16,15 +17,15 @@ class ProfileWebservices {
     );
 
     if (response.statusCode == 200) {
-      print('User info: ${response.body}');
+      print('sub info: ${response.body}');
       final dataa = jsonDecode(response.body);
-      final data = dataa['data'];
-
+      final List<Map<String, dynamic>> data =
+          List<Map<String, dynamic>>.from(dataa['data']);
       print(data.toString());
       return data;
     } else {
-      print('Failed to get user info: ${response.statusCode}');
-      throw Exception('Login failed');
+      print('Failed to get services info: ${response.statusCode}');
+      throw Exception('services failed');
     }
   }
 }

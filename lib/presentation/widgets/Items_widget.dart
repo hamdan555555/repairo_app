@@ -1,5 +1,4 @@
-import 'package:breaking_project/constants/colors.dart';
-import 'package:breaking_project/data/models/items.dart';
+import 'package:breaking_project/data/models/items_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -23,21 +22,21 @@ class ItemWidget extends StatelessWidget {
                 // fit: BoxFit.cover,
               ),
             ),
-            decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 226, 222, 222),
-                borderRadius: BorderRadius.only(
+            decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 226, 222, 222),
+                borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(15),
                     topLeft: Radius.circular(15))),
           ),
           Container(
             width: 98,
             height: 34,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(15),
                     bottomLeft: Radius.circular(15))),
-            child: Center(
+            child: const Center(
                 child: Text(
               "Smart Home",
               style: TextStyle(fontWeight: FontWeight.bold),

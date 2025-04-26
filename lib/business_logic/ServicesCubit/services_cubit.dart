@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:breaking_project/data/models/items.dart';
+import 'package:breaking_project/data/models/items_model.dart';
 import 'package:breaking_project/data/repository/items_repository.dart';
 part 'services_states.dart';
 

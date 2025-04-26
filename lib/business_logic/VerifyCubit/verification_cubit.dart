@@ -8,14 +8,8 @@ class VerificationCubit extends Cubit<VerificationStates> {
 
   VerificationCubit(this.verificationRepository) : super(VerificationInitial());
 
-  void onSubmit() {
-    // hide = !hide;
-    // emit(LoginPassHideChanged(hide));
-  }
-  void DidnotgetCode() {
-    // hide = !hide;
-    // emit(LoginPassHideChanged(hide));
-  }
+  void onSubmit() {}
+  void DidnotgetCode() {}
 
   void verify(String phone, String code) async {
     emit(VerificationLoading());
@@ -23,7 +17,6 @@ class VerificationCubit extends Cubit<VerificationStates> {
       var user = await verificationRepository.verifyNumber(phone, code);
       emit(VerificationSuccess(user));
       Get.back();
-      //Get.toNamed('mainscreen');
       Get.offAllNamed('mainscreen');
     } catch (e) {
       emit(VerificationError(e.toString()));

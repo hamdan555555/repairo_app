@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -141,7 +139,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     if (response.statusCode == 200) {
                       print(' تم التحديث بنجاح');
                       print(' الرد: $body');
-                      Get.offNamed('profile');
+                      Get.offAllNamed('profile');
                     } else {
                       print(' فشل التحديث: ${response.statusCode}');
                       print(' الرد: $body');
@@ -149,35 +147,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   } catch (e) {
                     print(' خطأ أثناء الإرسال: $e');
                   }
-
-                  // var header = {
-                  //   'Authorization': 'Bearer $token',
-                  //   'Content-Type': 'application/json',
-                  // };
-
-                  // request.fields.addAll({
-                  //   '_method': 'put',
-                  //   'name': namecontroller.text,
-                  //   'address': addresscontroller.text
-                  // });
-                  // print("hereeeeeee");
-
-                  // request.files.add(await http.MultipartFile.fromPath(
-                  //     'image', _imageFile!.path));
-
-                  // request.headers.addAll(header);
-                  // http.StreamedResponse response = await request.send();
-
-                  // if (response.statusCode == 200) {
-                  //   print("edittttttt successssss");
-                  //   Get.offNamed('profile');
-                  //   //final data = jsonDecode(response.).toString();
-                  //   //print(data.toString());
-                  //   // return data;
-                  // } else {
-                  //   print('Failed to get user info: ${response.statusCode}');
-                  //   throw Exception('edit profile failed');
-                  // }
                 },
                 child: Text('Save',
                     style: TextStyle(fontSize: 18, color: Colors.white)),
