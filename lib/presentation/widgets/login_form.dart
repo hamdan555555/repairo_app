@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
 import 'package:breaking_project/business_logic/LoginCubit/login_states.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
@@ -8,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
@@ -55,7 +52,6 @@ class LoginForm extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-
                   const Text(
                     "Hello User !",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -90,26 +86,6 @@ class LoginForm extends StatelessWidget {
                   const SizedBox(
                     height: 30,
                   ),
-
-                  // CustomTextFormField(
-                  //   isPass: context.read<LoginCubit>().hide,
-                  //   controller: context.read<LoginCubit>().passwordController,
-                  //   hinttext: "Password",
-                  //   suffixicon: IconButton(
-                  //     onPressed: context.read<LoginCubit>().togglePassHide,
-                  //     icon: !context.read<LoginCubit>().hide
-                  //         ? const Icon(Icons.remove_red_eye_outlined)
-                  //         : const Icon(Icons.visibility_off_outlined),
-                  //   ),
-                  //   keybordtype: TextInputType.visiblePassword,
-                  //   valid: (value) {
-                  //     if (value == null || value.isEmpty) {
-                  //       return 'Please enter your phone';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(

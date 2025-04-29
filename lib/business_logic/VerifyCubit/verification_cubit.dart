@@ -9,7 +9,7 @@ class VerificationCubit extends Cubit<VerificationStates> {
   VerificationCubit(this.verificationRepository) : super(VerificationInitial());
 
   void onSubmit() {}
-  void DidnotgetCode() {}
+  void didnotgetCode() {}
 
   void verify(String phone, String code) async {
     emit(VerificationLoading());
@@ -18,8 +18,43 @@ class VerificationCubit extends Cubit<VerificationStates> {
       emit(VerificationSuccess(user));
       Get.back();
       Get.offAllNamed('mainscreen');
+      //await LocalStorageService.saveLastVisitedScreen('mainscreen');
+
     } catch (e) {
       emit(VerificationError(e.toString()));
     }
+
+//هاد مثال عن استخدام كلاس الايرور هاندلير 
+//   try {
+//   await api.login();
+// } catch (e) {
+//   final errorMessage = ErrorHandler.handleError(e);
+//   emit(LoginErrorState(errorMessage));
+// }
+
+
+//هاد مثال عن استخدام كلاس النيتوورك تشيكينغ
+// bool online = await NetworkChecker.isConnected();
+// if (!online) {
+//   // أعرض alert أو snackBar
+//   print("لا يوجد اتصال بالإنترنت");
+// }
+
+
+
+//هاد مثال عن استخدام كلاس النوتفيكيشن
+// await NotificationService.init();
+
+// NotificationService.showNotification(
+//   id: 1,
+//   title: "أهلاً محمد 👋",
+//   body: "تم تسجيل الدخول بنجاح!",
+// );
+
+
+
+
+
+
   }
 }

@@ -15,9 +15,7 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final namecontroller = TextEditingController();
-
   final phonecontroller = TextEditingController();
-
   final addresscontroller = TextEditingController();
 
   File? imageFile;
@@ -118,7 +116,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   var token = prefs.getString('auth_token');
 
                   var request = http.MultipartRequest('POST',
-                      Uri.parse('http://172.20.10.5:8000/api/user/profile'));
+                      Uri.parse('http://192.168.1.100:8000/api/user/profile'));
                   request.headers['Authorization'] = 'Bearer $token';
 
                   request.fields['_method'] = 'put';

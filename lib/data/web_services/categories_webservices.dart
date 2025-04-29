@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:breaking_project/constants/strings.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,7 +7,7 @@ class CategoriesWebservices {
   Future<List<Map<String, dynamic>>> getAllCategories() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('auth_token');
-    final url = Uri.parse('http://172.20.10.5:8000/api/category');
+    final url = Uri.parse('$BaseUrl/category');
     final response = await http.get(
       url,
       headers: {
@@ -20,7 +21,6 @@ class CategoriesWebservices {
       final dataa = jsonDecode(response.body);
       final List<Map<String, dynamic>> data =
           List<Map<String, dynamic>>.from(dataa['data']['data']);
-      print(data.toString());
       return data;
     } else {
       print('Failed to get user info: ${response.statusCode}');

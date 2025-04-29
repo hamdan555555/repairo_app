@@ -17,6 +17,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isDarkMode = true;
   late PData userdata;
+  late String? uname;
+  late String? uaddress;
 
   @override
   void initState() {
@@ -52,6 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocBuilder<ProfileCubit, ProfileStates>(builder: (context, state) {
       if (state is ProfileSuccess) {
         userdata = (state).userdata;
+        uname = userdata.name;
+        uaddress = userdata.address;
         return buildLoadedListWidget();
       } else {
         return showloadingindicator();
@@ -80,7 +84,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CircleAvatar(
                       radius: 50,
                       backgroundImage: userdata.image!.isNotEmpty
-                          ? NetworkImage(userdata.image!)
+                          ? NetworkImage(
+                              userdata.image!
+                                  .replaceFirst('127.0.0.1', '192.168.1.100'),
+                            )
                           : const AssetImage('assets/images/jpg/hamdan.jpg'),
                     ),
                     Positioned(
@@ -101,7 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                userdata.name == ' null'
+                // userdata.name!.contains('null')
+                uname.isNull
                     ? const Text("User Name",
                         style: TextStyle(
                             color: Colors.black,
@@ -112,8 +120,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold)),
-                Text("${userdata.address}",
-                    style: const TextStyle(color: Colors.black, fontSize: 14)),
+
+                uaddress.isNull
+                    ? const Text("user address",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ))
+                    : Text("${userdata.address}",
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 14)),
                 Text("${userdata.phone}",
                     style: const TextStyle(color: Colors.black, fontSize: 14)),
               ],
@@ -144,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 final url = Uri.parse(
-                    'http://172.20.10.5:8000/api/user/authentication/logout');
+                    'http://192.168.1.100:8000/api/user/authentication/logout');
                 var token = prefs.getString('auth_token');
                 final response = await http.post(
                   url,

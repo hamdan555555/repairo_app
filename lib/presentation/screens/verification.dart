@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Verification extends StatelessWidget {
@@ -80,18 +79,10 @@ class Verification extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       numberOfFields: 4,
                       borderColor: const Color.fromRGBO(95, 96, 185, 1),
-                      //set to true to show as box or false to show as dash
                       showFieldAsBox: true,
-                      //runs when a code is typed in
-                      onCodeChanged: (String code) {
-                        //handle validation or checks here
-                      },
-                      //runs when every textfield is filled
+                      onCodeChanged: (String code) {},
                       onSubmit: (String verificationCode) async {
-                        print("submitttttttt");
-
                         final prefs = await SharedPreferences.getInstance();
-
                         var phone = prefs.getString('phone');
 
                         context

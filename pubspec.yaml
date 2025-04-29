@@ -28,11 +28,14 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  connectivity_plus: ^6.1.4
+  convex_bottom_bar: ^3.2.0
   cupertino_icons: ^1.0.8
   dio: ^5.8.0+1
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.0
+  flutter_local_notifications: ^19.1.0
   flutter_offline: ^4.0.0
   flutter_otp_text_field: ^1.5.1+1
   flutter_rating_stars: ^1.1.0

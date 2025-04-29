@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:breaking_project/constants/strings.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,7 +7,7 @@ class ServiceWebservices {
   Future<List<Map<String, dynamic>>> getServices(String id) async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('auth_token');
-    final url = Uri.parse('http://172.20.10.5:8000/api/services/$id');
+    final url = Uri.parse('$BaseUrl/services/$id');
 
     final response = await http.get(
       url,

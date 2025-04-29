@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
+import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
 import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
+import 'package:breaking_project/data/models/banner_image_model.dart';
 import 'package:breaking_project/data/models/items_model.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:breaking_project/presentation/widgets/service_widget.dart';
@@ -20,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _controller = PageController();
   int currentPage = 0;
+  late List<RBannerImageData> bannerimages;
 
   late List<Services> allitems;
   late List<Services> searcheditems;
@@ -35,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    BlocProvider.of<HomeCubit>(context).getBannerImages('any');
 
     Timer.periodic(
       Duration(seconds: 3),
@@ -62,6 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("builllllld in home starteddddddd");
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -71,28 +78,83 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Stack(
                     children: [
-                      SizedBox(
-                        height: 220,
-                        child: PageView.builder(
-                          controller: _controller,
-                          itemCount: images.length,
-                          onPageChanged: (index) {
-                            setState(() => currentPage = index);
-                          },
-                          itemBuilder: (context, index) {
-                            return ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(0),
-                                bottomRight: Radius.circular(0),
-                              ),
-                              child: Image.asset(
-                                images[index],
-                                fit: BoxFit.cover,
-                                width: double.infinity,
+                      BlocBuilder<HomeCubit, HomeStates>(
+                        builder: (context, state) {
+                          if (state is BannerImagesSuccess) {
+                            print("this is your image path");
+                            bannerimages = (state).bannerimages;
+                            var thisimage = bannerimages[0]
+                                .image!
+                                .replaceFirst('127.0.0.1', '172.20.10.5');
+                            print(thisimage.toString());
+                            return SizedBox(
+                              height: 220,
+                              child: PageView.builder(
+                                controller: _controller,
+                                itemCount: context
+                                    .read<HomeCubit>()
+                                    .bannerimages
+                                    .length,
+                                //images.length,
+                                onPageChanged: (index) {
+                                  setState(() => currentPage = index);
+                                },
+                                itemBuilder: (context, index) {
+                                  return ClipRRect(
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(0),
+                                      bottomRight: Radius.circular(0),
+                                    ),
+                                    child: Image.network(
+                                      // 'http://172.20.10.5:8000/storage/images/defaults/banner.png'
+                                      bannerimages[index].image!.replaceFirst(
+                                          '127.0.0.1', '192.168.1.100'),
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: 200,
+                                    ),
+
+                                    //  Image.asset(
+                                    //   images[index],
+                                    //   fit: BoxFit.cover,
+                                    //   width: double.infinity,
+                                    // ),
+                                  );
+                                },
                               ),
                             );
-                          },
-                        ),
+                          } else {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: const Color.fromRGBO(95, 96, 185, 1),
+                            ));
+                          }
+                          // return SizedBox(
+                          //                     height: 220,
+                          //                     child: PageView.builder(
+                          //                       controller: _controller,
+                          //                       itemCount: context.read<HomeCubit>().bannerimages.length,
+                          //                       //images.length,
+                          //                       onPageChanged: (index) {
+                          //                         setState(() => currentPage = index);
+                          //                       },
+                          //                       itemBuilder: (context, index) {
+                          //                         return ClipRRect(
+                          //                           borderRadius: const BorderRadius.only(
+                          //                             bottomLeft: Radius.circular(0),
+                          //                             bottomRight: Radius.circular(0),
+                          //                           ),
+                          //                           child:
+                          //                           //  Image.asset(
+                          //                           //   images[index],
+                          //                           //   fit: BoxFit.cover,
+                          //                           //   width: double.infinity,
+                          //                           // ),
+                          //                         );
+                          //                       },
+                          //                     ),
+                          //                   );
+                        },
                       ),
                       Positioned(
                         bottom: 36,
@@ -116,6 +178,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           left: 300,
                           right: 0,
                           child: GestureDetector(
+                            onTap: () {
+                              Get.toNamed('search');
+                            },
                             child: CircleAvatar(
                               child: SvgPicture.asset(
                                   'assets/images/svg/Notification.svg'),
