@@ -1,4 +1,5 @@
 import 'package:breaking_project/business_logic/SubCategoryCubit/subcategory_cubit.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/category_model.dart';
 import 'package:breaking_project/data/repository/subcategory_repository.dart';
 import 'package:breaking_project/data/web_services/subcategories_webservice.dart';
@@ -26,40 +27,64 @@ class CategoriesWidget extends StatelessWidget {
         );
       },
       child: Container(
+        margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 223, 217, 217), // لون خلفية خفيف
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade300),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.15),
+              spreadRadius: 1,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 7,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SvgPicture.asset(
-                  'assets/images/svg/home.svg',
-                  width: 70,
-                  height: 70,
+            // الصورة أو placeholder
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 6),
+              child: category.image != null && category.image!.isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        category.image!.replaceFirst(
+                            '127.0.0.1', AppConstants.baseaddress),
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 50,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    )
+                  : SvgPicture.asset(
+                      'assets/images/svg/home.svg',
+                      width: 50,
+                      height: 50,
+                      color: Colors.grey.shade400,
+                    ),
+            ),
+            const SizedBox(height: 4),
+            // العنوان
+            Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8, top: 24),
+              child: Text(
+                category.displayName ?? '',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  category.displayName!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+            const SizedBox(height: 8),
           ],
         ),
       ),

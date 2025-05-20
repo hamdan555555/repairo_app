@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:breaking_project/constants/strings.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,7 +7,7 @@ class CategoriesWebservices {
   Future<List<Map<String, dynamic>>> getAllCategories() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('auth_token');
-    final url = Uri.parse('$BaseUrl/category');
+    final url = Uri.parse('${AppConstants.baseUrl}/category');
     final response = await http.get(
       url,
       headers: {

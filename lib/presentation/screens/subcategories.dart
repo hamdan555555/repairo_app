@@ -67,23 +67,33 @@ class SubcategoriesStatee extends State<Subcategories> {
 
   Widget builditemsList() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: context.read<SubcategoryCubit>().subcategories.length,
-        itemBuilder: (ctx, index) {
-          return SubcateroriesWidget(
-            subcategory: context.read<SubcategoryCubit>().subcategories[index],
-          );
-        },
-      ),
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: ListView.builder(
+          itemCount: context.read<SubcategoryCubit>().subcategories.length,
+          itemBuilder: (ctx, index) {
+            return SubcateroriesWidget(
+              subcategory:
+                  context.read<SubcategoryCubit>().subcategories[index],
+            );
+          },
+        )
+
+        //  GridView.builder(
+        //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        //     crossAxisCount: 2,
+        //     childAspectRatio: 0.8,
+        //     crossAxisSpacing: 16,
+        //     mainAxisSpacing: 16,
+        //   ),
+        //   shrinkWrap: true,
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   itemCount: context.read<SubcategoryCubit>().subcategories.length,
+        //   itemBuilder: (ctx, index) {
+        //     return SubcateroriesWidget(
+        //       subcategory: context.read<SubcategoryCubit>().subcategories[index],
+        //     );
+        //   },
+        // ),
+        );
   }
 }

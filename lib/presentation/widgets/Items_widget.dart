@@ -1,14 +1,30 @@
-import 'package:breaking_project/data/models/items_model.dart';
+import 'package:breaking_project/business_logic/SubCategoryCubit/subcategory_cubit.dart';
+import 'package:breaking_project/data/models/category_model.dart';
+import 'package:breaking_project/data/repository/subcategory_repository.dart';
+import 'package:breaking_project/data/web_services/subcategories_webservice.dart';
+import 'package:breaking_project/presentation/screens/subcategories.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class ItemWidget extends StatelessWidget {
-  final Services item;
+  final RCategoryData item;
   const ItemWidget({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () {
+        Get.to(
+          () => BlocProvider(
+            create: (context) => SubcategoryCubit(SubcategoryRepository(
+                subcategoriesWebservice: SubcategoriesWebservice())),
+            child: Subcategories(id: item.id.toString()),
+          ),
+        );
+      },
       child: Column(
         children: [
           Container(
@@ -36,9 +52,9 @@ class ItemWidget extends StatelessWidget {
                 borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(15),
                     bottomLeft: Radius.circular(15))),
-            child: const Center(
+            child: Center(
                 child: Text(
-              "Smart Home",
+              '${item.displayName}',
               style: TextStyle(fontWeight: FontWeight.bold),
             )),
           )

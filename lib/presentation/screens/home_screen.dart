@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'package:breaking_project/business_logic/AllCategoriesCubit/allcategories_states.dart';
+import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
-import 'package:breaking_project/business_logic/ServicesCubit/services_cubit.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/banner_image_model.dart';
-import 'package:breaking_project/data/models/items_model.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:breaking_project/presentation/widgets/service_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,8 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentPage = 0;
   late List<RBannerImageData> bannerimages;
 
-  late List<Services> allitems;
-  late List<Services> searcheditems;
+  //late List<RCategoryData> allitems;
+  //late List<Services> searcheditems;
   bool isSearching = false;
   final searchTextController = TextEditingController();
 
@@ -35,11 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/jpg/fifth.jpg',
     'assets/images/jpg/sixth.jpg',
   ];
+  final ValueNotifier<int> currentPageNotifier = ValueNotifier<int>(0);
 
   @override
   void initState() {
     super.initState();
     BlocProvider.of<HomeCubit>(context).getBannerImages('any');
+    BlocProvider.of<AllcategoriesCubit>(context).getAllCategories();
 
     Timer.periodic(
       Duration(seconds: 3),
@@ -62,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _controller.dispose();
     searchTextController.dispose();
+    currentPageNotifier.dispose();
     super.dispose();
   }
 
@@ -83,9 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           if (state is BannerImagesSuccess) {
                             print("this is your image path");
                             bannerimages = (state).bannerimages;
-                            var thisimage = bannerimages[0]
-                                .image!
-                                .replaceFirst('127.0.0.1', '172.20.10.5');
+                            var thisimage = bannerimages[0].image!.replaceFirst(
+                                '127.0.0.1', AppConstants.baseaddress);
                             print(thisimage.toString());
                             return SizedBox(
                               height: 220,
@@ -97,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     .length,
                                 //images.length,
                                 onPageChanged: (index) {
-                                  setState(() => currentPage = index);
+                                  currentPageNotifier.value = index;
                                 },
                                 itemBuilder: (context, index) {
                                   return ClipRRect(
@@ -108,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Image.network(
                                       // 'http://172.20.10.5:8000/storage/images/defaults/banner.png'
                                       bannerimages[index].image!.replaceFirst(
-                                          '127.0.0.1', '192.168.1.100'),
+                                          '127.0.0.1',
+                                          AppConstants.baseaddress),
                                       fit: BoxFit.cover,
                                       width: double.infinity,
                                       height: 200,
@@ -124,36 +129,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           } else {
-                            return Center(
-                                child: CircularProgressIndicator(
-                              color: const Color.fromRGBO(95, 96, 185, 1),
-                            ));
+                            return Shimmer.fromColors(
+                              baseColor: Colors.grey.shade300,
+                              highlightColor: Colors.grey.shade100,
+                              child: Container(
+                                width: double.infinity,
+                                height: 220,
+                                color: Colors.white,
+                              ),
+                            );
                           }
-                          // return SizedBox(
-                          //                     height: 220,
-                          //                     child: PageView.builder(
-                          //                       controller: _controller,
-                          //                       itemCount: context.read<HomeCubit>().bannerimages.length,
-                          //                       //images.length,
-                          //                       onPageChanged: (index) {
-                          //                         setState(() => currentPage = index);
-                          //                       },
-                          //                       itemBuilder: (context, index) {
-                          //                         return ClipRRect(
-                          //                           borderRadius: const BorderRadius.only(
-                          //                             bottomLeft: Radius.circular(0),
-                          //                             bottomRight: Radius.circular(0),
-                          //                           ),
-                          //                           child:
-                          //                           //  Image.asset(
-                          //                           //   images[index],
-                          //                           //   fit: BoxFit.cover,
-                          //                           //   width: double.infinity,
-                          //                           // ),
-                          //                         );
-                          //                       },
-                          //                     ),
-                          //                   );
                         },
                       ),
                       Positioned(
@@ -161,15 +146,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         left: 0,
                         right: 0,
                         child: Center(
-                          child: SmoothPageIndicator(
-                            controller: _controller,
-                            count: images.length,
-                            effect: const WormEffect(
-                              activeDotColor: Colors.white,
-                              dotColor: Colors.white54,
-                              dotHeight: 8,
-                              dotWidth: 8,
-                            ),
+                          child: ValueListenableBuilder<int>(
+                            valueListenable: currentPageNotifier,
+                            builder: (context, value, child) {
+                              return SmoothPageIndicator(
+                                controller: _controller,
+                                count: images.length,
+                                effect: const WormEffect(
+                                  activeDotColor: Colors.white,
+                                  dotColor: Colors.white54,
+                                  dotHeight: 8,
+                                  dotWidth: 8,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -179,7 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           right: 0,
                           child: GestureDetector(
                             onTap: () {
-                              Get.toNamed('search');
+                              //Get.toNamed('search');
+                              Get.toNamed('providers');
                             },
                             child: CircleAvatar(
                               child: SvgPicture.asset(
@@ -231,13 +222,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             children: [
                               Text(
-                                "Services",
+                                "Pobular Now",
                                 style: TextStyle(
                                   fontSize: 22,
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 180),
+                                padding: const EdgeInsets.only(left: 150),
                                 child: GestureDetector(child: Text("View All")),
                               )
                             ],
@@ -321,16 +312,56 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildBlocWidget() {
-    return BlocBuilder<ServicesCubit, ServicesStates>(
+    return BlocBuilder<AllcategoriesCubit, AllcategoriesStates>(
         builder: (context, state) {
-      if (state is ServicesLoaded) {
+      if (state is AllcategoriesLoaded) {
         print("34434343434");
-        allitems = (state).services;
+        //allitems = (state).categories;
+        //print(allitems);
         return buildLoadedListWidget();
       } else {
-        return showloadingindicator();
+        return buildCategoriesShimmer();
       }
+
+      // Widget buildBlocWidget() {
+      //   return BlocBuilder<AllcategoriesCubit, AllcategoriesStates>(
+      //       builder: (context, state) {
+      //     if (state is AllcategoriesLoaded) {
+      //       return buildLoadedListWidget();
+      //     } else {
+      //       return buildCategoriesShimmer(); // <-- بدّل هون
+      //     }
+      //   });
+      // }
     });
+  }
+
+  Widget buildCategoriesShimmer() {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 0.9,
+        crossAxisSpacing: 1,
+        mainAxisSpacing: 1,
+      ),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemCount: 6,
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey.shade300,
+          highlightColor: Colors.grey.shade100,
+          child: Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget buildLoadedListWidget() {
@@ -353,6 +384,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget builditemsList() {
+    print("the lengthhhhh isssss");
+    print(context.read<AllcategoriesCubit>().categories.length);
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
@@ -363,9 +396,12 @@ class _HomeScreenState extends State<HomeScreen> {
         shrinkWrap: true,
         physics: const ClampingScrollPhysics(),
         padding: EdgeInsets.zero,
-        itemCount: 6,
+        itemCount: context.read<AllcategoriesCubit>().categories.length > 6
+            ? 6
+            : context.read<AllcategoriesCubit>().categories.length,
         itemBuilder: (ctx, index) {
-          return ItemWidget(item: allitems[index]);
+          return ItemWidget(
+              item: context.read<AllcategoriesCubit>().categories[index]);
         });
   }
 }

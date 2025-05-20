@@ -72,7 +72,7 @@ class AllcategoriesStatee extends State<Allcategories> {
           mainAxisSpacing: 16,
         ),
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
+        //physics: const NeverScrollableScrollPhysics(),
         itemCount: context.read<AllcategoriesCubit>().categories.length,
         itemBuilder: (ctx, index) {
           return CategoriesWidget(

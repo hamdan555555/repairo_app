@@ -31,10 +31,10 @@ class CategoryData {
   int? lastPage;
   String? lastPageUrl;
   List<Links>? links;
-  Null? nextPageUrl;
+  String? nextPageUrl;
   String? path;
   int? perPage;
-  Null? prevPageUrl;
+  String? prevPageUrl;
   int? to;
   int? total;
 
@@ -108,13 +108,15 @@ class RCategoryData {
   String? createdAt;
   String? updatedAt;
   String? deletedAt;
+  String? image;
 
   RCategoryData(
       {this.id,
       this.displayName,
       this.createdAt,
       this.updatedAt,
-      this.deletedAt});
+      this.deletedAt,
+      this.image});
 
   RCategoryData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -122,6 +124,7 @@ class RCategoryData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {

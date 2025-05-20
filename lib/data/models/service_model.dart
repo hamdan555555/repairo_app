@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Service {
   bool? success;
   String? message;
@@ -36,6 +38,7 @@ class RServiceData {
   String? createdAt;
   String? updatedAt;
   String? deletedAt;
+  String? image;
 
   RServiceData(
       {this.id,
@@ -45,6 +48,7 @@ class RServiceData {
       this.maxPrice,
       this.createdAt,
       this.updatedAt,
+      this.image,
       this.deletedAt});
 
   RServiceData.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,7 @@ class RServiceData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
@@ -68,6 +73,7 @@ class RServiceData {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['deleted_at'] = this.deletedAt;
+    data['image'] = this.image;
     return data;
   }
 }

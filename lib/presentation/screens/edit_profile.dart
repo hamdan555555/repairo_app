@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -112,11 +113,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
                 onPressed: () async {
+                  print("oooooooooooooooooooooo");
                   final prefs = await SharedPreferences.getInstance();
                   var token = prefs.getString('auth_token');
 
                   var request = http.MultipartRequest('POST',
-                      Uri.parse('http://192.168.1.100:8000/api/user/profile'));
+                      Uri.parse('${AppConstants.baseUrl}/user/profile'));
                   request.headers['Authorization'] = 'Bearer $token';
 
                   request.fields['_method'] = 'put';
@@ -137,7 +139,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     if (response.statusCode == 200) {
                       print(' تم التحديث بنجاح');
                       print(' الرد: $body');
-                      Get.offAllNamed('profile');
+                      Get.back();
                     } else {
                       print(' فشل التحديث: ${response.statusCode}');
                       print(' الرد: $body');

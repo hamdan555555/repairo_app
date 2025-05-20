@@ -1,4 +1,4 @@
-import 'package:breaking_project/constants/strings.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProfileWebservices {
   Future<Map<String, dynamic>> getUserInfo(String token) async {
     final prefs = await SharedPreferences.getInstance();
-    final url = Uri.parse('$BaseUrl/user/profile');
+    final url = Uri.parse('${AppConstants.baseUrl}/user/profile');
     var token = prefs.getString('auth_token');
     final response = await http.get(
       url,

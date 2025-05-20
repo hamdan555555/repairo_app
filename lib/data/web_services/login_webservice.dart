@@ -1,11 +1,11 @@
-import 'package:breaking_project/constants/strings.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthWebService {
   Future<Map<String, dynamic>> login(String phone) async {
     final response = await http.post(
-      Uri.parse('$BaseUrl/user/authentication/login'),
+      Uri.parse('${AppConstants.baseUrl}/user/authentication/login'),
       body: {'phone': phone, 'type_message': 'sms'},
     );
 

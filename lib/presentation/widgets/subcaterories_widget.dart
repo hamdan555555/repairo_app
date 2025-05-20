@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:breaking_project/business_logic/ServiceCubit/service_cubit.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/subcategory_model.dart';
 import 'package:breaking_project/data/repository/services_repository.dart';
 import 'package:breaking_project/data/web_services/services_webservices.dart';
@@ -28,40 +29,59 @@ class SubcateroriesWidget extends StatelessWidget {
         );
       },
       child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 223, 217, 217),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade300),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
+            // الصورة
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: subcategory.image != null && subcategory.image!.isNotEmpty
+                  ? Image.network(
+                      subcategory.image!
+                          .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 50,
+                        color: Colors.grey.shade400,
+                      ),
+                    )
+                  : SvgPicture.asset(
+                      'assets/images/svg/home.svg',
+                      width: 60,
+                      height: 60,
+                      color: Colors.grey.shade400,
+                    ),
+            ),
+            const SizedBox(width: 16),
+            // النص
             Expanded(
-              flex: 7,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SvgPicture.asset(
-                  'assets/images/svg/home.svg',
-                  width: 70,
-                  height: 70,
+              child: Text(
+                subcategory.displayName ?? '',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  subcategory.displayName!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+            const Icon(Icons.arrow_forward_ios_rounded,
+                size: 18, color: Colors.grey),
           ],
         ),
       ),

@@ -1,17 +1,17 @@
-class Search {
+class Technicians {
   bool? success;
   String? message;
-  List<RSearchData>? data;
+  List<RTechData>? data;
 
-  Search({this.success, this.message, this.data});
+  Technicians({this.success, this.message, this.data});
 
-  Search.fromJson(Map<String, dynamic> json) {
+  Technicians.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
     if (json['data'] != null) {
-      data = <RSearchData>[];
+      data = <RTechData>[];
       json['data'].forEach((v) {
-        data!.add(new RSearchData.fromJson(v));
+        data!.add(new RTechData.fromJson(v));
       });
     }
   }
@@ -27,18 +27,18 @@ class Search {
   }
 }
 
-class RSearchData {
+class RTechData {
   String? id;
   String? name;
-  String? phone;
+  String? rating;
   String? image;
 
-  RSearchData({this.id, this.name, this.phone, this.image});
+  RTechData({this.id, this.name, this.rating, this.image});
 
-  RSearchData.fromJson(Map<String, dynamic> json) {
+  RTechData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    phone = json['phone'];
+    rating = json['rating'];
     image = json['image'];
   }
 
@@ -46,7 +46,7 @@ class RSearchData {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['name'] = this.name;
-    data['phone'] = this.phone;
+    data['rating'] = this.rating;
     data['image'] = this.image;
     return data;
   }

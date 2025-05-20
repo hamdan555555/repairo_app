@@ -1,53 +1,130 @@
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/service_model.dart';
-import 'package:breaking_project/data/models/subcategory_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-class ServicesWidget extends StatelessWidget {
+class ServicesWidget extends StatefulWidget {
   final RServiceData services;
-  const ServicesWidget({super.key, required this.services});
+  final int indexx;
+
+  const ServicesWidget({
+    super.key,
+    required this.services,
+    required this.indexx,
+  });
+
+  @override
+  State<ServicesWidget> createState() => _ServicesWidgetState();
+}
+
+class _ServicesWidgetState extends State<ServicesWidget> {
+  bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 223, 217, 217),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              flex: 7,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SvgPicture.asset(
-                  'assets/images/svg/home.svg',
-                  width: 70,
-                  height: 70,
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        children: [
+          // صورة الخدمة
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
                 ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  services.displayName!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                child: Image.network(
+                  widget.services.image!
+                      .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    Icons.image_not_supported_outlined,
+                    size: 50,
+                    color: Colors.grey.shade400,
                   ),
-                  textAlign: TextAlign.center,
+                ),
+
+                // Image.asset(
+                //   'assets/images/png/worker1.png',
+                //   height: 100,
+                //   width: 100,
+                //   fit: BoxFit.cover,
+                // ),
+              ),
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    widget.services.maxPrice!,
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
+            ],
+          ),
+
+          const SizedBox(width: 16),
+
+          // معلومات الخدمة
+          Expanded(
+            flex: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: List.generate(
+                    5,
+                    (index) =>
+                        const Icon(Icons.star, size: 16, color: Colors.amber),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.services.displayName!,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: const [
+                    CircleAvatar(
+                      radius: 12,
+                      backgroundImage:
+                          AssetImage("assets/images/png/worker1.png"),
+                    ),
+                    SizedBox(width: 8),
+                    Text("provider"),
+                  ],
+                )
+              ],
             ),
-          ],
-        ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Checkbox(
+              value: isSelected,
+              shape: const CircleBorder(),
+              activeColor: Colors.deepPurple,
+              onChanged: (val) {
+                setState(() {
+                  isSelected = val!;
+                  //////////////heree
+                });
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

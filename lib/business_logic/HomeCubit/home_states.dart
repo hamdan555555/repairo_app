@@ -1,5 +1,7 @@
 import 'package:breaking_project/data/models/banner_image_model.dart';
-import 'package:breaking_project/data/models/search_model.dart';
+import 'package:breaking_project/data/models/searched_services_model.dart';
+import 'package:breaking_project/data/models/searched_services_providers_model.dart';
+import 'package:breaking_project/data/models/searched_technicians_model.dart';
 
 abstract class HomeStates {}
 
@@ -21,14 +23,40 @@ class BannerImagesSuccess extends HomeStates {
 
 class SearchHomeInitial extends HomeStates {}
 
-class SearchHomeLoading extends HomeStates {}
+class SearchTechsHomeLoading extends HomeStates {}
 
-class SearchHomeFailed extends HomeStates {
+class SearchServicesHomeLoading extends HomeStates {}
+
+class SearchTechsHomeFailed extends HomeStates {
   final String message;
-  SearchHomeFailed(this.message);
+  SearchTechsHomeFailed(this.message);
 }
 
-class SearchHomeSuccess extends HomeStates {
-  final List<RSearchData> searchresult;
-  SearchHomeSuccess(this.searchresult);
+class SearchServicesHomeFailed extends HomeStates {
+  final String message;
+  SearchServicesHomeFailed(this.message);
+}
+
+class SearchTechsHomeSuccess extends HomeStates {
+  final List<RSearchedTechsData> techssearchresult;
+  SearchTechsHomeSuccess(this.techssearchresult);
+}
+
+class SearchServicesHomeSuccess extends HomeStates {
+  final List<RSearchedServiceData> servicessearchresult;
+  SearchServicesHomeSuccess(this.servicessearchresult);
+}
+
+class ServiceSelectionUpdated extends HomeStates {}
+
+class SearchServicesProvidersLoading extends HomeStates {}
+
+class SearchServicesProvidersSuccess extends HomeStates {
+  final List<RSearchesServiceProvidersData> servicesproviders;
+  SearchServicesProvidersSuccess(this.servicesproviders);
+}
+
+class SearchServicesProvidersFailed extends HomeStates {
+  final String message;
+  SearchServicesProvidersFailed(this.message);
 }

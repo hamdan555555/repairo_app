@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_states.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/userprofile_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,8 +86,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       radius: 50,
                       backgroundImage: userdata.image!.isNotEmpty
                           ? NetworkImage(
-                              userdata.image!
-                                  .replaceFirst('127.0.0.1', '192.168.1.100'),
+                              userdata.image!.replaceFirst(
+                                  '127.0.0.1', AppConstants.baseaddress),
                             )
                           : const AssetImage('assets/images/jpg/hamdan.jpg'),
                     ),
@@ -158,9 +159,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ElevatedButton(
               onPressed: () async {
+                Get.defaultDialog(
+                  title: "Loading...",
+                  content: const Column(
+                    children: [
+                      CircularProgressIndicator(color: Colors.blueAccent),
+                      SizedBox(height: 10),
+                      Text("Please wait..."),
+                    ],
+                  ),
+                  barrierDismissible: false,
+                );
                 final prefs = await SharedPreferences.getInstance();
                 final url = Uri.parse(
-                    'http://192.168.1.100:8000/api/user/authentication/logout');
+                    '${AppConstants.baseUrl}/user/authentication/logout');
                 var token = prefs.getString('auth_token');
                 final response = await http.post(
                   url,
@@ -171,6 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
 
                 if (response.statusCode == 200) {
+                  Get.back();
                   Get.toNamed('login');
                   final data = jsonDecode(response.body);
                   print(data.toString());

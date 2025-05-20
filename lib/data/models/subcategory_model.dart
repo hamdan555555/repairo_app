@@ -35,6 +35,7 @@ class RSubCategoryData {
   String? createdAt;
   String? updatedAt;
   String? deletedAt;
+  String? image;
 
   RSubCategoryData(
       {this.id,
@@ -43,7 +44,8 @@ class RSubCategoryData {
       this.parentId,
       this.createdAt,
       this.updatedAt,
-      this.deletedAt});
+      this.deletedAt,
+      this.image});
 
   RSubCategoryData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -53,6 +55,7 @@ class RSubCategoryData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {

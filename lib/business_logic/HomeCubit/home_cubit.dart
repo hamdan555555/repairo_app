@@ -1,14 +1,18 @@
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
 import 'package:breaking_project/data/models/banner_image_model.dart';
-import 'package:breaking_project/data/models/search_model.dart';
+import 'package:breaking_project/data/models/searched_services_model.dart';
+import 'package:breaking_project/data/models/searched_services_providers_model.dart';
+import 'package:breaking_project/data/models/searched_technicians_model.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   final HomeRepository homeRepository;
-  late List<RSearchData> searchresult = [];
+  late List<RSearchedTechsData> techssearchresult = [];
+  late List<RSearchedServiceData> servicessearchresult = [];
   late List<RBannerImageData> bannerimages = [];
+  List<RSearchesServiceProvidersData> serviceproviders = [];
 
   HomeCubit(
     this.homeRepository,
@@ -25,24 +29,55 @@ class HomeCubit extends Cubit<HomeStates> {
     return bannerimages;
   }
 
-  // void searchHome(String word, String type) async {
-  //   emit(SearchHomeLoading());
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     var tokenn = prefs.getString('auth_token');
+  Future<List<RSearchedTechsData>> searchTechsHome(
+      String word, String type) async {
+    emit(SearchTechsHomeLoading());
+    try {
+      final thetechssearchresult =
+          await homeRepository.searchTechHome(word, type);
+      print("insideee search cubitttt");
+      print(thetechssearchresult);
+      emit(SearchTechsHomeSuccess(thetechssearchresult));
+      return thetechssearchresult;
+    } catch (e) {
+      print("error in cubit: $e");
+      emit(SearchTechsHomeFailed(e.toString()));
+      return [];
+    }
+  }
 
-  //     final searcheresult = await homeRepository.searchHome(word, type);
-  //     emit(SearchHomeSuccess(searcheresult));
-  //   } catch (e) {
-  //     emit(SearchHomeFailed(e.toString()));
-  //   }
-  // }
+  Future<List<RSearchesServiceProvidersData>> getServicesProviders(
+      List<String> selectedservices) async {
+    emit(SearchServicesProvidersLoading());
+    try {
+      final thetechssearchresult =
+          await homeRepository.getServicesProviders(selectedservices);
+      print("insideee services providers cubitttt");
+      print(thetechssearchresult);
+      emit(SearchServicesProvidersSuccess(thetechssearchresult));
+      serviceproviders = thetechssearchresult;
+      return thetechssearchresult;
+    } catch (e) {
+      print("error in cubit: $e");
+      emit(SearchServicesProvidersFailed(e.toString()));
+      return [];
+    }
+  }
 
-  Future<List<RSearchData>> searchHome(String word, String type) async {
-    homeRepository.searchHome(word, type).then((thesearchresult) {
-      emit(SearchHomeSuccess(searchresult));
-      searchresult = thesearchresult;
-    });
-    return searchresult;
+  Future<List<RSearchedServiceData>> searchServicesHome(
+      String word, String type) async {
+    emit(SearchServicesHomeLoading());
+    try {
+      final theservicesresult =
+          await homeRepository.searchServiceHome(word, type);
+      print("insideee search cubitttt");
+      print(theservicesresult);
+      emit(SearchServicesHomeSuccess(theservicesresult));
+      return theservicesresult;
+    } catch (e) {
+      print("error in cubit: $e");
+      emit(SearchServicesHomeFailed(e.toString()));
+      return [];
+    }
   }
 }

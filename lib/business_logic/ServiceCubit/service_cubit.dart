@@ -9,6 +9,8 @@ class ServiceCubit extends Cubit<ServiceStates> {
   final ServiceRepository serviceRepository;
   late List<RServiceData> services = [];
 
+  late List selectedServices = [];
+
   Future<List<RServiceData>> getServices(String id) async {
     serviceRepository.getServices(id).then((theservices) {
       emit(ServiceLoaded(services: services));

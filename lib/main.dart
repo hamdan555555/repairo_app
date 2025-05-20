@@ -11,8 +11,8 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final AppRouter appRouter;
-   String? lastScreen = LocalStorageService.getLastVisitedScreen();
- MyApp({super.key, required this.appRouter});
+  // String? lastScreen = LocalStorageService.getLastVisitedScreen();
+  MyApp({super.key, required this.appRouter});
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,7 @@ class MyApp extends StatelessWidget {
               cursorColor: Color.fromARGB(255, 124, 155, 207))),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: appRouter.generateRoute,
-      initialRoute:
-      lastScreen ?? 'login',
+      initialRoute: 'login',
     );
   }
 }

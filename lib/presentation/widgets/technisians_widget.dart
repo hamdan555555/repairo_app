@@ -1,50 +1,112 @@
-import 'package:breaking_project/data/models/search_model.dart';
+import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
+import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
+import 'package:breaking_project/data/models/searched_technicians_model.dart';
+import 'package:breaking_project/data/repository/technician_data_repository.dart';
+import 'package:breaking_project/data/web_services/technician_data_webservices.dart';
+import 'package:breaking_project/presentation/screens/tech_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class TechnisiansWidget extends StatelessWidget {
-  final RSearchData technisians;
+  final RSearchedTechsData technisians;
   const TechnisiansWidget({super.key, required this.technisians});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        print("hereeeee is agaaaaaain ${technisians.id}");
+        Get.to(() => BlocProvider(
+              create: (context) => TechDataCubit(TechnicianDataRepository(
+                  technicianDataWebservices: TechnicianDataWebservices())),
+              child: TechDataScreen(id: technisians.account!.id!),
+            ));
+      },
+      // onTap: () {
+      //   Get.to(
+      //     () => BlocProvider(
+      //       create: (context) => TechDataCubit(TechnicianDataRepository(
+      //           technicianDataWebservices: TechnicianDataWebservices())),
+      //       child: TechDataScreen(id: technisians.id!),
+      //     ),
+      //   );
+      // },
       child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 223, 217, 217),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade300),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
+            // Profile image
+            ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: technisians.account!.image!.isNotEmpty
+                    ? Image.network(
+                        technisians.account!.image!
+                            .replaceFirst('127.0.0.1', '172.20.10.5'),
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 60,
+                            height: 60,
+                            color: Colors.grey.shade300,
+                            child: const Icon(Icons.person, size: 30),
+                          );
+                        },
+                      )
+                    : Image.network(
+                        'https://via.placeholder.com/100x100.png?text=No+Image',
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 60,
+                            height: 60,
+                            color: Colors.grey.shade300,
+                            child: const Icon(Icons.person, size: 30),
+                          );
+                        },
+                      )),
+            const SizedBox(width: 16),
+            // Name and phone
             Expanded(
-              flex: 7,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SvgPicture.asset(
-                  'assets/images/svg/home.svg',
-                  width: 70,
-                  height: 70,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  technisians.name!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    technisians.account!.name ?? 'No Name',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  const SizedBox(height: 4),
+                  Text(
+                    technisians.phone ?? '',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ),
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
           ],
         ),
       ),
