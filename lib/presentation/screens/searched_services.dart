@@ -1,8 +1,11 @@
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
+import 'package:breaking_project/business_logic/ProvidedServicesCubit/provided_services_cubit.dart';
 import 'package:breaking_project/data/models/searched_services_model.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
+import 'package:breaking_project/data/repository/provided_services_repository.dart';
 import 'package:breaking_project/data/web_services/home_webservices.dart';
+import 'package:breaking_project/data/web_services/provided_services_webservices.dart';
 import 'package:breaking_project/presentation/screens/servicesProviders.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:breaking_project/presentation/widgets/searching_services_widget.dart';
@@ -103,16 +106,40 @@ class SearchedServ extends StatelessWidget {
                           // final techs =
                           //     context.read<HomeCubit>().getServicesProviders();
 
-                          Get.to(() => BlocProvider(
-                                create: (context) => HomeCubit(
-                                  HomeRepository(
-                                      homeWebservices: HomeWebservices()),
-                                ),
-                                child: FilteredTechniciansScreen(
-                                  selectedservices: selectedServices,
-                                ),
-                              ));
-                          // Get.to(FilteredTechniciansScreen(selectedservices: selectedservices,));
+                          Get.to(() => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(
+                                        create: (context) => HomeCubit(
+                                          HomeRepository(
+                                              homeWebservices:
+                                                  HomeWebservices()),
+                                        ),
+                                        // child: FilteredTechniciansScreen(
+                                        //   selectedservices: selectedServices,
+                                        // ),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => ProvidedServicesCubit(
+                                            ProvidedServicesRepository(
+                                                ProvidedServicesWebservices())),
+                                      ),
+                                    ],
+                                    child: FilteredTechniciansScreen(
+                                      selectedservices: selectedServices,
+                                    ),
+                                  )
+
+                              // BlocProvider(
+                              //       create: (context) => HomeCubit(
+                              //         HomeRepository(
+                              //             homeWebservices: HomeWebservices()),
+                              //       ),
+                              //       child: FilteredTechniciansScreen(
+                              //         selectedservices: selectedServices,
+                              //       ),
+                              //     ));
+                              // Get.to(FilteredTechniciansScreen(selectedservices: selectedservices,));
+                              );
                         },
                         text: 'next',
                       );

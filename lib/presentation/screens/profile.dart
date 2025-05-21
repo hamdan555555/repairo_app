@@ -3,6 +3,7 @@ import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart'
 import 'package:breaking_project/business_logic/ProfileCubit/profile_states.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/userprofile_model.dart';
+import 'package:breaking_project/presentation/screens/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -20,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late PData userdata;
   late String? uname;
   late String? uaddress;
+  late String? uimage;
 
   @override
   void initState() {
@@ -34,7 +36,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                Get.toNamed('editprofile');
+                Get.to(
+                  () => EditProfileScreen(
+                    name: uname ?? "",
+                    address: uaddress ?? "",
+                    image: uimage ?? "",
+                  ),
+                );
+
+                // Get.toNamed('editprofile');
               },
               icon: const Icon(
                 Icons.edit,
@@ -54,9 +64,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget buildprofileWidget() {
     return BlocBuilder<ProfileCubit, ProfileStates>(builder: (context, state) {
       if (state is ProfileSuccess) {
+        print("buildddd succeeed");
         userdata = (state).userdata;
         uname = userdata.name;
         uaddress = userdata.address;
+        uimage =
+            userdata.image!.replaceFirst('127.0.0.1', AppConstants.baseaddress);
+        print(uname);
+        print(uaddress);
+        print(uimage);
         return buildLoadedListWidget();
       } else {
         return showloadingindicator();
@@ -80,33 +96,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: const EdgeInsets.only(top: 20, bottom: 40),
             child: Column(
               children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundImage: userdata.image!.isNotEmpty
-                          ? NetworkImage(
-                              userdata.image!.replaceFirst(
-                                  '127.0.0.1', AppConstants.baseaddress),
-                            )
-                          : const AssetImage('assets/images/jpg/hamdan.jpg'),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: Colors.white,
-                        child: IconButton(
-                          onPressed: () {
-                            print(userdata.image);
-                          },
-                          icon: const Icon(Icons.edit,
-                              size: 18, color: Color(0xFF6F4EC9)),
-                        ),
-                      ),
-                    ),
-                  ],
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: userdata.image!.isNotEmpty
+                      ? NetworkImage(
+                          userdata.image!.replaceFirst(
+                              '127.0.0.1', AppConstants.baseaddress),
+                        )
+                      : const AssetImage('assets/images/jpg/hamdan.jpg'),
                 ),
                 const SizedBox(height: 10),
                 // userdata.name!.contains('null')

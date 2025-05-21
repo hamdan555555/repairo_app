@@ -42,8 +42,8 @@ class AppRouter {
 
   Route? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case 'editprofile':
-        return MaterialPageRoute(builder: (_) => EditProfileScreen());
+      // case 'editprofile':
+      //   return MaterialPageRoute(builder: (_) => EditProfileScreen());
 
       // case 'map':
       //   return MaterialPageRoute(builder: (_) => MapScreen());

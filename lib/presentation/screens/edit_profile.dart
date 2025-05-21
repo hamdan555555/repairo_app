@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -8,19 +9,42 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class EditProfileScreen extends StatefulWidget {
-  EditProfileScreen({super.key});
+  final String name;
+  final String address;
+  final String image;
+  const EditProfileScreen(
+      {super.key,
+      required this.name,
+      required this.address,
+      required this.image});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final namecontroller = TextEditingController();
-  final phonecontroller = TextEditingController();
-  final addresscontroller = TextEditingController();
+  late final TextEditingController namecontroller;
+  late final TextEditingController phonecontroller;
+  late final TextEditingController addresscontroller;
 
   File? imageFile;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    namecontroller = TextEditingController(text: widget.name);
+    addresscontroller = TextEditingController(text: widget.address);
+    phonecontroller = TextEditingController(); // أو حط قيمة ابتدائية إذا عندك
+  }
+
+  @override
+  void dispose() {
+    namecontroller.dispose();
+    phonecontroller.dispose();
+    addresscontroller.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickImage() async {
     try {
@@ -48,9 +72,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'Edit Profile',
           style: TextStyle(color: Colors.black),
         ),
-        leading: Icon(
-          Icons.arrow_back_ios,
-          color: Colors.black,
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+          ),
         ),
         actions: [
           IconButton(
@@ -73,7 +102,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   radius: 55,
                   backgroundImage: imageFile != null
                       ? FileImage(imageFile!) as ImageProvider
-                      : AssetImage('assets/images/jpg/hamdan.jpg'),
+                      :
+                      // Image.network(widget.image) as ImageProvider
+                      NetworkImage(widget.image) as ImageProvider,
+
+                  // AssetImage('assets/images/jpg/hamdan.jpg'),
                 ),
                 CircleAvatar(
                   radius: 16,
@@ -113,6 +146,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
                 onPressed: () async {
+                  Get.defaultDialog(
+                    title: "Loading...",
+                    content: const Column(
+                      children: [
+                        CircularProgressIndicator(color: Colors.blueAccent),
+                        SizedBox(height: 10),
+                        Text("Please wait..."),
+                      ],
+                    ),
+                    barrierDismissible: false,
+                  );
                   print("oooooooooooooooooooooo");
                   final prefs = await SharedPreferences.getInstance();
                   var token = prefs.getString('auth_token');
@@ -140,7 +184,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       print(' تم التحديث بنجاح');
                       print(' الرد: $body');
                       Get.back();
+                      Get.offAllNamed('mainscreen');
                     } else {
+                      Get.back();
+                      //Get.defaultDialog();
                       print(' فشل التحديث: ${response.statusCode}');
                       print(' الرد: $body');
                     }
