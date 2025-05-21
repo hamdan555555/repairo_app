@@ -1,6 +1,7 @@
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
 import 'package:breaking_project/business_logic/ProvidedServicesCubit/provided_services_cubit.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/searched_services_providers_model.dart';
 import 'package:breaking_project/data/repository/provided_services_repository.dart';
 import 'package:breaking_project/data/web_services/provided_services_webservices.dart';
@@ -29,9 +30,9 @@ class _FilteredTechniciansScreenState extends State<FilteredTechniciansScreen> {
     print(
         "hereeeeebb ${context.read<HomeCubit>().getServicesProviders(widget.selectedservices)}");
     print("we'll start nowwww");
-    context.read<ProvidedServicesCubit>().fetchProvidedServices(
-        'f06cc4dd-6c00-4801-94c9-5433fbfb9c3a',
-        ['9ef4d40e-9802-428c-b5af-9c7e171693d6']);
+    // context.read<ProvidedServicesCubit>().fetchProvidedServices(
+    //     'f06cc4dd-6c00-4801-94c9-5433fbfb9c3a',
+    //     ['9ef4d40e-9802-428c-b5af-9c7e171693d6']);
 
     super.initState();
   }
@@ -99,7 +100,14 @@ class _FilteredTechniciansScreenState extends State<FilteredTechniciansScreen> {
               ));
         },
         leading: CircleAvatar(
-          backgroundImage: AssetImage("assets/images/jpg/hamdan.jpg"),
+          backgroundImage: tech.image!.isNotEmpty
+              ? NetworkImage(
+                  tech.image!
+                      .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+                )
+              : const AssetImage('assets/images/jpg/hamdan.jpg'),
+
+          // Image.network(tech.image!.replaceFirst("127.0", to)) as ImageProvider,
         ),
         title: Text(tech.name ?? ""),
         subtitle: Column(

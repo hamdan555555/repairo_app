@@ -12,8 +12,6 @@ class AppConstants {
   static const String googleMapsApiKey = "YOUR_GOOGLE_MAPS_API_KEY";
   static const String firebaseServerKey = "YOUR_FIREBASE_SERVER_KEY";
 
-
   // روابط صور افتراضية
   static const String defaultUserImage = "https://example.com/default_user.png";
-
 }

@@ -9,6 +9,16 @@ class ProvidedServicesScreen extends StatefulWidget {
   final List<String> selectedServices;
   final String techId;
 
+  // static List<String> selectedServicess = [];
+
+  // void toggleServiceSelection(String service, bool selected) {
+  //   if (selected) {
+  //     selectedServicess.add(service);
+  //   } else {
+  //     selectedServicess.removeWhere((element) => element == service);
+  //   }
+  // }
+
   const ProvidedServicesScreen(
       {super.key, required this.selectedServices, required this.techId});
 
@@ -18,6 +28,7 @@ class ProvidedServicesScreen extends StatefulWidget {
 
 class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
   List<RProvidedServices> services = [];
+  List<String> selectedServices = [];
 
   @override
   void initState() {
@@ -27,11 +38,24 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
     super.initState();
   }
 
+  void toggleServiceSelection(String serviceId, bool selected) {
+    setState(() {
+      if (selected) {
+        selectedServices.add(serviceId);
+        print(selectedServices);
+      } else {
+        selectedServices.remove(serviceId);
+        print(selectedServices);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('خدماتي', style: TextStyle(color: Colors.white)),
+        title: const Text('Technician Services',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF6F4EC9),
         centerTitle: true,
       ),
@@ -39,12 +63,21 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
         builder: (context, state) {
           if (state is ProvidedServicesSuccess) {
             services = (state).providedservices;
+            selectedServices = widget.selectedServices;
+            print(selectedServices);
             return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: services.length,
               itemBuilder: (context, index) {
                 final service = services[index];
-                return ServiceCard(service: service);
+                final isSelected = selectedServices.contains(service.id);
+                //final isSelected = service.selected;
+                print(isSelected);
+
+                return ServiceCard(
+                    service: service,
+                    isSelected: isSelected!,
+                    onToggle: toggleServiceSelection);
               },
             );
           } else if (state is ProvidedServicesLoading) {
@@ -52,14 +85,16 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
           } else if (state is ProvidedServicesError) {
             return Center(child: Text("Error Happened"));
           }
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: services.length,
-            itemBuilder: (context, index) {
-              final service = services[index];
-              return ServiceCard(service: service);
-            },
-          );
+          return Center(child: Text("No Data"));
+
+          //  ListView.builder(
+          //   padding: const EdgeInsets.all(16),
+          //   itemCount: services.length,
+          //   itemBuilder: (context, index) {
+          //     final service = services[index];
+          //     return Center(child: Text("NO Data"))
+          //   },
+          // );
         },
       ),
     );
