@@ -1,9 +1,37 @@
 import 'dart:convert';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeWebservices {
+  late PermissionStatus _permissionGranted;
+  LocationData? currentLocation;
+  final Location location = Location();
+
+  Future<void> getLocation() async {
+    bool _serviceEnabled;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) return;
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) return;
+    }
+
+    final loc = await location.getLocation();
+
+    currentLocation = loc;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lat', currentLocation!.latitude.toString());
+    await prefs.setString('lng', currentLocation!.longitude.toString());
+  }
+
   Future<List<Map<String, dynamic>>> getBannerImages() async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('auth_token');
@@ -17,6 +45,10 @@ class HomeWebservices {
     );
 
     if (response.statusCode == 200) {
+      await getLocation();
+      var lat = prefs.getString('lat');
+      print(lat);
+
       print('Banner info: ${response.body}');
       final dataa = jsonDecode(response.body);
       final List<Map<String, dynamic>> data =

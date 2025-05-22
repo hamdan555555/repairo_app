@@ -20,12 +20,12 @@ class _MapScreenState extends State<MapScreen> {
   bool isSearched = false;
   LatLng currentpos = const LatLng(0, 0);
 
-  LocationData? currentLocation;
   final Location location = Location();
   final MapController mapController = MapController();
   bool access = false;
-  late PermissionStatus _permissionGranted;
 
+  late PermissionStatus _permissionGranted;
+  LocationData? currentLocation;
   Future<void> getLocation() async {
     bool _serviceEnabled;
 

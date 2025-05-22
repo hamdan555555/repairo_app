@@ -13,6 +13,8 @@ import 'package:breaking_project/presentation/screens/profile.dart';
 import 'package:breaking_project/presentation/screens/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -20,6 +22,34 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  // late PermissionStatus _permissionGranted;
+  // LocationData? currentLocation;
+  // final Location location = Location();
+
+  // Future<void> getLocation() async {
+  //   bool _serviceEnabled;
+
+  //   _serviceEnabled = await location.serviceEnabled();
+  //   if (!_serviceEnabled) {
+  //     _serviceEnabled = await location.requestService();
+  //     if (!_serviceEnabled) return;
+  //   }
+
+  //   _permissionGranted = await location.hasPermission();
+  //   if (_permissionGranted == PermissionStatus.denied) {
+  //     _permissionGranted = await location.requestPermission();
+  //     if (_permissionGranted != PermissionStatus.granted) return;
+  //   }
+
+  //   final loc = await location.getLocation();
+  //   setState(()  {
+  //     currentLocation = loc;
+  //     // final prefs = await SharedPreferences.getInstance();
+  //     // await prefs.setString('lat', currentLocation!.latitude.toString());
+  //     // await prefs.setString('lng', currentLocation!.longitude.toString());
+  //   });
+  // }
+
   int _selectedIndex = 0;
 
   late final List<Widget> _pages;
@@ -32,6 +62,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void initState() {
+    // getLocation();
+
     super.initState();
 
     _pages = [

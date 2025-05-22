@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -23,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final PageController _controller = PageController();
   int currentPage = 0;
   late List<RBannerImageData> bannerimages;
@@ -75,6 +77,59 @@ class _HomeScreenState extends State<HomeScreen> {
     print("builllllld in home starteddddddd");
 
     return Scaffold(
+      key: scaffoldKey,
+      drawer: Container(
+          width: 170,
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16, left: 16),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 70, bottom: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      scaffoldKey.currentState?.closeDrawer();
+                    },
+                    child: CircleAvatar(
+                      child: Icon(Icons.list),
+                      radius: 18,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                // Expanded(
+                //   child: ListView.builder(
+                //     itemCount: 10,
+                //     itemBuilder: (context, index) {
+                //       return Text(" item[$index]");
+                //     },
+                //   ),
+                // )
+                GestureDetector(
+                  onTap: () {
+                    scaffoldKey.currentState?.closeDrawer();
+
+                    Future.delayed(Duration(seconds: 1), () {
+                      Get.toNamed('providers');
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.person_3_outlined,
+                        size: 18,
+                      ),
+                      Text(
+                        "All Providers",
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -170,11 +225,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: GestureDetector(
                             onTap: () {
                               //Get.toNamed('search');
-                              Get.toNamed('providers');
+                              // var prefs = await SharedPreferences.getInstance();
+                              // var lat = prefs.getString('lat');
+                              // print(lat);
+                              // Get.toNamed('providers');
                             },
                             child: CircleAvatar(
                               child: SvgPicture.asset(
                                   'assets/images/svg/Notification.svg'),
+                              radius: 18,
+                              backgroundColor: Colors.white,
+                            ),
+                          )),
+                      Positioned(
+                          top: 50,
+                          left: 0,
+                          right: 300,
+                          child: GestureDetector(
+                            onTap: () {
+                              scaffoldKey.currentState?.openDrawer();
+                            },
+                            child: CircleAvatar(
+                              child: Icon(Icons.list),
                               radius: 18,
                               backgroundColor: Colors.white,
                             ),

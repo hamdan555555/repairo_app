@@ -36,6 +36,7 @@ class ProvidedServicesCubit extends Cubit<ProvidedServicesStates> {
     try {
       final services = await providedServicesRepository.getThisTechServices(
           techId, selectedServiceIds);
+
       emit(ProvidedServicesSuccess(services));
     } catch (e) {
       emit(ProvidedServicesError(e.toString()));

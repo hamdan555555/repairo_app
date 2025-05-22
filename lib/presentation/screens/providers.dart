@@ -4,6 +4,7 @@ import 'package:breaking_project/business_logic/AllTechniciansCubiit/alltechnisi
 import 'package:breaking_project/business_logic/AllTechniciansCubiit/alltechnisian_states.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/category_model.dart';
 import 'package:breaking_project/data/models/technisians_model.dart';
 import 'package:breaking_project/data/repository/technician_data_repository.dart';
@@ -184,7 +185,12 @@ class _FilterScreenState extends State<FilterScreen> {
               ));
         },
         leading: CircleAvatar(
-          backgroundImage: AssetImage("assets/images/jpg/hamdan.jpg"),
+          backgroundImage: tech.image!.isNotEmpty
+              ? NetworkImage(
+                  tech.image!
+                      .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+                )
+              : const AssetImage('assets/images/jpg/hamdan.jpg'),
         ),
         title: Text(tech.name ?? ""),
         subtitle: Column(

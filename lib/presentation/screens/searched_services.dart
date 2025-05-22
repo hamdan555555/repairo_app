@@ -14,20 +14,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-class SearchedServ extends StatelessWidget {
+class SearchedServ extends StatefulWidget {
   SearchedServ({super.key});
+  @override
+  State<SearchedServ> createState() => _SearchedServState();
+}
 
-  static List<String> selectedServices = [];
-
-  static void toggleServiceSelection(String service, bool selected) {
-    if (selected) {
-      selectedServices.add(service);
-    } else {
-      selectedServices.removeWhere((element) => element == service);
-    }
-  }
-
+class _SearchedServState extends State<SearchedServ> {
   List<RSearchedServiceData> searchresult = [];
+
+  List<String> selectedServices = [];
+
+  void toggleServiceSelection(String service, bool selected) {
+    setState(() {
+      if (selected) {
+        selectedServices.add(service);
+      } else {
+        selectedServices.removeWhere((element) => element == service);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +80,7 @@ class SearchedServ extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 6.0),
               child: SearchingServicesWidget(
+                onToggle: toggleServiceSelection,
                 indexx: index,
                 services: searchresult[index],
               ),
@@ -88,7 +95,9 @@ class SearchedServ extends StatelessWidget {
               children: [
                 Expanded(
                     child: CustomElevatedButton(
-                        onpressed: () {}, text: 'order now')),
+                        active: selectedServices.isNotEmpty,
+                        onpressed: selectedServices.isNotEmpty ? () {} : () {},
+                        text: 'order now')),
                 SizedBox(
                   width: 10,
                 ),
@@ -99,50 +108,33 @@ class SearchedServ extends StatelessWidget {
                     },
                     builder: (context, state) {
                       return CustomElevatedButton(
-                        onpressed: () {
-                          print(selectedServices);
-                          // final selectedservices =
-                          //     selectedServices;
-                          // final techs =
-                          //     context.read<HomeCubit>().getServicesProviders();
-
-                          Get.to(() => MultiBlocProvider(
-                                    providers: [
-                                      BlocProvider(
-                                        create: (context) => HomeCubit(
-                                          HomeRepository(
-                                              homeWebservices:
-                                                  HomeWebservices()),
+                          active: selectedServices.isNotEmpty,
+                          onpressed: selectedServices.isNotEmpty
+                              ? () {
+                                  print(selectedServices);
+                                  Get.to(() => MultiBlocProvider(
+                                        providers: [
+                                          BlocProvider(
+                                            create: (context) => HomeCubit(
+                                              HomeRepository(
+                                                  homeWebservices:
+                                                      HomeWebservices()),
+                                            ),
+                                          ),
+                                          BlocProvider(
+                                            create: (context) =>
+                                                ProvidedServicesCubit(
+                                                    ProvidedServicesRepository(
+                                                        ProvidedServicesWebservices())),
+                                          ),
+                                        ],
+                                        child: FilteredTechniciansScreen(
+                                          selectedservices: selectedServices,
                                         ),
-                                        // child: FilteredTechniciansScreen(
-                                        //   selectedservices: selectedServices,
-                                        // ),
-                                      ),
-                                      BlocProvider(
-                                        create: (context) => ProvidedServicesCubit(
-                                            ProvidedServicesRepository(
-                                                ProvidedServicesWebservices())),
-                                      ),
-                                    ],
-                                    child: FilteredTechniciansScreen(
-                                      selectedservices: selectedServices,
-                                    ),
-                                  )
-
-                              // BlocProvider(
-                              //       create: (context) => HomeCubit(
-                              //         HomeRepository(
-                              //             homeWebservices: HomeWebservices()),
-                              //       ),
-                              //       child: FilteredTechniciansScreen(
-                              //         selectedservices: selectedServices,
-                              //       ),
-                              //     ));
-                              // Get.to(FilteredTechniciansScreen(selectedservices: selectedservices,));
-                              );
-                        },
-                        text: 'next',
-                      );
+                                      ));
+                                }
+                              : () {},
+                          text: 'Next');
                     },
                   ),
                 ),
@@ -160,86 +152,3 @@ class SearchedServ extends StatelessWidget {
     );
   }
 }
-
-
-
-// class SearchedServicess extends StatefulWidget {
-//   final String word;
-//   final String type;
-//   const SearchedServicess({Key? key, required this.word, required this.type})
-//       : super(key: key);
-//   @override
-//   State<SearchedServicess> createState() => SearchedServicesStatee();
-// }
-
-// class SearchedServicesStatee extends State<SearchedServicess> {
-//   late List<RSearchedServiceData> searchresult;
-//   //final searchTextController = TextEditingController();
-//   //late String id;
-//   //bool isInitialized = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     // BlocProvider.of<HomeCubit>(context)
-//     //     .searchServiceHome(widget.word, widget.type);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return
-//         //Scaffold(
-//         // appBar: AppBar(
-//         //   leading: IconButton(
-//         //       onPressed: () {
-//         //         Get.back();
-//         //       },
-//         //       icon: Icon(Icons.arrow_back_ios_new)),
-//         //   title: Text("te"),
-//         // ),
-//         // body:
-//         Container(color: Colors.white10, child: buildBlocWidget());
-//   }
-
-//   Widget buildBlocWidget() {
-//     return BlocBuilder<HomeCubit, HomeStates>(builder: (context, state) {
-//       if (state is SearchServicesHomeSuccess) {
-//         searchresult = (state).servicessearchresult;
-//         return buildLoadedListWidget();
-//       } else {
-//         return showloadingindicator();
-//       }
-//     });
-//   }
-
-//   Widget buildLoadedListWidget() {
-//     return builditemsList();
-//   }
-
-//   Widget showloadingindicator() {
-//     return const Center(
-//         child: CircularProgressIndicator(
-//       color: const Color.fromRGBO(95, 96, 185, 1),
-//     ));
-//   }
-
-//   Widget builditemsList() {
-//     return Column(children: [
-//       ListView.builder(
-//         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//         itemCount: searchresult.length,
-//         shrinkWrap: true,
-//         physics: NeverScrollableScrollPhysics(),
-//         itemBuilder: (ctx, index) {
-//           return Padding(
-//             padding: const EdgeInsets.only(bottom: 12.0),
-//             child: SearchingServicesWidget(
-//               indexx: index,
-//               services: searchresult[index],
-//             ),
-//           );
-//         },
-//       ),
-//     ]);
-//   }
-// }

@@ -17,12 +17,13 @@ import 'package:get/get_core/src/get_main.dart';
 class SearchingServicesWidget extends StatefulWidget {
   final RSearchedServiceData services;
   final int indexx;
+  final void Function(String serviceId, bool selected) onToggle;
 
-  const SearchingServicesWidget({
-    super.key,
-    required this.services,
-    required this.indexx,
-  });
+  const SearchingServicesWidget(
+      {super.key,
+      required this.services,
+      required this.indexx,
+      required this.onToggle});
 
   @override
   State<SearchingServicesWidget> createState() => _ServicesWidgetState();
@@ -140,13 +141,15 @@ class _ServicesWidgetState extends State<SearchingServicesWidget> {
                   value: isSelected,
                   shape: const CircleBorder(), // خلي شكلها دائرة
                   activeColor: Colors.deepPurple,
+
                   onChanged: (val) {
                     setState(() {
                       isSelected = val!;
                       //final cubit = context.read<HomeCubit>();
+                      widget.onToggle(widget.services.id!, isSelected);
 
-                      SearchedServ.toggleServiceSelection(
-                          widget.services.id!, isSelected);
+                      // SearchedServ.toggleServiceSelection(
+                      //     widget.services.id!, isSelected);
                       // cubit.toggleServiceSelection(
                       //     widget.services.id!, isSelected);
                     });

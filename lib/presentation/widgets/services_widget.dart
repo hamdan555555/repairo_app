@@ -1,15 +1,19 @@
 import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:breaking_project/data/models/items_model.dart';
 import 'package:breaking_project/data/models/service_model.dart';
+import 'package:breaking_project/presentation/screens/services_screen.dart';
 import 'package:flutter/material.dart';
 
 class ServicesWidget extends StatefulWidget {
   final RServiceData services;
   final int indexx;
+  final void Function(String serviceId, bool selected) onToggle;
 
   const ServicesWidget({
     super.key,
     required this.services,
     required this.indexx,
+    required this.onToggle,
   });
 
   @override
@@ -119,7 +123,7 @@ class _ServicesWidgetState extends State<ServicesWidget> {
               onChanged: (val) {
                 setState(() {
                   isSelected = val!;
-                  //////////////heree
+                  widget.onToggle(widget.services.id!, isSelected);
                 });
               },
             ),

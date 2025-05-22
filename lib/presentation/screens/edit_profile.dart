@@ -158,9 +158,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     barrierDismissible: false,
                   );
                   print("oooooooooooooooooooooo");
+
                   final prefs = await SharedPreferences.getInstance();
                   var token = prefs.getString('auth_token');
-
                   var request = http.MultipartRequest('POST',
                       Uri.parse('${AppConstants.baseUrl}/user/profile'));
                   request.headers['Authorization'] = 'Bearer $token';

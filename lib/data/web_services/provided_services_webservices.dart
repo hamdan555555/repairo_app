@@ -55,6 +55,11 @@ class ProvidedServicesWebservices {
     required String technicianId,
     required List<String> selectedServiceIds,
   }) async {
+    final prefss = await SharedPreferences.getInstance();
+    print("thissss is latttt");
+    var lat = prefss.getString('lat');
+    print(lat);
+
     final url = Uri.parse(
         '${AppConstants.baseUrl}/user/technician/$technicianId/services');
 
@@ -65,8 +70,10 @@ class ProvidedServicesWebservices {
 
     request.headers['Authorization'] = 'Bearer $token';
 
-    for (int i = 0; i < selectedServiceIds.length; i++) {
-      request.fields['selected_services[$i]'] = selectedServiceIds[i];
+    if (selectedServiceIds.isNotEmpty) {
+      for (int i = 0; i < selectedServiceIds.length; i++) {
+        request.fields['selected_services[$i]'] = selectedServiceIds[i];
+      }
     }
 
     try {
