@@ -48,23 +48,23 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.only(left: 8, right: 8, top: 40),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                          icon: const Icon(Icons.arrow_back_ios_new_outlined),
-                        ),
-                        const Spacer(),
-                        const Text(
-                          "Search",
-                          style: TextStyle(
-                              fontSize: 21, fontWeight: FontWeight.bold),
-                        ),
-                        const Spacer(flex: 2),
-                      ],
+                    // Row(
+                    // children: [
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Get.back();
+                    //   },
+                    //   icon: const Icon(Icons.arrow_back_ios_new_outlined),
+                    // ),
+                    // const Spacer(),
+                    const Text(
+                      "Search",
+                      style:
+                          TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                     ),
+                    //const Spacer(flex: 2),
+                    //],
+                    //),
                     const SizedBox(height: 15),
                     Padding(
                       padding: const EdgeInsets.only(left: 20),

@@ -1,9 +1,16 @@
+import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_cubit.dart';
 import 'package:breaking_project/business_logic/ProvidedServicesCubit/provided_services_cubit.dart';
 import 'package:breaking_project/business_logic/ProvidedServicesCubit/provided_services_states.dart';
 import 'package:breaking_project/data/models/provided_services.dart';
+import 'package:breaking_project/data/repository/creating_order_repository.dart';
+import 'package:breaking_project/data/web_services/creating_order_webservice.dart';
+import 'package:breaking_project/presentation/screens/creating_order.dart';
+import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:breaking_project/presentation/widgets/service_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class ProvidedServicesScreen extends StatefulWidget {
   final List<String> selectedServices;
@@ -65,21 +72,43 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
             services = (state).providedservices;
             selectedServices = widget.selectedServices;
             print(selectedServices);
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: services.length,
-              itemBuilder: (context, index) {
-                final service = services[index];
-                final isSelected = selectedServices.contains(service.id);
-                //final isSelected = service.selected;
-                print(isSelected);
+            return Column(children: [
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: services.length,
+                  itemBuilder: (context, index) {
+                    final service = services[index];
+                    final isSelected = selectedServices.contains(service.id);
+                    //final isSelected = service.selected;
+                    print(isSelected);
 
-                return ServiceCard(
-                    service: service,
-                    isSelected: isSelected!,
-                    onToggle: toggleServiceSelection);
-              },
-            );
+                    return ServiceCard(
+                        service: service,
+                        isSelected: isSelected!,
+                        onToggle: toggleServiceSelection);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: CustomElevatedButton(
+                  onpressed: () {
+                    Get.to(() => BlocProvider(
+                          create: (context) => CreatingOrderCubit(
+                              CreatingOrderRepository(
+                                  CreatingOrderWebservice())),
+                          child: CreateRequestScreen(
+                            id: widget.techId,
+                            services: widget.selectedServices,
+                          ),
+                        ));
+                  },
+                  text: "Next",
+                  active: selectedServices.isNotEmpty,
+                ),
+              )
+            ]);
           } else if (state is ProvidedServicesLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (state is ProvidedServicesError) {
