@@ -1,5 +1,5 @@
 class AppConstants {
-  static const baseaddress = '192.168.175.20';
+  static const baseaddress = '192.168.124.20';
   static const baseUrl = 'http://$baseaddress:8000/api';
   static const Duration connectionTimeout = Duration(seconds: 15);
   static const Duration receiveTimeout = Duration(seconds: 15);

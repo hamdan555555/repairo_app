@@ -1,7 +1,9 @@
 import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_cubit.dart';
 import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_states.dart';
+import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
@@ -78,6 +80,46 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
                   SizedBox(height: 10),
                   Text("Please wait..."),
                 ],
+              ),
+              barrierDismissible: false,
+            );
+          } else if (state is CreatingOrderSuccess) {
+            Get.back();
+            Get.defaultDialog(
+              title: '',
+              titlePadding:
+                  EdgeInsets.only(left: 16, right: 16, bottom: 0, top: 0),
+              content: Column(
+                children: [
+                  Container(
+                      width: 32,
+                      height: 32,
+                      child: SvgPicture.asset("assets/images/svg/checkc.svg")),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    "Your order has been created",
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromRGBO(71, 71, 71, 1)),
+                  ),
+                ],
+              ),
+              middleText: "Enter Correct Informations",
+              backgroundColor: Colors.white,
+              middleTextStyle: TextStyle(color: Colors.black),
+              confirm: Padding(
+                padding: const EdgeInsets.only(left: 63, right: 63, bottom: 12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: CustomElevatedButton(
+                      text: 'ok',
+                      onpressed: () {
+                        Get.toNamed("mainscreen");
+                      }),
+                ),
               ),
               barrierDismissible: false,
             );
@@ -177,6 +219,14 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
                   Center(
                     child: ElevatedButton.icon(
                       onPressed: () {
+                        final hour = selectedDateTime!.hour
+                            .toString()
+                            .padLeft(2, '0'); // "14"
+                        final minute =
+                            selectedDateTime!.minute.toString().padLeft(2, '0');
+                        print('$hour:$minute');
+                        print(
+                            '${selectedDateTime!.hour}:${selectedDateTime!.minute}');
                         context.read<CreatingOrderCubit>().createOrder(
                             technicianId: widget.id,
                             selectedServiceIds: widget.services,
@@ -185,7 +235,7 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
                             location: locationcontroller.text,
                             date:
                                 '${selectedDateTime!.year}-${selectedDateTime!.month}-${selectedDateTime!.day}',
-                            time: '09:00');
+                            time: '$hour:$minute');
                       },
                       icon: Icon(Icons.send),
                       label: Text('send order'),

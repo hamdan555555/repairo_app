@@ -3,8 +3,13 @@ import 'package:breaking_project/business_logic/AllCategoriesCubit/allcategories
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
+import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/banner_image_model.dart';
+import 'package:breaking_project/data/models/user_requests_model.dart';
+import 'package:breaking_project/data/repository/user_requests_repository.dart';
+import 'package:breaking_project/data/web_services/user_requests_webservices.dart';
+import 'package:breaking_project/presentation/screens/user_requests.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:breaking_project/presentation/widgets/service_widget.dart';
 import 'package:flutter/material.dart';
@@ -122,6 +127,37 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Text(
                         "All Providers",
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    scaffoldKey.currentState?.closeDrawer();
+
+                    Future.delayed(Duration(seconds: 1), () {
+                      // Get.toNamed('providers');
+                      Get.to(() => BlocProvider(
+                            create: (context) => UserRequestsCubit(
+                                UserRequestsRepository(
+                                    userRequestsWebservices:
+                                        UserRequestsWebservices())),
+                            child: UserRequests(),
+                          ));
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.outbox_rounded,
+                        size: 18,
+                      ),
+                      Text(
+                        "My Requests",
                         style: TextStyle(color: Colors.black, fontSize: 16),
                       ),
                     ],
