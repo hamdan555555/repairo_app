@@ -90,11 +90,10 @@ class _ServiceCardState extends State<ServiceCard> {
           ),
         ),
         title: Text(
-          "السعر: ${widget.service.price} ل.س",
+          "الخدمة: ${widget.service.name}",
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(
-            "النطاق السعري: ${widget.service.minPrice} - ${widget.service.maxPrice} ل.س"),
+        subtitle: Text(" السعر: ${widget.service.price} ل.س"),
         trailing: Checkbox(
           value: widget.isSelected,
           shape: const CircleBorder(),

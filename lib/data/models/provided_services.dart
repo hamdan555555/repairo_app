@@ -56,6 +56,7 @@ class RProvidedServicesData {
 
 class RProvidedServices {
   String? id;
+  String? name;
   String? minPrice;
   String? maxPrice;
   bool? selected;
@@ -64,6 +65,7 @@ class RProvidedServices {
 
   RProvidedServices(
       {this.id,
+      this.name,
       this.minPrice,
       this.maxPrice,
       this.selected,
@@ -72,6 +74,7 @@ class RProvidedServices {
 
   RProvidedServices.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    name = json['display_name'];
     minPrice = json['min_price'];
     maxPrice = json['max_price'];
     selected = json['selected'];
@@ -82,6 +85,7 @@ class RProvidedServices {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['display_name'] = this.name;
     data['min_price'] = this.minPrice;
     data['max_price'] = this.maxPrice;
     data['selected'] = this.selected;

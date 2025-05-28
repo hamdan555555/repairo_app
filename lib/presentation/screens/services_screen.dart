@@ -239,7 +239,7 @@ class ServicesScreenStatee extends State<ServicesScreen> {
           child: ServicesWidget(
             indexx: index,
             services: services[index],
-            onToggle: toggleServiceSelection, // ✅ مرّر الدالة هون
+            onToggle: toggleServiceSelection,
           ),
         );
       },

@@ -94,9 +94,9 @@ class _FilteredTechniciansScreenState extends State<FilteredTechniciansScreen> {
                 create: (_) => ProvidedServicesCubit(
                     ProvidedServicesRepository(ProvidedServicesWebservices())),
                 child: ProvidedServicesScreen(
-                  techId: tech.id!,
-                  selectedServices: widget.selectedservices,
-                ),
+                    techId: tech.id!,
+                    selectedServices: widget.selectedservices,
+                    techname: tech.name!),
               ));
         },
         leading: CircleAvatar(

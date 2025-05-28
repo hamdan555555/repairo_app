@@ -94,12 +94,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(left: 70, bottom: 20),
                   child: GestureDetector(
                     onTap: () {
-                      scaffoldKey.currentState?.closeDrawer();
+                      scaffoldKey.currentState!.closeDrawer();
                     },
                     child: CircleAvatar(
-                      child: Icon(Icons.list),
-                      radius: 18,
-                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.list,
+                        color: Colors.white,
+                      ),
+                      radius: 14,
+                      backgroundColor: Colors.black,
                     ),
                   ),
                 ),
@@ -123,17 +126,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Icon(
                         Icons.person_3_outlined,
-                        size: 18,
+                        size: 22,
+                      ),
+                      SizedBox(
+                        width: 5,
                       ),
                       Text(
                         "All Providers",
-                        style: TextStyle(color: Colors.black, fontSize: 16),
+                        style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                     ],
                   ),
                 ),
+                Divider(),
                 SizedBox(
-                  height: 15,
+                  height: 4,
                 ),
                 GestureDetector(
                   onTap: () {
@@ -154,15 +161,57 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Icon(
                         Icons.outbox_rounded,
-                        size: 18,
+                        size: 22,
+                      ),
+                      SizedBox(
+                        width: 5,
                       ),
                       Text(
                         "My Requests",
-                        style: TextStyle(color: Colors.black, fontSize: 16),
+                        style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                     ],
                   ),
-                )
+                ),
+                Divider(),
+                SizedBox(
+                  height: 4,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    scaffoldKey.currentState?.closeDrawer();
+
+                    Future.delayed(Duration(seconds: 1), () {
+                      // Get.toNamed('providers');
+                      // Get.to(() => BlocProvider(
+                      //       create: (context) => UserRequestsCubit(
+                      //           UserRequestsRepository(
+                      //               userRequestsWebservices:
+                      //                   UserRequestsWebservices())),
+                      //       child: UserRequests(),
+                      //     ));
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.settings,
+                        size: 22,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Settings",
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(),
+                SizedBox(
+                  height: 4,
+                ),
               ],
             ),
           )),
@@ -260,11 +309,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           right: 0,
                           child: GestureDetector(
                             onTap: () {
-                              //Get.toNamed('search');
-                              // var prefs = await SharedPreferences.getInstance();
-                              // var lat = prefs.getString('lat');
-                              // print(lat);
-                              // Get.toNamed('providers');
+                              Get.to(() => BlocProvider(
+                                    create: (context) => UserRequestsCubit(
+                                        UserRequestsRepository(
+                                            userRequestsWebservices:
+                                                UserRequestsWebservices())),
+                                    child: UserRequests(),
+                                  ));
                             },
                             child: CircleAvatar(
                               child: SvgPicture.asset(
@@ -279,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           right: 300,
                           child: GestureDetector(
                             onTap: () {
-                              scaffoldKey.currentState?.openDrawer();
+                              scaffoldKey.currentState!.openDrawer();
                             },
                             child: CircleAvatar(
                               child: Icon(Icons.list),
@@ -375,7 +426,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 270,
                         height: 50,
                         child: TextFormField(
+
                           decoration: InputDecoration(
+                            
                             hintText: 'type to start searching',
                             hintStyle: const TextStyle(fontSize: 14),
                             filled: true,

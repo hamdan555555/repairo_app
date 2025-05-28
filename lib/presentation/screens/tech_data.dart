@@ -207,6 +207,7 @@ class SubcategoriesStatee extends State<TechDataScreen> {
                       child: ProvidedServicesScreen(
                         techId: tech.id!,
                         selectedServices: [],
+                        techname: tech.name!,
                       ),
                     ));
               },

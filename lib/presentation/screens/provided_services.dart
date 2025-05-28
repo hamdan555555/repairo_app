@@ -15,19 +15,13 @@ import 'package:get/get_core/src/get_main.dart';
 class ProvidedServicesScreen extends StatefulWidget {
   final List<String> selectedServices;
   final String techId;
-
-  // static List<String> selectedServicess = [];
-
-  // void toggleServiceSelection(String service, bool selected) {
-  //   if (selected) {
-  //     selectedServicess.add(service);
-  //   } else {
-  //     selectedServicess.removeWhere((element) => element == service);
-  //   }
-  // }
+  final String techname;
 
   const ProvidedServicesScreen(
-      {super.key, required this.selectedServices, required this.techId});
+      {super.key,
+      required this.selectedServices,
+      required this.techId,
+      required this.techname});
 
   @override
   State<ProvidedServicesScreen> createState() => _ProvidedServicesScreenState();
@@ -61,7 +55,7 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Technician Services',
+        title: Text("${widget.techname}'s services ",
             style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF6F4EC9),
         centerTitle: true,

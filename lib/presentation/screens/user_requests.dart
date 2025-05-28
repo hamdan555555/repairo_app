@@ -1,9 +1,16 @@
+import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_cubit.dart';
 import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_cubit.dart';
 import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_states.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:breaking_project/data/models/request_details_model.dart';
 import 'package:breaking_project/data/models/user_requests_model.dart';
+import 'package:breaking_project/data/repository/requset_details_repository.dart';
+import 'package:breaking_project/data/web_services/request_details_webservices.dart';
+import 'package:breaking_project/presentation/screens/request_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 class UserRequests extends StatefulWidget {
   @override
@@ -123,123 +130,135 @@ class UserRequestsState extends State<UserRequests> {
   }
 
   Widget buildRequestCard(RUserRequestData request) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // صورة الطلب
-          //if (request.image != null && request.image!.isNotEmpty)
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.network(
-              request.service!.image
-                  .toString()
-                  .replaceFirst('127.0.0.1', AppConstants.baseaddress),
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                height: 180,
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => BlocProvider(
+              create: (context) => RequestDetailsCubit(
+                  RequsetDetailsRepository(RequestDetailsWebservices())),
+              child: RequestDetailsScreen(
+                id: request.id!,
+              ),
+            ));
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 4,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // صورة الطلب
+            //if (request.image != null && request.image!.isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              child: Image.network(
+                request.service!.image
+                    .toString()
+                    .replaceFirst('127.0.0.1', AppConstants.baseaddress),
                 width: double.infinity,
-                color: Colors.grey[300],
-                child: Icon(Icons.broken_image, size: 40),
+                height: 180,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 180,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: Icon(Icons.broken_image, size: 40),
+                ),
               ),
             ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.settings, size: 16, color: Colors.grey[700]),
-                    SizedBox(width: 6),
-                    Text(
-                      'الخدمة: ${request.service?.name ?? request.technicianAccount?.name ?? "غير معروف"}',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.person, size: 16, color: Colors.grey[700]),
-                    SizedBox(width: 6),
-                    Text(
-                      'المهني: ${request.technicianAccount?.name ?? "غير معروف"}',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                // التاريخ والوقت
-                Row(
-                  children: [
-                    Icon(Icons.calendar_today,
-                        size: 16, color: Colors.grey[700]),
-                    SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        '${request.scheduledDate ?? "--"} - ${request.scheduledTime ?? "--"}',
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.settings, size: 16, color: Colors.grey[700]),
+                      SizedBox(width: 6),
+                      Text(
+                        'الخدمة: ${request.service?.name ?? request.technicianAccount?.name ?? "غير معروف"}',
                         style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
+                            fontSize: 14, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    Container(
-                        width: 65,
-                        height: 20,
-                        decoration: BoxDecoration(
-                            color: request.status == 'Accepted'
-                                ? Colors.green
-                                : request.status == "rejected"
-                                    ? Colors.red
-                                    : request.status == "pending"
-                                        ? Colors.grey
-                                        : Colors.amber,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Center(
-                            child: Text(
-                          "${request.status}",
-                          style: TextStyle(),
-                        )))
-                  ],
-                ),
-                SizedBox(height: 8),
-
-                // الموقع
-                Row(
-                  children: [
-                    Icon(Icons.location_on, size: 16, color: Colors.grey[700]),
-                    SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        request.location ?? "الموقع غير محدد",
-                        style: TextStyle(fontSize: 14),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Icon(Icons.person, size: 16, color: Colors.grey[700]),
+                      SizedBox(width: 6),
+                      Text(
+                        'المهني: ${request.technicianAccount?.name ?? "غير معروف"}',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  // التاريخ والوقت
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today,
+                          size: 16, color: Colors.grey[700]),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          '${request.scheduledDate ?? "--"} - ${request.scheduledTime ?? "--"}',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Container(
+                          width: 65,
+                          height: 20,
+                          decoration: BoxDecoration(
+                              color: request.status == 'Accepted'
+                                  ? Colors.green
+                                  : request.status == "rejected"
+                                      ? Colors.red
+                                      : request.status == "pending"
+                                          ? Colors.grey
+                                          : Colors.amber,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Center(
+                              child: Text(
+                            "${request.status}",
+                            style: TextStyle(),
+                          )))
+                    ],
+                  ),
+                  SizedBox(height: 8),
 
-                // اسم الفني أو الخدمة
-              ],
-            ),
-          )
-        ],
+                  // الموقع
+                  Row(
+                    children: [
+                      Icon(Icons.location_on,
+                          size: 16, color: Colors.grey[700]),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          request.location ?? "الموقع غير محدد",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+
+                  // اسم الفني أو الخدمة
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

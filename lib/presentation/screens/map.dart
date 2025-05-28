@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -13,9 +14,8 @@ class _MapScreenState extends State<MapScreen> {
   final DraggableScrollableController _controller =
       DraggableScrollableController();
 
-  final double latitude = 35.5308;
-
-  final double longitude = 35.7906;
+  double latitude = 35.5308;
+  double longitude = 35.7906;
 
   bool isSearched = false;
   LatLng currentpos = const LatLng(0, 0);
@@ -54,7 +54,7 @@ class _MapScreenState extends State<MapScreen> {
     _controller.addListener(() {
       setState(() {
         widgetsize = _controller.size;
-        print("Current Draggable Sheet size: $widgetsize");
+        // print("Current Draggable Sheet size: $widgetsize");
       });
     });
 
@@ -125,18 +125,27 @@ class _MapScreenState extends State<MapScreen> {
                       radius: 30,
                       backgroundColor: Colors.white,
                       child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            print("here is stsssss $_permissionGranted");
-                            print(currentLocation!.latitude!);
-                            if (_permissionGranted ==
-                                PermissionStatus.granted) {
-                              print("dfdfdfd");
-                              mapController.move(
-                                  LatLng(currentLocation!.latitude!,
-                                      currentLocation!.longitude!),
-                                  15);
-                            }
+                        onPressed: () async {
+                          setState(() async {
+                            // print("here is stsssss $_permissionGranted");
+                            // print(currentLocation!.latitude!);
+                            // if (_permissionGranted ==
+                            //     PermissionStatus.granted) {
+                            //   print("dfdfdfd");
+                            //   mapController.move(
+                            //       LatLng(currentLocation!.latitude!,
+                            //           currentLocation!.longitude!),
+                            //       15);
+                            // }
+
+                            final prefs = await SharedPreferences.getInstance();
+                            String lat = prefs.getString('lat')!;
+                            String lng = prefs.getString('lng')!;
+
+                            latitude = double.parse(prefs.getString('lat')!);
+                            longitude = double.parse(prefs.getString('lng')!);
+
+                            mapController.move(LatLng(latitude, longitude), 15);
                           });
                         },
                         icon: Icon(
@@ -179,6 +188,7 @@ class _MapScreenState extends State<MapScreen> {
                   onTap: () {
                     setState(() {
                       isSearched = !isSearched;
+                      //print()
                     });
                   },
                   child: Container(

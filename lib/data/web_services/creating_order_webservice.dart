@@ -25,7 +25,6 @@ class CreatingOrderWebservice {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('auth_token');
     request.headers['Authorization'] = 'Bearer $token';
-    print("2222222222222222222");
 
     request.fields['technician_account_id'] = technicianId;
     request.fields['location'] = location;
@@ -35,23 +34,17 @@ class CreatingOrderWebservice {
     request.fields['scheduled_time'] = time;
     request.fields['details'] = details;
 
-    print("33333333333333");
-
     if (selectedServiceIds.isNotEmpty) {
       for (int i = 0; i < selectedServiceIds.length; i++) {
         request.fields['services[$i][id]'] = selectedServiceIds[i];
       }
     }
 
-    print("4444444444444444");
-
     if (selectedServiceIds.isNotEmpty) {
       for (int i = 0; i < selectedServiceIds.length; i++) {
         request.fields['services[$i][quantity]'] = '1';
       }
     }
-
-    print("55555555555555");
 
     for (int i = 0; i < images.length; i++) {
       File imageFile = images[i];
@@ -61,22 +54,14 @@ class CreatingOrderWebservice {
       ));
     }
 
-    print("6666666666666");
-
     try {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      print("77777777777777");
-
       if (response.statusCode == 200) {
-        print("8888888888888888");
-
         print("تم الإرسال بنجاح: ${response.body}");
         return jsonDecode(response.body);
       } else {
-        print("999999999999999999");
-
         print("فشل الطلب: ${response.statusCode} - ${response.body}");
         return {
           'success': false,
