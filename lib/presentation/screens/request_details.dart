@@ -1,11 +1,19 @@
 import 'package:breaking_project/app_router.dart';
+import 'package:breaking_project/business_logic/InvoiceCubit/invoice_cubit.dart';
+import 'package:breaking_project/business_logic/PayInvoiceCubit/pay_invoice_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_states.dart';
 import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:breaking_project/data/repository/invoice_repository.dart';
+import 'package:breaking_project/data/repository/pay_invoice_repository.dart';
 import 'package:breaking_project/data/repository/technician_data_repository.dart';
+import 'package:breaking_project/data/web_services/invoice_web_services.dart';
+import 'package:breaking_project/data/web_services/pay_invoice_webservices.dart';
 import 'package:breaking_project/data/web_services/technician_data_webservices.dart';
+import 'package:breaking_project/presentation/screens/invoice_details.dart';
 import 'package:breaking_project/presentation/screens/tech_data.dart';
+import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -112,6 +120,35 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                       '⏰ الوقت المحدد', requestdetails.scheduledTime!),
                   _buildInfoCard('📌 حالة الطلب', requestdetails.status!),
                   _buildInfoCard('📋 التفاصيل', requestdetails.details!),
+                  Visibility(
+                      visible: requestdetails.status == "ended",
+                      child: CustomElevatedButton(
+                          onpressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MultiBlocProvider(
+                                          providers: [
+                                            BlocProvider<InvoiceCubit>(
+                                              create: (_) => InvoiceCubit(
+                                                  InvoiceRepository(
+                                                      InvoiceWebServices())),
+
+                                              // أو مرر نسخة جاهزة إذا موجودة
+                                            ),
+                                            BlocProvider<PayInvoiceCubit>(
+                                              create: (_) => PayInvoiceCubit(
+                                                  PayInvoiceRepository(
+                                                      PayInvoiceWebservices())),
+
+                                              // أو مرر نسخة جاهزة إذا موجودة
+                                            ),
+                                          ],
+                                          child: InvoiceDetailsPage(
+                                              id: requestdetails.id!))),
+                            );
+                          },
+                          text: "Show Invoice"))
                 ],
               ),
             );

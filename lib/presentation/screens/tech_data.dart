@@ -154,6 +154,7 @@ class SubcategoriesStatee extends State<TechDataScreen> {
           const SizedBox(height: 24),
 
           // عنوان الأعمال السابقة
+          // عنوان الأعمال السابقة
           if ((tech.previousWorks?.isNotEmpty ?? false)) ...[
             Text(
               "الأعمال السابقة",
@@ -161,37 +162,30 @@ class SubcategoriesStatee extends State<TechDataScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            ...tech.previousWorks!.map((work) {
-              return ProvidedServiceCard(
-                title: work.title,
-                description: work.description,
-                images: work.image,
-              );
-              // Card(
-              //   elevation: 2,
-              //   margin: const EdgeInsets.symmetric(vertical: 8),
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(12),
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         Text(
-              //           work.title ?? '',
-              //           style: const TextStyle(
-              //               fontSize: 16, fontWeight: FontWeight.w600),
-              //         ),
-              //         const SizedBox(height: 6),
-              //         Text(work.description ?? '',
-              //             style: const TextStyle(
-              //                 fontSize: 14, color: Colors.grey)),
-              //       ],
-              //     ),
-              //   ),
-              // );
-            }).toList()
+
+            // Scrollable Row مرة وحدة فقط
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: tech.previousWorks!.map((work) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: SizedBox(
+                      width: 300, // عرض الكارد
+                      child: ProvidedServiceCard(
+                        title: work.title,
+                        description: work.description,
+                        images: work.image,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
           ] else ...[
             const Text("لا يوجد أعمال سابقة"),
           ],
+
           CustomElevatedButton(
               onpressed: () {
                 // Get.to(MapScreen(

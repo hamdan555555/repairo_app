@@ -1,13 +1,13 @@
-import 'dart:convert';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CategoriesWebservices {
-  Future<List<Map<String, dynamic>>> getAllCategories() async {
+class InvoiceWebServices {
+  Future<Map<String, dynamic>> getinvoice(String id) async {
     final prefs = await SharedPreferences.getInstance();
+    final url = Uri.parse('${AppConstants.baseUrl}/user/invoice/$id');
     var token = prefs.getString('auth_token');
-    final url = Uri.parse('${AppConstants.baseUrl}/category');
     final response = await http.get(
       url,
       headers: {
@@ -17,14 +17,15 @@ class CategoriesWebservices {
     );
 
     if (response.statusCode == 200) {
-      print('User info: ${response.body}');
+      print('invoice info: ${response.body}');
       final dataa = jsonDecode(response.body);
-      final List<Map<String, dynamic>> data =
-          List<Map<String, dynamic>>.from(dataa['data']['data']);
+      final data = dataa['data'];
+
+      print(data.toString());
       return data;
     } else {
-      print('Failed to get categories info: ${response.statusCode}');
-      throw Exception('Login failed');
+      print('Failed to get invoice details: ${response.statusCode}');
+      throw Exception('failed');
     }
   }
 }

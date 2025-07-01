@@ -10,6 +10,7 @@ import 'package:breaking_project/data/models/user_requests_model.dart';
 import 'package:breaking_project/data/repository/user_requests_repository.dart';
 import 'package:breaking_project/data/web_services/user_requests_webservices.dart';
 import 'package:breaking_project/presentation/screens/user_requests.dart';
+import 'package:breaking_project/presentation/screens/wallet.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:breaking_project/presentation/widgets/service_widget.dart';
 import 'package:flutter/material.dart';
@@ -211,6 +212,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 Divider(),
                 SizedBox(
                   height: 4,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    scaffoldKey.currentState?.closeDrawer();
+
+                    Future.delayed(Duration(seconds: 1), () {
+                      Get.to(WalletPage());
+                      // Get.toNamed('providers');
+                      // Get.to(() => BlocProvider(
+                      //       create: (context) => UserRequestsCubit(
+                      //           UserRequestsRepository(
+                      //               userRequestsWebservices:
+                      //                   UserRequestsWebservices())),
+                      //       child: UserRequests(),
+                      //     ));
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.wallet,
+                        size: 22,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "My Wallet",
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -426,9 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 270,
                         height: 50,
                         child: TextFormField(
-
                           decoration: InputDecoration(
-                            
                             hintText: 'type to start searching',
                             hintStyle: const TextStyle(fontSize: 14),
                             filled: true,
@@ -481,6 +512,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //print(allitems);
         return buildLoadedListWidget();
       } else {
+        print("999999999");
         return buildCategoriesShimmer();
       }
 

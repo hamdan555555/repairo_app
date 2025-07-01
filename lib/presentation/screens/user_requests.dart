@@ -2,7 +2,6 @@ import 'package:breaking_project/business_logic/RequestDetailsCubit/request_deta
 import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_cubit.dart';
 import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_states.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
-import 'package:breaking_project/data/models/request_details_model.dart';
 import 'package:breaking_project/data/models/user_requests_model.dart';
 import 'package:breaking_project/data/repository/requset_details_repository.dart';
 import 'package:breaking_project/data/web_services/request_details_webservices.dart';
@@ -219,13 +218,15 @@ class UserRequestsState extends State<UserRequests> {
                           width: 65,
                           height: 20,
                           decoration: BoxDecoration(
-                              color: request.status == 'Accepted'
+                              color: request.status == 'accepted'
                                   ? Colors.green
                                   : request.status == "rejected"
                                       ? Colors.red
-                                      : request.status == "pending"
-                                          ? Colors.grey
-                                          : Colors.amber,
+                                      : request.status == "ongoing"
+                                          ? Colors.blueGrey
+                                          : request.status == "pending"
+                                              ? Colors.grey
+                                              : Colors.amber,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10))),
                           child: Center(
