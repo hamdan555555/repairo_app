@@ -112,20 +112,20 @@ class Services {
 }
 
 class CustomService {
-  String? title;
-  int? cost;
+  String? name;
+  int? price;
 
-  CustomService({this.title, this.cost});
+  CustomService({this.name, this.price});
 
   CustomService.fromJson(Map<String, dynamic> json) {
-    title = json['title'];
-    cost = json['cost'];
+    name = json['name'];
+    price = json['price'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['title'] = title;
-    data['cost'] = cost;
+    data['name'] = name;
+    data['price'] = price;
     return data;
   }
 }

@@ -18,9 +18,6 @@ class PayInvoiceCubit extends Cubit<PayInvoiceStates> {
 
       await payInvoiceRepository.payinvoice(id: id, paymenttype: paymenttype);
       emit(PayInvoiceSuccess());
-      print("Doneeeeeeeeeeeeeeeeeeee");
-      //Get.back();
-      //Get.toNamed('verification');
     } catch (e) {
       emit(PayInvoiceError(e.toString()));
     }

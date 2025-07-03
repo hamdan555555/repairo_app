@@ -1,5 +1,6 @@
 import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
 import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/searched_technicians_model.dart';
 import 'package:breaking_project/data/repository/technician_data_repository.dart';
 import 'package:breaking_project/data/web_services/technician_data_webservices.dart';
@@ -54,8 +55,8 @@ class TechnisiansWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50),
                 child: technisians.account!.image!.isNotEmpty
                     ? Image.network(
-                        technisians.account!.image!
-                            .replaceFirst('127.0.0.1', '172.20.10.5'),
+                        technisians.account!.image!.replaceFirst(
+                            '127.0.0.1', AppConstants.baseaddress),
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,

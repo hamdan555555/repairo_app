@@ -43,7 +43,7 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
       appBar: AppBar(
         title: Text('تفاصيل الطلب'),
         centerTitle: true,
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.deepPurple,
       ),
       body: BlocBuilder<RequestDetailsCubit, RequestDetailsStates>(
         builder: (context, state) {
@@ -51,18 +51,21 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
             final requestdetails = (state).requestdata;
 
             Widget _buildUserAvatar(String imageUrl, String name, String role) {
-              return Column(
-                children: [
-                  CircleAvatar(
-                    radius: 35,
-                    backgroundImage: NetworkImage(imageUrl.replaceFirst(
-                        "127.0.0.1", AppConstants.baseaddress)),
-                  ),
-                  SizedBox(height: 8),
-                  Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(role,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                ],
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 35,
+                      backgroundImage: NetworkImage(imageUrl.replaceFirst(
+                          "127.0.0.1", AppConstants.baseaddress)),
+                    ),
+                    SizedBox(height: 8),
+                    Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(role,
+                        style:
+                            TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  ],
+                ),
               );
             }
 
@@ -148,7 +151,12 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                                               id: requestdetails.id!))),
                             );
                           },
-                          text: "Show Invoice"))
+                          text: "Show Invoice")),
+                  Visibility(
+                      visible: requestdetails.status != "ended" &&
+                          requestdetails.status != "ongoing",
+                      child: CustomElevatedButton(
+                          onpressed: () {}, text: "Cancel Order"))
                 ],
               ),
             );

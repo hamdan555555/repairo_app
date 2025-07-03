@@ -1,4 +1,12 @@
+import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_cubit.dart';
+import 'package:breaking_project/business_logic/WalletTopupCubit/wallet_topup_cubit.dart';
+import 'package:breaking_project/data/repository/bank_repository.dart';
+import 'package:breaking_project/data/repository/wallet_topup_request_repository.dart';
+import 'package:breaking_project/data/web_services/banks_webservices.dart';
+import 'package:breaking_project/data/web_services/wallet_topup_request_webservice.dart';
+import 'package:breaking_project/presentation/screens/fill_wallet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
@@ -52,7 +60,10 @@ class WalletPage extends StatelessWidget {
                       ),
                       Text(
                         "Scan & Charge",
-                        style: TextStyle(color: Colors.blue, fontSize: 14),
+                        style: TextStyle(
+                            color: Colors.blueAccent,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -68,7 +79,7 @@ class WalletPage extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Color.fromRGBO(236, 106, 30, 0.83),
+                color: Colors.deepPurpleAccent,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -80,14 +91,30 @@ class WalletPage extends StatelessWidget {
                           fontSize: 18,
                           fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
-                  Text("1000\$",
+                  Text("0\$",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold)),
                   SizedBox(height: 100),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) => AllbanksCubit(
+                                    BanksRepository(
+                                        bankWebservices: BankWebservices())),
+                              ),
+                              BlocProvider(
+                                create: (context) => WalletTopupCubit(
+                                    WalletTopupRequestRepository(
+                                        WalletTopupRequestWebservice())),
+                              ),
+                            ],
+                            child: FillWallet(),
+                          ));
+                    },
                     child: Column(
                       children: [
                         Icon(Icons.add, color: Colors.white),
@@ -131,7 +158,7 @@ class WalletPage extends StatelessWidget {
 
   Widget _buildListItem(IconData icon, String title, {String? trailingText}) {
     return ListTile(
-      leading: Icon(icon, color: Color.fromRGBO(236, 106, 30, 0.83)),
+      leading: Icon(icon, color: Colors.deepPurpleAccent),
       title: Text(title,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
       trailing: trailingText != null

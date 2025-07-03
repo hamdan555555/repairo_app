@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_cubit.dart';
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcategories_states.dart';
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
@@ -7,8 +8,11 @@ import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/banner_image_model.dart';
 import 'package:breaking_project/data/models/user_requests_model.dart';
+import 'package:breaking_project/data/repository/bank_repository.dart';
 import 'package:breaking_project/data/repository/user_requests_repository.dart';
+import 'package:breaking_project/data/web_services/banks_webservices.dart';
 import 'package:breaking_project/data/web_services/user_requests_webservices.dart';
+import 'package:breaking_project/presentation/screens/banks.dart';
 import 'package:breaking_project/presentation/screens/user_requests.dart';
 import 'package:breaking_project/presentation/screens/wallet.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
@@ -240,6 +244,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Text(
                         "My Wallet",
+                        style: TextStyle(color: Colors.black, fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(),
+                SizedBox(
+                  height: 4,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    scaffoldKey.currentState?.closeDrawer();
+
+                    Future.delayed(Duration(seconds: 1), () {
+                      Get.to(() => BlocProvider(
+                            create: (context) => AllbanksCubit(BanksRepository(
+                                bankWebservices: BankWebservices())),
+                            child: BanksScreen(),
+                          ));
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.monetization_on,
+                        size: 22,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "Available Banks",
                         style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                     ],
