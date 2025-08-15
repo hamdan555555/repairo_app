@@ -61,7 +61,7 @@ class SubcategoriesStatee extends State<Subcategories> {
   Widget showloadingindicator() {
     return const Center(
         child: CircularProgressIndicator(
-      color: const Color.fromRGBO(95, 96, 185, 1),
+      color: Colors.teal,
     ));
   }
 

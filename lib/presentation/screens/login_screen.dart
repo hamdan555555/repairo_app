@@ -7,6 +7,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      resizeToAvoidBottomInset: false, // يمنع تحريك العناصر عند ظهور 
       body: LoginForm(),
     );
   }

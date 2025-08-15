@@ -59,7 +59,7 @@ class _FilteredTechniciansScreenState extends State<FilteredTechniciansScreen> {
             } else if (state is SearchServicesProvidersLoading) {
               return Center(
                 child: CircularProgressIndicator(
-                  color: Colors.deepPurpleAccent,
+                  color: Colors.teal,
                 ),
               );
             } else if (state is SearchServicesProvidersFailed) {

@@ -135,22 +135,22 @@ class AppRouter {
           ),
         );
 
-      case 'profile':
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (context) =>
-                      ProfileCubit(ProfileRepository(ProfileWebservices()))
-                        ..getUserData('anytoken'),
-                  child: ProfileScreen(),
-                ));
+      // case 'profile':
+      //   return MaterialPageRoute(
+      //       builder: (_) => BlocProvider(
+      //             create: (context) =>
+      //                 ProfileCubit(ProfileRepository(ProfileWebservices()))
+      //                   ..getUserData(''),
+      //             child: ProfileScreen(),
+      //           ));
 
-      case 'verification':
-        return MaterialPageRoute(
-            builder: (_) => BlocProvider(
-                  create: (context) => VerificationCubit(
-                      VerificationRepository(VerificationWebservices())),
-                  child: Verification(),
-                ));
+      // case 'verification':
+      //   return MaterialPageRoute(
+      //       builder: (_) => BlocProvider(
+      //             create: (context) => VerificationCubit(
+      //                 VerificationRepository(VerificationWebservices())),
+      //             child: Verification(),
+      //           ));
     }
     return null;
   }

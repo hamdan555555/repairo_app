@@ -11,20 +11,19 @@ class VerificationCubit extends Cubit<VerificationStates> {
   void onSubmit() {}
   void didnotgetCode() {}
 
-  void verify(String phone, String code) async {
+  void verify(String phone, String code, String fcm) async {
     emit(VerificationLoading());
     try {
-      var user = await verificationRepository.verifyNumber(phone, code);
+      var user = await verificationRepository.verifyNumber(phone, code, fcm);
       emit(VerificationSuccess(user));
       Get.back();
       Get.offAllNamed('mainscreen');
       //await LocalStorageService.saveLastVisitedScreen('mainscreen');
-
     } catch (e) {
       emit(VerificationError(e.toString()));
     }
 
-//هاد مثال عن استخدام كلاس الايرور هاندلير 
+//هاد مثال عن استخدام كلاس الايرور هاندلير
 //   try {
 //   await api.login();
 // } catch (e) {
@@ -32,15 +31,12 @@ class VerificationCubit extends Cubit<VerificationStates> {
 //   emit(LoginErrorState(errorMessage));
 // }
 
-
 //هاد مثال عن استخدام كلاس النيتوورك تشيكينغ
 // bool online = await NetworkChecker.isConnected();
 // if (!online) {
 //   // أعرض alert أو snackBar
 //   print("لا يوجد اتصال بالإنترنت");
 // }
-
-
 
 //هاد مثال عن استخدام كلاس النوتفيكيشن
 // await NotificationService.init();
@@ -50,11 +46,5 @@ class VerificationCubit extends Cubit<VerificationStates> {
 //   title: "أهلاً محمد 👋",
 //   body: "تم تسجيل الدخول بنجاح!",
 // );
-
-
-
-
-
-
   }
 }

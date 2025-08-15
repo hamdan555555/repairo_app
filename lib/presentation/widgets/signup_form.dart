@@ -17,12 +17,16 @@ class SignupForm extends StatelessWidget {
         if (state is SignupLoading) {
           print("oooooooooooooooooooooooohhhhhhhh");
           Get.defaultDialog(
-            title: "Loading...",
+            title: "...جاري التحميل ",
+            titleStyle: TextStyle(fontFamily: "Cairo"),
             content: const Column(
               children: [
-                CircularProgressIndicator(color: Colors.blueAccent),
+                CircularProgressIndicator(color: Colors.teal),
                 SizedBox(height: 10),
-                Text("Please wait..."),
+                Text(
+                  "الرجاء الانتظار.",
+                  style: TextStyle(fontFamily: "Cairo"),
+                ),
               ],
             ),
             barrierDismissible: false,

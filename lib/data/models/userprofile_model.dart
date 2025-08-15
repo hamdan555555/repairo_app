@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class UserProfile {
   bool? success;
   String? message;
@@ -28,8 +30,10 @@ class PData {
   String? phone;
   String? address;
   String? image;
+  int? wallet;
 
-  PData({this.id, this.name, this.phone, this.address, this.image});
+  PData(
+      {this.id, this.name, this.phone, this.address, this.image, this.wallet});
 
   PData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -37,15 +41,18 @@ class PData {
     phone = json['phone'];
     address = json['address'];
     image = json['image'];
+    wallet =
+        json['wallet'] != null ? int.tryParse(json['wallet'].toString()) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['phone'] = this.phone;
-    data['address'] = this.address;
-    data['image'] = this.image;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['name'] = name;
+    data['phone'] = phone;
+    data['address'] = address;
+    data['image'] = image;
+    if (wallet != null) data['wallet'] = wallet.toString();
     return data;
   }
 }

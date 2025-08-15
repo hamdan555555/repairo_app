@@ -73,12 +73,16 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
         listener: (context, state) {
           if (state is CreatingOrderLoading) {
             Get.defaultDialog(
-              title: "Loading...",
+              title: "...جاري التحميل ",
+              titleStyle: TextStyle(fontFamily: "Cairo"),
               content: const Column(
                 children: [
-                  CircularProgressIndicator(color: Colors.blueAccent),
+                  CircularProgressIndicator(color: Colors.teal),
                   SizedBox(height: 10),
-                  Text("Please wait..."),
+                  Text(
+                    "الرجاء الانتظار.",
+                    style: TextStyle(fontFamily: "Cairo"),
+                  ),
                 ],
               ),
               barrierDismissible: false,

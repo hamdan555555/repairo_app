@@ -32,12 +32,16 @@ class _InvoiceDetailsPageState extends State<InvoiceDetailsPage> {
       listener: (context, state) {
         if (state is PayInvoiceLoading) {
           Get.defaultDialog(
-            title: "Loading...",
+            title: "...جاري التحميل ",
+            titleStyle: TextStyle(fontFamily: "Cairo"),
             content: const Column(
               children: [
-                CircularProgressIndicator(color: Colors.blueAccent),
+                CircularProgressIndicator(color: Colors.teal),
                 SizedBox(height: 10),
-                Text("Please wait..."),
+                Text(
+                  "الرجاء الانتظار.",
+                  style: TextStyle(fontFamily: "Cairo"),
+                ),
               ],
             ),
             barrierDismissible: false,
@@ -145,7 +149,14 @@ class _InvoiceDetailsPageState extends State<InvoiceDetailsPage> {
                                   ),
                                   Expanded(
                                     child: CustomElevatedButton(
-                                        onpressed: () {},
+                                        onpressed: () {
+                                          context
+                                              .read<PayInvoiceCubit>()
+                                              .payinvoice(
+                                                  id: invoicedetails
+                                                      .serviceRequestId!,
+                                                  paymenttype: "wallet");
+                                        },
                                         text: "pay by wallet"),
                                   ),
                                 ],
@@ -157,7 +168,10 @@ class _InvoiceDetailsPageState extends State<InvoiceDetailsPage> {
                 ),
               );
             } else if (state is InvoiceLoading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Colors.teal,
+              ));
             }
             return Center(child: Text("Error Happenep"));
           },

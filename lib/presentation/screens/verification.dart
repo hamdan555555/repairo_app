@@ -1,26 +1,76 @@
+import 'dart:async';
+
 import 'package:breaking_project/business_logic/VerifyCubit/verification_cubit.dart';
 import 'package:breaking_project/business_logic/VerifyCubit/verification_states.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Verification extends StatelessWidget {
+class Verification extends StatefulWidget {
+  final String phone;
+  const Verification({super.key, required this.phone});
+
+  @override
+  State<Verification> createState() => _VerificationState();
+}
+
+class _VerificationState extends State<Verification> {
+  late Timer _timer;
+  int _start = 60;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  @override
+  void dispose() {
+    // يجب إيقاف الـ Timer عند إغلاق الـ Widget لتجنب تسرب الذاكرة
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<VerificationCubit, VerificationStates>(
       listener: (context, state) {
         if (state is VerificationLoading) {
           Get.defaultDialog(
-            title: "Loading...",
+            title: "...جاري التحميل ",
+            titleStyle: TextStyle(fontFamily: "Cairo"),
             content: const Column(
               children: [
-                CircularProgressIndicator(color: Colors.blueAccent),
+                CircularProgressIndicator(color: Colors.teal),
                 SizedBox(height: 10),
-                Text("Please wait..."),
+                Text(
+                  "الرجاء الانتظار.",
+                  style: TextStyle(fontFamily: "Cairo"),
+                ),
               ],
             ),
             barrierDismissible: false,
@@ -40,74 +90,119 @@ class Verification extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             body: Padding(
-              padding: const EdgeInsets.only(top: 70, left: 4, right: 4),
+              padding: const EdgeInsets.only(top: 70, left: 8, right: 8),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.arrow_back_ios_new)),
-                        const Text(
-                          "Verification code",
-                          style: TextStyle(fontSize: 30),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 70,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 95),
-                      child: Column(
+                    Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Row(
                         children: [
-                          Text(
-                            "we texted you a code",
-                            style: TextStyle(fontSize: 20),
+                          GestureDetector(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Colors.grey[300],
+                              radius: 14,
+                              child: Icon(
+                                Icons.arrow_back_ios_new,
+                                size: 16,
+                              ),
+                            ),
                           ),
-                          Text("please enter it below :",
-                              style: TextStyle(fontSize: 20)),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          // IconButton(
+                          //     onPressed: () {},
+                          //     icon: const Icon(
+                          //       Icons.arrow_back_ios_new,
+                          //       size: 16,
+                          //     )),
+                          const Text(
+                            "تحقق من رقم هاتفك",
+                            style: TextStyle(fontSize: 24, fontFamily: "Cairo"),
+                          ),
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 70,
+                    SizedBox(
+                      height: 24.h,
+                    ),
+                    SizedBox(
+                      width: 200.w,
+                      height: 120.h,
+                      child: Lottie.asset('assets/images/lottie/login.json',
+                          fit: BoxFit.cover),
+                    ),
+                    SizedBox(
+                      height: 96.h,
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          " +963أدخل الرمز الذي تم إرساله إلى ${widget.phone}",
+                          style: const TextStyle(
+                              fontSize: 16, fontFamily: "Cairo"),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 32.h,
                     ),
                     OtpTextField(
-                      cursorColor: const Color.fromRGBO(95, 96, 185, 1),
+                      focusedBorderColor: Colors.teal,
+
+                      borderWidth: 1,
+                      fillColor: Colors.grey,
+                      cursorColor: Colors.grey,
+                      showCursor: false,
                       borderRadius: BorderRadius.circular(10),
                       numberOfFields: 4,
-                      borderColor: const Color.fromRGBO(95, 96, 185, 1),
+                      borderColor: Colors.teal,
                       showFieldAsBox: true,
                       onCodeChanged: (String code) {},
                       onSubmit: (String verificationCode) async {
                         final prefs = await SharedPreferences.getInstance();
-                        var phone = prefs.getString('phone');
+                        //var phone = prefs.getString('phone');
 
                         context
                             .read<VerificationCubit>()
-                            .verify(phone!, verificationCode);
+                            .verify(widget.phone, verificationCode, "lkl");
                       }, // end onSubmit
                     ),
                     const SizedBox(
                       height: 40,
                     ),
-                    const Text("this helps us verify every user in the"),
-                    const Text("system"),
-                    TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "Didn't get a code ?",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                        )),
+                    const Text(
+                      "  هذا يساعد في التحقق من هوية المستخدمين ",
+                      style: TextStyle(fontFamily: "Cairo"),
+                    ),
+
+                    _start != 0
+                        ? Text(
+                            "00:$_start يمكنك طلب إعادة الإرسال بعد",
+                            style: TextStyle(fontFamily: "Cairo"),
+                          )
+                        : TextButton(
+                            onPressed: () {
+                              setState(() {
+                                startTimer();
+                              });
+                            },
+                            child: const Text(
+                              "إعادة إرسال الرمز",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: "Cairo",
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal),
+                            )),
                     const SizedBox(
                       height: 70,
                     ),
-                    CustomElevatedButton(onpressed: () {}, text: 'Confirm')
+                    // CustomElevatedButton(onpressed: () {}, text: 'Confirm')
                   ],
                 ),
               ),

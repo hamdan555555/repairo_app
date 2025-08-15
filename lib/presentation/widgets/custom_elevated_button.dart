@@ -15,8 +15,7 @@ class CustomElevatedButton extends StatelessWidget {
       height: 45,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              active ? const Color.fromRGBO(95, 96, 185, 1) : Colors.grey,
+          backgroundColor: active ? Colors.teal : Colors.grey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -24,7 +23,10 @@ class CustomElevatedButton extends StatelessWidget {
         onPressed: onpressed,
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Cairo',
+              fontWeight: FontWeight.bold),
         ),
       ),
     );

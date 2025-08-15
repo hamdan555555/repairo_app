@@ -1,5 +1,9 @@
 import 'package:breaking_project/business_logic/LoginCubit/login_states.dart';
+import 'package:breaking_project/business_logic/VerifyCubit/verification_cubit.dart';
 import 'package:breaking_project/data/repository/login_repository.dart';
+import 'package:breaking_project/data/repository/verification_repository.dart';
+import 'package:breaking_project/data/web_services/verification_webservices.dart';
+import 'package:breaking_project/presentation/screens/verification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -33,7 +37,12 @@ class LoginCubit extends Cubit<LoginState> {
       final userlog = await authRepository.login(phone);
       emit(LoginSuccess(userlog));
       Get.back();
-      Get.toNamed('verification');
+      // Get.toNamed('verification');
+      Get.to(() => BlocProvider(
+            create: (context) => VerificationCubit(
+                VerificationRepository(VerificationWebservices())),
+            child: Verification(phone: phone),
+          ));
     } catch (e) {
       emit(LoginError(e.toString()));
     }

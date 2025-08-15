@@ -1,18 +1,25 @@
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
+import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_cubit.dart';
 import 'package:breaking_project/data/repository/categories_repository.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
 import 'package:breaking_project/data/repository/profile_repository.dart';
+import 'package:breaking_project/data/repository/user_requests_repository.dart';
 import 'package:breaking_project/data/web_services/categories_webservices.dart';
 import 'package:breaking_project/data/web_services/home_webservices.dart';
 import 'package:breaking_project/data/web_services/profile_webservices.dart';
+import 'package:breaking_project/data/web_services/user_requests_webservices.dart';
 import 'package:breaking_project/presentation/screens/home_screen.dart';
 import 'package:breaking_project/presentation/screens/map.dart';
 import 'package:breaking_project/presentation/screens/profile.dart';
 import 'package:breaking_project/presentation/screens/search.dart';
+import 'package:breaking_project/presentation/screens/user_requests.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -69,6 +76,7 @@ class _MainScreenState extends State<MainScreen> {
     _pages = [
       const HomeScreen(),
       const SearchScreen(),
+      UserRequests(),
       MapScreen(),
       ProfileScreen(),
     ];
@@ -76,6 +84,10 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -89,31 +101,82 @@ class _MainScreenState extends State<MainScreen> {
         BlocProvider(
           create: (_) => ProfileCubit(ProfileRepository(ProfileWebservices())),
         ),
+        BlocProvider(
+          create: (_) => UserRequestsCubit(UserRequestsRepository(
+              userRequestsWebservices: UserRequestsWebservices())),
+        ),
       ],
       child: Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedItemColor: const Color.fromRGBO(95, 96, 185, 1),
-          unselectedItemColor: Colors.grey,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16.0), // زاوية علوية يسار
+              topRight: Radius.circular(16.0), // زاوية علوية يمين
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'search',
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 20,
+                color: Colors.black.withOpacity(.1),
+              )
+            ],
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: GNav(
+                style: GnavStyle.google,
+                rippleColor: Colors.grey[300]!,
+                hoverColor: Colors.grey[100]!,
+                gap: 8,
+                activeColor: Colors.teal,
+                iconSize: 24,
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                duration: Duration(milliseconds: 400),
+                tabBackgroundColor: Colors.grey[100]!,
+                color: Colors.black,
+                tabs: [
+                  GButton(
+                    hoverColor: Colors.tealAccent,
+                    icon: LineIcons.home,
+                    text: 'الرئيسية',
+                    textStyle:
+                        TextStyle(fontFamily: "Cairo", color: Colors.teal),
+                  ),
+                  GButton(
+                    icon: LineIcons.search,
+                    text: 'البحث',
+                    textStyle:
+                        TextStyle(fontFamily: "Cairo", color: Colors.teal),
+                  ),
+                  GButton(
+                    icon: LineIcons.book,
+                    text: 'الحجوزات',
+                    textStyle:
+                        TextStyle(fontFamily: "Cairo", color: Colors.teal),
+                  ),
+                  GButton(
+                    icon: LineIcons.mapAlt,
+                    text: 'الخريطة',
+                    textStyle:
+                        TextStyle(fontFamily: "Cairo", color: Colors.teal),
+                  ),
+                  GButton(
+                    icon: LineIcons.user,
+                    text: 'حسابي',
+                    textStyle:
+                        TextStyle(fontFamily: "Cairo", color: Colors.teal),
+                  ),
+                ],
+                selectedIndex: _selectedIndex,
+                onTabChange: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: 'map',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
+          ),
         ),
         body: IndexedStack(
           index: _selectedIndex,

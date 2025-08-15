@@ -6,10 +6,12 @@ import 'package:breaking_project/data/models/userprofile_model.dart';
 import 'package:breaking_project/presentation/screens/edit_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -20,11 +22,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isDarkMode = true;
   late PData userdata;
   late String? uname;
+  late String? uphone;
   late String? uaddress;
   late String? uimage;
 
   @override
   void initState() {
+    print("iiiiiiiiiiiiii");
     BlocProvider.of<ProfileCubit>(context).getUserData('any');
     super.initState();
   }
@@ -32,31 +36,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                Get.to(
-                  () => EditProfileScreen(
-                    name: uname ?? "",
-                    address: uaddress ?? "",
-                    image: uimage ?? "",
-                  ),
-                );
+      // appBar: AppBar(
+      //   actions: [
+      //     IconButton(
+      //         onPressed: () {
+      //           Get.to(
+      //             () => EditProfileScreen(
+      //               name: uname ?? "",
+      //               address: uaddress ?? "",
+      //               image: uimage ?? "",
+      //             ),
+      //           );
 
-                // Get.toNamed('editprofile');
-              },
-              icon: const Icon(
-                Icons.edit,
-                color: Colors.white,
-              ))
-        ],
-        backgroundColor: const Color(0xFF6F4EC9),
-        elevation: 0,
-        //leading: Icon(Icons.arrow_back_ios, color: Colors.white),
-        title: const Text('Profile', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-      ),
+      //           // Get.toNamed('editprofile');
+      //         },
+      //         icon: const Icon(
+      //           Icons.edit,
+      //           color: Colors.white,
+      //         ))
+      //   ],
+      //   backgroundColor: const Color(0xFF6F4EC9),
+      //   elevation: 0,
+      //   //leading: Icon(Icons.arrow_back_ios, color: Colors.white),
+      //   title: const Text('Profile', style: TextStyle(color: Colors.white)),
+      //   centerTitle: true,
+      // ),
       body: buildprofileWidget(),
     );
   }
@@ -68,6 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         userdata = (state).userdata;
         uname = userdata.name;
         uaddress = userdata.address;
+        uphone = userdata.phone;
         uimage =
             userdata.image!.replaceFirst('127.0.0.1', AppConstants.baseaddress);
         print(uname);
@@ -83,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget showloadingindicator() {
     return const Center(
         child: CircularProgressIndicator(
-      color: Colors.blueAccent,
+      color: Colors.teal,
     ));
   }
 
@@ -92,50 +97,103 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           Container(
-            //color: Color(0xFF6F4EC9),
-            padding: const EdgeInsets.only(top: 20, bottom: 40),
-            child: Column(
+            child: Stack(
               children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: userdata.image!.isNotEmpty
-                      ? NetworkImage(
-                          userdata.image!.replaceFirst(
-                              '127.0.0.1', AppConstants.baseaddress),
-                        )
-                      : const AssetImage('assets/images/jpg/hamdan.jpg'),
-                ),
-                const SizedBox(height: 10),
-                // userdata.name!.contains('null')
-                uname.isNull
-                    ? const Text("User Name",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold))
-                    : Text("${userdata.name}",
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold)),
-
-                uaddress.isNull
-                    ? const Text("user address",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                        ))
-                    : Text("${userdata.address}",
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 14)),
-                Text("${userdata.phone}",
-                    style: const TextStyle(color: Colors.black, fontSize: 14)),
+                Image.asset("assets/images/jpg/profile.jpg"),
+                Padding(
+                  padding: const EdgeInsets.only(top: 40),
+                  child: Column(
+                    children: [
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: Row(
+                            children: [
+                              Text(
+                                "حسابي",
+                                style: TextStyle(
+                                  fontFamily: "Cairo",
+                                  fontSize: 20,
+                                  // fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          // CircleAvatar(
+                          //   radius: 35,
+                          //   backgroundImage: userdata.image!.isNotEmpty
+                          //       ? NetworkImage(
+                          //           userdata.image!.replaceFirst(
+                          //               '127.0.0.1', AppConstants.baseaddress),
+                          //         )
+                          //       : const AssetImage(
+                          //           'assets/images/jpg/hamdan.jpg'),
+                          // ),
+                          userdata.image != null && userdata.image!.isNotEmpty
+                              ? CircleAvatar(
+                                  radius: 35,
+                                  backgroundImage: NetworkImage(
+                                    userdata.image!.replaceFirst(
+                                        '127.0.0.1', AppConstants.baseaddress),
+                                  ),
+                                )
+                              : Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: CircleAvatar(
+                                    radius: 35,
+                                    backgroundColor: Colors.grey[300],
+                                  ),
+                                ),
+                          SizedBox(height: 10),
+                          // userdata.name!.contains('null')
+                          uname.isNull
+                              ? const Text("Verified User",
+                                  style: TextStyle(
+                                      fontFamily: "Cairo",
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold))
+                              : Text("${userdata.name}",
+                                  style: const TextStyle(
+                                      fontFamily: "Cairo",
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      uaddress.isNull
+                          ? const Text("user address",
+                              style: TextStyle(
+                                fontFamily: "Cairo",
+                                color: Colors.black,
+                                fontSize: 12,
+                              ))
+                          : Text("${userdata.address}",
+                              style: const TextStyle(
+                                  fontFamily: "Cairo",
+                                  color: Colors.grey,
+                                  fontSize: 14)),
+                      Text("+${userdata.phone}",
+                          style: const TextStyle(
+                              fontFamily: "Cairo",
+                              color: Colors.grey,
+                              fontSize: 14)),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
-          sectionTitle("GENERAL"),
-          settingsTile(Icons.dark_mode, "Dark Mode",
+          sectionTitle("عام"),
+          settingsTile(Icons.dark_mode, "الوضع الليلي",
               trailing: Switch(
+                activeColor: Colors.teal,
                 value: isDarkMode,
                 onChanged: (val) {
                   setState(() {
@@ -143,26 +201,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   });
                 },
               )),
-          settingsTile(Icons.lock, "Change Password"),
-          settingsTile(Icons.language, "App Language"),
-          settingsTile(Icons.favorite_border, "Favourite Service"),
-          settingsTile(Icons.star_border, "Rate Us"),
-          sectionTitle("ABOUT APP"),
-          settingsTile(Icons.privacy_tip_outlined, "Privacy Policy"),
-          settingsTile(Icons.article_outlined, "Terms & Conditions"),
-          settingsTile(Icons.help_outline, "Help Support"),
+          settingsTile(
+            Icons.person,
+            "الملف الشخصي",
+            onTap: () {
+              Get.to(
+                () => EditProfileScreen(
+                  name: uname ?? "",
+                  address: uaddress ?? "",
+                  image: uimage ?? "",
+                  phone: uphone ?? "",
+                ),
+              );
+            },
+          ),
+          settingsTile(Icons.language, "لغة التطبيق"),
+          settingsTile(Icons.location_on_outlined, "العناوين"),
+          settingsTile(Icons.favorite_border, "التفضيلات"),
+          settingsTile(Icons.star_border, "قم بتقييمنا"),
+          sectionTitle("حول التطبيق"),
+          settingsTile(Icons.privacy_tip_outlined, "سياسة الخصوصية"),
+          settingsTile(Icons.money, "طرق الدفع"),
+          settingsTile(Icons.article_outlined, "الشروط والأحكام"),
+          settingsTile(
+            Icons.help_outline,
+            "فريق الدعم",
+          ),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ElevatedButton(
               onPressed: () async {
                 Get.defaultDialog(
-                  title: "Loading...",
+                  title: "...جاري التحميل ",
+                  titleStyle: TextStyle(fontFamily: "Cairo"),
                   content: const Column(
                     children: [
-                      CircularProgressIndicator(color: Colors.blueAccent),
+                      CircularProgressIndicator(color: Colors.teal),
                       SizedBox(height: 10),
-                      Text("Please wait..."),
+                      Text(
+                        "الرجاء الانتظار.",
+                        style: TextStyle(fontFamily: "Cairo"),
+                      ),
                     ],
                   ),
                   barrierDismissible: false,
@@ -191,11 +271,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 }
               },
               child: const Text(
-                "Log out",
-                style: TextStyle(color: Colors.white, fontSize: 16),
+                "تسجيل الخروج",
+                style: TextStyle(
+                    color: Colors.white, fontSize: 16, fontFamily: "Cairo"),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6F4EC9),
+                backgroundColor: Colors.redAccent,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -203,7 +284,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
+          Text(
+            "version 1.45(3)",
+            style: TextStyle(color: Colors.grey),
+          ),
+          SizedBox(
+            height: 24.h,
+          )
         ],
       ),
     );
@@ -211,20 +299,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 Widget sectionTitle(String title) {
-  return Container(
-    width: double.infinity,
-    color: Colors.grey.shade100,
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    child: Text(title,
-        style: const TextStyle(
-            fontSize: 12, color: Colors.grey, fontWeight: FontWeight.bold)),
+  return Directionality(
+    textDirection: TextDirection.rtl,
+    child: Container(
+      width: double.infinity,
+      color: Colors.white30,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Text(title,
+          style: const TextStyle(
+              fontFamily: "Cairo",
+              fontSize: 12,
+              color: Colors.grey,
+              fontWeight: FontWeight.bold)),
+    ),
   );
 }
 
-Widget settingsTile(IconData icon, String title, {Widget? trailing}) {
-  return ListTile(
-    leading: Icon(icon, color: Colors.black),
-    title: Text(title),
-    trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16),
+Widget settingsTile(IconData icon, String title,
+    {Widget? trailing, void Function()? onTap}) {
+  return Directionality(
+    textDirection: TextDirection.rtl,
+    child: ListTile(
+      onTap: onTap,
+      leading: Icon(icon, color: Colors.black),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontFamily: "Cairo",
+        ),
+      ),
+      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16),
+    ),
   );
 }

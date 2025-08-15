@@ -91,7 +91,7 @@ class _MapScreenState extends State<MapScreen> {
           children: [
             TileLayer(
               urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-              userAgentPackageName: 'com.example.app',
+              userAgentPackageName: 'com.repairo.mapapp',
             ),
             // MarkerLayer(
             //   markers: [
@@ -150,7 +150,7 @@ class _MapScreenState extends State<MapScreen> {
                         },
                         icon: Icon(
                           Icons.my_location_rounded,
-                          color: Colors.deepPurpleAccent,
+                          color: Colors.teal,
                           size: 26,
                         ),
                       ),
@@ -162,10 +162,11 @@ class _MapScreenState extends State<MapScreen> {
                   Expanded(
                     flex: 6,
                     child: TextField(
-                      cursorColor: Colors.deepPurple,
+                      cursorColor: Colors.teal,
                       textDirection: TextDirection.rtl,
                       decoration: InputDecoration(
-                        hintStyle: TextStyle(color: Colors.grey),
+                        hintStyle:
+                            TextStyle(color: Colors.grey, fontFamily: "Cairo"),
                         filled: true,
                         fillColor: Colors.white,
                         hintText: "ابحث عن مهني  ...",
@@ -193,15 +194,17 @@ class _MapScreenState extends State<MapScreen> {
                   },
                   child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.teal,
                           borderRadius: BorderRadius.all(Radius.circular(10))),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 8),
                         child: Text(
                           "ابحث هنا ",
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 17),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontFamily: "Cairo"),
                         ),
                       )),
                 ),
@@ -216,61 +219,61 @@ class _MapScreenState extends State<MapScreen> {
             child: Icon(
               Icons.person_pin_circle_outlined,
               size: 40,
-              color: Colors.deepPurpleAccent,
+              color: Colors.teal,
             ),
           ),
         ),
-        DraggableScrollableSheet(
-          controller: _controller,
-          initialChildSize: 0.2,
-          minChildSize: 0.1,
-          maxChildSize: 0.88,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                // borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    //blurRadius: 10,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: Column(children: [
-                Center(
-                  child: SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: widgetsize < 0.8
-                          ? Lottie.asset('assets/images/lottie/swipeup.json',
-                              fit: BoxFit.cover)
-                          : Icon(Icons.keyboard_arrow_down_sharp)),
-                ),
-                Center(
-                    child: Text(
-                  "المهنيين في المنطقة المختارة",
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                )),
-                Expanded(
-                  child: ListView.builder(
-                    clipBehavior: Clip.hardEdge,
-                    // physics: NeverScrollableScrollPhysics(),
-                    // shrinkWrap: true,
-                    controller: scrollController,
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text("المهني رقم ${index + 1}"),
-                      );
-                    },
-                  ),
-                ),
-              ]),
-            );
-          },
-        ),
+        // DraggableScrollableSheet(
+        //   controller: _controller,
+        //   initialChildSize: 0.2,
+        //   minChildSize: 0.1,
+        //   maxChildSize: 0.88,
+        //   builder: (context, scrollController) {
+        //     return Container(
+        //       decoration: BoxDecoration(
+        //         color: Colors.white,
+        //         // borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        //         boxShadow: [
+        //           BoxShadow(
+        //             color: Colors.black26,
+        //             //blurRadius: 10,
+        //             spreadRadius: 2,
+        //           ),
+        //         ],
+        //       ),
+        //       child: Column(children: [
+        //         Center(
+        //           child: SizedBox(
+        //               width: 30,
+        //               height: 30,
+        //               child: widgetsize < 0.8
+        //                   ? Lottie.asset('assets/images/lottie/swipeup.json',
+        //                       fit: BoxFit.cover)
+        //                   : Icon(Icons.keyboard_arrow_down_sharp)),
+        //         ),
+        //         Center(
+        //             child: Text(
+        //           "المهنيين في المنطقة المختارة",
+        //           style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+        //         )),
+        //         Expanded(
+        //           child: ListView.builder(
+        //             clipBehavior: Clip.hardEdge,
+        //             // physics: NeverScrollableScrollPhysics(),
+        //             // shrinkWrap: true,
+        //             controller: scrollController,
+        //             itemCount: 10,
+        //             itemBuilder: (context, index) {
+        //               return ListTile(
+        //                 title: Text("المهني رقم ${index + 1}"),
+        //               );
+        //             },
+        //           ),
+        //         ),
+        //       ]),
+        //     );
+        //   },
+        // ),
       ]),
     );
   }

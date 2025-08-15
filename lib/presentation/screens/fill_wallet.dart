@@ -78,12 +78,16 @@ class _FillWalletState extends State<FillWallet> {
           listener: (context, state) {
             if (state is AllbanksLoading) {
               Get.defaultDialog(
-                title: "Loading...",
+                title: "...جاري التحميل ",
+                titleStyle: TextStyle(fontFamily: "Cairo"),
                 content: const Column(
                   children: [
-                    CircularProgressIndicator(color: Colors.blueAccent),
+                    CircularProgressIndicator(color: Colors.teal),
                     SizedBox(height: 10),
-                    Text("Please wait..."),
+                    Text(
+                      "الرجاء الانتظار.",
+                      style: TextStyle(fontFamily: "Cairo"),
+                    ),
                   ],
                 ),
                 barrierDismissible: false,
@@ -107,12 +111,16 @@ class _FillWalletState extends State<FillWallet> {
           listener: (context, state) {
             if (state is WalletTopupLoading) {
               Get.defaultDialog(
-                title: "Loading...",
+                title: "...جاري التحميل ",
+                titleStyle: TextStyle(fontFamily: "Cairo"),
                 content: const Column(
                   children: [
-                    CircularProgressIndicator(color: Colors.blueAccent),
+                    CircularProgressIndicator(color: Colors.teal),
                     SizedBox(height: 10),
-                    Text("Please wait..."),
+                    Text(
+                      "الرجاء الانتظار.",
+                      style: TextStyle(fontFamily: "Cairo"),
+                    ),
                   ],
                 ),
                 barrierDismissible: false,

@@ -3,10 +3,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class VerificationWebservices {
-  Future<Map<String, dynamic>> verifyNumber(String phone, String code) async {
+  Future<Map<String, dynamic>> verifyNumber(
+      String phone, String code, String fcm) async {
+    print("0$phone");
     final response = await http.post(
       Uri.parse('${AppConstants.baseUrl}/user/authentication/check-code'),
-      body: {'phone': phone, 'code': code},
+      body: {'phone': phone, 'code': code, 'fcm_token': fcm},
     );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

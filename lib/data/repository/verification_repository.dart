@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class VerificationRepository {
   final VerificationWebservices verificationWebservices;
   VerificationRepository(this.verificationWebservices);
-  Future<User> verifyNumber(String phone, String code) async {
-    final data = await verificationWebservices.verifyNumber(phone, code);
+  Future<User> verifyNumber(String phone, String code, String fcm) async {
+    final data = await verificationWebservices.verifyNumber(phone, code, fcm);
     final token = data['data']['access_token'];
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('auth_token', token);

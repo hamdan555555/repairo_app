@@ -1,16 +1,19 @@
-import 'package:breaking_project/app_router.dart';
+import 'package:breaking_project/business_logic/CancelOrderCubit/cancel_order_cubit.dart';
 import 'package:breaking_project/business_logic/InvoiceCubit/invoice_cubit.dart';
 import 'package:breaking_project/business_logic/PayInvoiceCubit/pay_invoice_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_states.dart';
 import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:breaking_project/data/repository/cancel_order_repository.dart';
 import 'package:breaking_project/data/repository/invoice_repository.dart';
 import 'package:breaking_project/data/repository/pay_invoice_repository.dart';
 import 'package:breaking_project/data/repository/technician_data_repository.dart';
+import 'package:breaking_project/data/web_services/cancel_order_webservice.dart';
 import 'package:breaking_project/data/web_services/invoice_web_services.dart';
 import 'package:breaking_project/data/web_services/pay_invoice_webservices.dart';
 import 'package:breaking_project/data/web_services/technician_data_webservices.dart';
+import 'package:breaking_project/presentation/screens/cancellation_reasons.dart';
 import 'package:breaking_project/presentation/screens/invoice_details.dart';
 import 'package:breaking_project/presentation/screens/tech_data.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
@@ -154,16 +157,36 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                           text: "Show Invoice")),
                   Visibility(
                       visible: requestdetails.status != "ended" &&
-                          requestdetails.status != "ongoing",
+                          requestdetails.status != "ongoing" &&
+                          requestdetails.status != "canceled",
                       child: CustomElevatedButton(
-                          onpressed: () {}, text: "Cancel Order"))
+                          onpressed: () {
+                            print("dfdfdfdfdfdfd");
+
+                            print("being pressed");
+                            Get.to(() => BlocProvider(
+                                  create: (context) => CancelOrderCubit(
+                                      CancelOrderRepository(
+                                          CancelOrderWebservice())),
+                                  child: CancelOrderScreen(
+                                    id: requestdetails.id!,
+                                  ),
+                                ));
+                            // Get.to(CancelOrderScreen(
+                            //   id: requestdetails.id,
+                            // ));
+                          },
+                          text: "Cancel Order"))
                 ],
               ),
             );
           } else if (state is RequestDetailsLoading) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+                child: CircularProgressIndicator(
+              color: Colors.teal,
+            ));
           }
-          return Center(child: Text("Error Happenep"));
+          return Center(child: Text("Error Happened"));
         },
       ),
     );

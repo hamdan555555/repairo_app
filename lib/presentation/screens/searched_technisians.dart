@@ -42,7 +42,7 @@ class SearchedTechs extends StatelessWidget {
   Widget showloadingindicator() {
     return const Center(
         child: CircularProgressIndicator(
-      color: const Color.fromRGBO(95, 50, 20, 1),
+      color: Colors.teal,
     ));
   }
 
@@ -58,9 +58,6 @@ class SearchedTechs extends StatelessWidget {
     );
   }
 }
-
-
-
 
 // class SearchedTechnisians extends StatefulWidget {
 //   final String word;

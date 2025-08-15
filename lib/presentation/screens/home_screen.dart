@@ -2,16 +2,22 @@ import 'dart:async';
 import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_cubit.dart';
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcategories_states.dart';
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
+import 'package:breaking_project/business_logic/AllWalletRequestsCubit/all_wallet_requests_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
+import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/banner_image_model.dart';
-import 'package:breaking_project/data/models/user_requests_model.dart';
+import 'package:breaking_project/data/repository/all_wallet_requests_repository.dart';
 import 'package:breaking_project/data/repository/bank_repository.dart';
+import 'package:breaking_project/data/repository/profile_repository.dart';
 import 'package:breaking_project/data/repository/user_requests_repository.dart';
+import 'package:breaking_project/data/web_services/all_wallet_requests_webservice.dart';
 import 'package:breaking_project/data/web_services/banks_webservices.dart';
+import 'package:breaking_project/data/web_services/profile_webservices.dart';
 import 'package:breaking_project/data/web_services/user_requests_webservices.dart';
+import 'package:breaking_project/presentation/screens/all_wallet_requests_screen.dart';
 import 'package:breaking_project/presentation/screens/banks.dart';
 import 'package:breaking_project/presentation/screens/user_requests.dart';
 import 'package:breaking_project/presentation/screens/wallet.dart';
@@ -222,15 +228,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     scaffoldKey.currentState?.closeDrawer();
 
                     Future.delayed(Duration(seconds: 1), () {
-                      Get.to(WalletPage());
+                      //  Get.to(WalletPage());
                       // Get.toNamed('providers');
-                      // Get.to(() => BlocProvider(
-                      //       create: (context) => UserRequestsCubit(
-                      //           UserRequestsRepository(
-                      //               userRequestsWebservices:
-                      //                   UserRequestsWebservices())),
-                      //       child: UserRequests(),
-                      //     ));
+                      Get.to(
+                        () => BlocProvider(
+                          create: (_) => ProfileCubit(
+                              ProfileRepository(ProfileWebservices())),
+                          child: WalletPage(),
+                        ),
+                      );
                     });
                   },
                   child: Row(
@@ -378,13 +384,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           right: 0,
                           child: GestureDetector(
                             onTap: () {
-                              Get.to(() => BlocProvider(
-                                    create: (context) => UserRequestsCubit(
-                                        UserRequestsRepository(
-                                            userRequestsWebservices:
-                                                UserRequestsWebservices())),
-                                    child: UserRequests(),
+                              Get.to(() => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(
+                                        create: (context) => AllWalletRequestsCubit(
+                                            AllWalletRequestsRepository(
+                                                allWalletRequestsWebservice:
+                                                    AllWalletRequestsWebservice())),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => AllbanksCubit(
+                                            BanksRepository(
+                                                bankWebservices:
+                                                    BankWebservices())),
+                                      ),
+                                    ],
+                                    child: AllWalletRequestsScreen(),
                                   ));
+                              // Get.to(ShipmentRequestsScreen());
                             },
                             child: CircleAvatar(
                               child: SvgPicture.asset(
@@ -608,7 +625,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget showloadingindicator() {
     return const Center(
         child: CircularProgressIndicator(
-      color: const Color.fromRGBO(95, 96, 185, 1),
+      color: Colors.teal,
     ));
   }
 

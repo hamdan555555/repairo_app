@@ -9,8 +9,10 @@ class ProfileCubit extends Cubit<ProfileStates> {
   ProfileCubit(this.profileRepository) : super(ProfileInitial());
 
   void getUserData(String token) async {
+    print("000000000000000");
     emit(ProfileLoading());
     try {
+      print("ddddddddddddddd");
       final prefs = await SharedPreferences.getInstance();
       var tokenn = prefs.getString('auth_token');
 

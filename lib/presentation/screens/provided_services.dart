@@ -104,7 +104,10 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
               )
             ]);
           } else if (state is ProvidedServicesLoading) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+                child: CircularProgressIndicator(
+              color: Colors.teal,
+            ));
           } else if (state is ProvidedServicesError) {
             return Center(child: Text("Error Happened"));
           }
