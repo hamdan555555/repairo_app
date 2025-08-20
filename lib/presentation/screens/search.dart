@@ -1,7 +1,14 @@
 import 'dart:async';
 
+import 'package:breaking_project/business_logic/CategoriesTreeCubit/categories_tree_cubit.dart';
+import 'package:breaking_project/business_logic/CategoriesTreeCubit/categories_tree_states.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
+import 'package:breaking_project/business_logic/SubCategoryCubit/subcategory_cubit.dart';
+import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:breaking_project/data/repository/subcategory_repository.dart';
+import 'package:breaking_project/data/web_services/subcategories_webservice.dart';
+import 'package:breaking_project/presentation/screens/subcategories.dart';
 import 'package:flutter/material.dart';
 import 'package:breaking_project/presentation/screens/searched_services.dart';
 import 'package:breaking_project/presentation/screens/searched_technisians.dart';
@@ -9,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:line_icons/line_icon.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -43,21 +51,31 @@ class _SearchScreenState extends State<SearchScreen> {
     {"name": "التنظيف العميق", "icon": Icons.cleaning_services_outlined},
   ];
 
-  Widget serviceCard(String imagePath, String title) {
-    return Container(
-      width: 100,
-      margin: const EdgeInsets.only(right: 8),
-      child: Column(
-        children: [
-          Image.asset(imagePath, height: 60),
-          const SizedBox(height: 5),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-                fontSize: 12, fontFamily: "Cairo", fontWeight: FontWeight.bold),
-          ),
-        ],
+  Widget CategoryCard(String imagePath, String title, void Function()? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        margin: const EdgeInsets.only(right: 0),
+        child: Column(
+          children: [
+            Image.network(
+              imagePath.replaceFirst('127.0.0.1', AppConstants.baseaddress),
+              fit: BoxFit.cover,
+              height: 50,
+            ),
+            //Image.asset(imagePath, height: 50),
+            const SizedBox(height: 5),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontFamily: "Cairo",
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -70,6 +88,7 @@ class _SearchScreenState extends State<SearchScreen> {
         currentHintIndex = (currentHintIndex + 1) % hints.length;
       });
     });
+    BlocProvider.of<CategoriesTreeCubit>(context).getCategoriesTree();
     searchController = TextEditingController(text: '');
     final cubit = context.read<HomeCubit>();
     techcount = cubit.techssearchresult.length;
@@ -106,14 +125,19 @@ class _SearchScreenState extends State<SearchScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Row(
                     children: [
-                      CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.grey,
-                          child: Icon(
-                            Icons.arrow_back_ios_new_sharp,
-                            size: 16,
-                            color: Colors.white,
-                          )),
+                      GestureDetector(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.grey,
+                            child: Icon(
+                              Icons.arrow_back_ios_new_sharp,
+                              size: 16,
+                              color: Colors.white,
+                            )),
+                      ),
                       SizedBox(
                         width: 8.w,
                       ),
@@ -251,22 +275,94 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              SizedBox(
-                                height: 120, // ارتفاع الـ slider
-                                child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: [
-                                    serviceCard(
-                                        "assets/images/png/plumbing.png",
-                                        "السباكة"),
-                                    serviceCard("assets/images/png/light.png",
-                                        "الكهربائيات"),
-                                    serviceCard(
-                                        "assets/images/png/sofa.png", "الأثاث"),
-                                    serviceCard("assets/images/png/cleaner.png",
-                                        "تنظيف عام"),
-                                  ],
-                                ),
+                              BlocBuilder<CategoriesTreeCubit,
+                                  CategoriesTreeStates>(
+                                builder: (context, state) {
+                                  if (state is CategoriesTreeLoaded) {
+                                    return Container(
+                                      height: 90,
+                                      color: Colors.white,
+                                      child: Center(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8),
+                                          child: ListView.builder(
+                                            itemCount:
+                                                state.categoriesTree.length,
+                                            itemBuilder: (context, index) {
+                                              String type = state
+                                                          .categoriesTree[index]
+                                                          .displayName ==
+                                                      "أدوات سباكة"
+                                                  ? "plumbing"
+                                                  : state.categoriesTree[index]
+                                                              .displayName ==
+                                                          "أدوات يدوية"
+                                                      ? "handy"
+                                                      : state
+                                                                  .categoriesTree[
+                                                                      index]
+                                                                  .displayName ==
+                                                              "أدوات منزلية"
+                                                          ? "home"
+                                                          : state
+                                                                      .categoriesTree[
+                                                                          index]
+                                                                      .displayName ==
+                                                                  "أدوات كهربائية"
+                                                              ? "electricity"
+                                                              : state.categoriesTree[index]
+                                                                          .displayName ==
+                                                                      "أثاث"
+                                                                  ? "furniture"
+                                                                  : "";
+                                              return CategoryCard(
+                                                "http://127.0.0.1:8000/storage/images/defaults/$type.png",
+                                                state.categoriesTree[index]
+                                                    .displayName!,
+                                                () {
+                                                  Get.to(
+                                                    () => BlocProvider(
+                                                      create: (context) => SubcategoryCubit(
+                                                          SubcategoryRepository(
+                                                              subcategoriesWebservice:
+                                                                  SubcategoriesWebservice())),
+                                                      child: Subcategories(
+                                                        id: state
+                                                            .categoriesTree[
+                                                                index]
+                                                            .id
+                                                            .toString(),
+                                                        catname: state
+                                                            .categoriesTree[
+                                                                index]
+                                                            .displayName!,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            scrollDirection: Axis.horizontal,
+                                            shrinkWrap: true,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return Shimmer.fromColors(
+                                    baseColor: Colors.grey.shade300,
+                                    highlightColor: Colors.grey.shade100,
+                                    child: Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),

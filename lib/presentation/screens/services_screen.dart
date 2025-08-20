@@ -51,111 +51,112 @@ class ServicesScreenStatee extends State<ServicesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
-        child: Row(
-          children: [
-            Expanded(
-                child: CustomElevatedButton(
-                    active: selectedServices.isNotEmpty,
-                    onpressed: selectedServices.isNotEmpty
-                        ? () {
-                            // print(selectedServices);
-                            // Get.to(() => MultiBlocProvider(
-                            //       providers: [
-                            //         BlocProvider(
-                            //           create: (context) => HomeCubit(
-                            //             HomeRepository(
-                            //                 homeWebservices: HomeWebservices()),
-                            //           ),
-                            //           // child: FilteredTechniciansScreen(
-                            //           //   selectedservices: selectedServices,
-                            //           // ),
-                            //         ),
-                            //         BlocProvider(
-                            //           create: (context) => ProvidedServicesCubit(
-                            //               ProvidedServicesRepository(
-                            //                   ProvidedServicesWebservices())),
-                            //         ),
-                            //       ],
-                            //       child: FilteredTechniciansScreen(
-                            //         selectedservices: selectedServices,
-                            //       ),
-                            //     ));
-                          }
-                        : () {},
-                    text: 'order')),
-            SizedBox(
-              width: 10,
-            ),
-            Expanded(
-                child: CustomElevatedButton(
-                    active: selectedServices.isNotEmpty,
-                    onpressed: selectedServices.isNotEmpty
-                        ? () {
-                            print(selectedServices);
-                            Get.to(() => MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider(
-                                      create: (context) => HomeCubit(
-                                        HomeRepository(
-                                            homeWebservices: HomeWebservices()),
-                                      ),
-                                      // child: FilteredTechniciansScreen(
-                                      //   selectedservices: selectedServices,
-                                      // ),
-                                    ),
-                                    BlocProvider(
-                                      create: (context) => ProvidedServicesCubit(
-                                          ProvidedServicesRepository(
-                                              ProvidedServicesWebservices())),
-                                    ),
-                                  ],
-                                  child: FilteredTechniciansScreen(
-                                    selectedservices: selectedServices,
-                                  ),
-                                ));
-                          }
-                        : () {},
-                    text: 'Next')
-                // : SizedBox(
-                //     width: 335,
-                //     height: 45,
-                //     child: ElevatedButton(
-                //       style: ElevatedButton.styleFrom(
-                //         backgroundColor: Colors.grey,
-                //         shape: RoundedRectangleBorder(
-                //           borderRadius: BorderRadius.circular(12),
-                //         ),
-                //       ),
-                //       onPressed: () {},
-                //       child: Text(
-                //         'Next',
-                //         style: const TextStyle(color: Colors.white),
-                //       ),
-                //     ),
-                //   ),
-                ),
-          ],
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        // bottomNavigationBar: Padding(
+        //   padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
+        //   child: Row(
+        //     children: [
+        //       Expanded(
+        //           child: CustomElevatedButton(
+        //               active: selectedServices.isNotEmpty,
+        //               onpressed: selectedServices.isNotEmpty
+        //                   ? () {
+        //                       // print(selectedServices);
+        //                       // Get.to(() => MultiBlocProvider(
+        //                       //       providers: [
+        //                       //         BlocProvider(
+        //                       //           create: (context) => HomeCubit(
+        //                       //             HomeRepository(
+        //                       //                 homeWebservices: HomeWebservices()),
+        //                       //           ),
+        //                       //           // child: FilteredTechniciansScreen(
+        //                       //           //   selectedservices: selectedServices,
+        //                       //           // ),
+        //                       //         ),
+        //                       //         BlocProvider(
+        //                       //           create: (context) => ProvidedServicesCubit(
+        //                       //               ProvidedServicesRepository(
+        //                       //                   ProvidedServicesWebservices())),
+        //                       //         ),
+        //                       //       ],
+        //                       //       child: FilteredTechniciansScreen(
+        //                       //         selectedservices: selectedServices,
+        //                       //       ),
+        //                       //     ));
+        //                     }
+        //                   : () {},
+        //               text: 'order')),
+        //       SizedBox(
+        //         width: 10,
+        //       ),
+        //       Expanded(
+        //           child: CustomElevatedButton(
+        //               active: selectedServices.isNotEmpty,
+        //               onpressed: selectedServices.isNotEmpty
+        //                   ? () {
+        //                       print(selectedServices);
+        //                       Get.to(() => MultiBlocProvider(
+        //                             providers: [
+        //                               BlocProvider(
+        //                                 create: (context) => HomeCubit(
+        //                                   HomeRepository(
+        //                                       homeWebservices: HomeWebservices()),
+        //                                 ),
+        //                                 // child: FilteredTechniciansScreen(
+        //                                 //   selectedservices: selectedServices,
+        //                                 // ),
+        //                               ),
+        //                               BlocProvider(
+        //                                 create: (context) => ProvidedServicesCubit(
+        //                                     ProvidedServicesRepository(
+        //                                         ProvidedServicesWebservices())),
+        //                               ),
+        //                             ],
+        //                             child: FilteredTechniciansScreen(
+        //                               selectedservices: selectedServices,
+        //                             ),
+        //                           ));
+        //                     }
+        //                   : () {},
+        //               text: 'Next')
+        //           // : SizedBox(
+        //           //     width: 335,
+        //           //     height: 45,
+        //           //     child: ElevatedButton(
+        //           //       style: ElevatedButton.styleFrom(
+        //           //         backgroundColor: Colors.grey,
+        //           //         shape: RoundedRectangleBorder(
+        //           //           borderRadius: BorderRadius.circular(12),
+        //           //         ),
+        //           //       ),
+        //           //       onPressed: () {},
+        //           //       child: Text(
+        //           //         'Next',
+        //           //         style: const TextStyle(color: Colors.white),
+        //           //       ),
+        //           //     ),
+        //           //   ),
+        //           ),
+        //     ],
+        //   ),
+        // ),
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Get.back();
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+              )),
+          title: Text(
+            "Services",
+            style: TextStyle(fontFamily: "Cairo"),
+          ),
         ),
+        body: Container(color: Colors.white10, child: buildBlocWidget()),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.white,
-            )),
-        title: Text(
-          "Services",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: Container(color: Colors.white10, child: buildBlocWidget()),
     );
   }
 

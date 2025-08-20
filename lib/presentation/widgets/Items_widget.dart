@@ -21,7 +21,10 @@ class ItemWidget extends StatelessWidget {
           () => BlocProvider(
             create: (context) => SubcategoryCubit(SubcategoryRepository(
                 subcategoriesWebservice: SubcategoriesWebservice())),
-            child: Subcategories(id: item.id.toString()),
+            child: Subcategories(
+              id: item.id.toString(),
+              catname: item.displayName.toString(),
+            ),
           ),
         );
       },

@@ -32,6 +32,10 @@ class CreatingOrderCubit extends Cubit<CreatingOrderStates> {
       final prefs = await SharedPreferences.getInstance();
       String lat = prefs.getString('lat')!;
       String lng = prefs.getString('lng')!;
+      print("///////////////////////////////");
+      print(lat);
+      print("///////////////////////////////");
+
       await creatingOrderRepository.createOrder(
           date: date,
           details: details,

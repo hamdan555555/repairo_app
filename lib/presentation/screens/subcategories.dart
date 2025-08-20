@@ -8,7 +8,9 @@ import 'package:get/get.dart';
 
 class Subcategories extends StatefulWidget {
   final String id;
-  Subcategories({Key? key, required this.id}) : super(key: key);
+  final String catname;
+  Subcategories({Key? key, required this.id, required this.catname})
+      : super(key: key);
   @override
   State<Subcategories> createState() => SubcategoriesStatee();
 }
@@ -29,16 +31,25 @@ class SubcategoriesStatee extends State<Subcategories> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(Icons.arrow_back_ios_new)),
-        title: Text("Sub Categories"),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Get.back();
+              },
+              icon: Icon(Icons.arrow_back_ios_new)),
+          title: Text(
+            widget.catname,
+            style: TextStyle(fontFamily: "Cairo", fontWeight: FontWeight.bold),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Container(color: Colors.white10, child: buildBlocWidget()),
+        ),
       ),
-      body: Container(color: Colors.white10, child: buildBlocWidget()),
     );
   }
 
@@ -68,7 +79,13 @@ class SubcategoriesStatee extends State<Subcategories> {
   Widget builditemsList() {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ListView.builder(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 4,
+          ),
           itemCount: context.read<SubcategoryCubit>().subcategories.length,
           itemBuilder: (ctx, index) {
             return SubcateroriesWidget(
@@ -76,24 +93,6 @@ class SubcategoriesStatee extends State<Subcategories> {
                   context.read<SubcategoryCubit>().subcategories[index],
             );
           },
-        )
-
-        //  GridView.builder(
-        //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        //     crossAxisCount: 2,
-        //     childAspectRatio: 0.8,
-        //     crossAxisSpacing: 16,
-        //     mainAxisSpacing: 16,
-        //   ),
-        //   shrinkWrap: true,
-        //   physics: const NeverScrollableScrollPhysics(),
-        //   itemCount: context.read<SubcategoryCubit>().subcategories.length,
-        //   itemBuilder: (ctx, index) {
-        //     return SubcateroriesWidget(
-        //       subcategory: context.read<SubcategoryCubit>().subcategories[index],
-        //     );
-        //   },
-        // ),
-        );
+        ));
   }
 }

@@ -62,88 +62,67 @@ class _SearchedServState extends State<SearchedServ> {
   }
 
   Widget builditemsList() {
-    return
+    // فرز القائمة أولاً لضمان الترتيب الصحيح
+    searchresult.sort((a, b) {
+      if (a.type == "category" && b.type != "category") return -1;
+      if (a.type != "category" && b.type == "category") return 1;
 
-        //  SingleChildScrollView(
-        //   child: Column(children: [
+      if (a.type == "sub_category" && b.type != "sub_category") return -1;
+      if (a.type != "sub_category" && b.type == "sub_category") return 1;
 
-        ListView.builder(
+      if (a.type == "service" && b.type != "service") return -1;
+      if (a.type != "service" && b.type == "service") return 1;
+
+      return 0;
+    });
+
+    // إنشاء القائمة الجديدة مع العناوين
+    List<dynamic> combinedList = [];
+    String? lastType;
+
+    for (var item in searchresult) {
+      // إضافة عنوان جديد إذا كان نوع العنصر مختلف عن السابق
+      if (item.type != lastType) {
+        combinedList.add(item.type); // هنا نضيف العنوان كـ String
+        lastType = item.type;
+      }
+      combinedList.add(item); // ثم نضيف العنصر نفسه
+    }
+
+    // استخدام ListView.builder على القائمة المدمجة
+    return ListView.builder(
       padding: EdgeInsets.zero,
-
-      // padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      itemCount: searchresult.length,
+      itemCount: combinedList.length,
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (ctx, index) {
-        return SearchingServicesWidget(
-          onToggle: toggleServiceSelection,
-          indexx: index,
-          services: searchresult[index],
-        );
+        final item = combinedList[index];
+
+        if (item is String) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+            child: Text(
+              item == "category"
+                  ? "الفئات"
+                  : item == "sub_category"
+                      ? " الفئات الفرعية"
+                      : "الخدمات",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Cairo",
+                color: Colors.grey,
+              ),
+            ),
+          );
+        } else {
+          return SearchingServicesWidget(
+            onToggle: toggleServiceSelection,
+            indexx: index,
+            services: item as RSearchedServiceData,
+          );
+        }
       },
     );
-    // Visibility(
-    //   visible: searchresult.isNotEmpty,
-    //   child: Padding(
-    //     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-    //     child: Row(
-    //       children: [
-    //         Expanded(
-    //             child: CustomElevatedButton(
-    //                 active: selectedServices.isNotEmpty,
-    //                 onpressed: selectedServices.isNotEmpty ? () {} : () {},
-    //                 text: 'order now')),
-    //         SizedBox(
-    //           width: 10,
-    //         ),
-    //         Expanded(
-    //           child: BlocConsumer<HomeCubit, HomeStates>(
-    //             listener: (context, state) {
-    //               // TODO: implement listener
-    //             },
-    //             builder: (context, state) {
-    //               return CustomElevatedButton(
-    //                   active: selectedServices.isNotEmpty,
-    //                   onpressed: selectedServices.isNotEmpty
-    //                       ? () {
-    //                           print(selectedServices);
-    //                           Get.to(() => MultiBlocProvider(
-    //                                 providers: [
-    //                                   BlocProvider(
-    //                                     create: (context) => HomeCubit(
-    //                                       HomeRepository(
-    //                                           homeWebservices:
-    //                                               HomeWebservices()),
-    //                                     ),
-    //                                   ),
-    //                                   BlocProvider(
-    //                                     create: (context) =>
-    //                                         ProvidedServicesCubit(
-    //                                             ProvidedServicesRepository(
-    //                                                 ProvidedServicesWebservices())),
-    //                                   ),
-    //                                 ],
-    //                                 child: FilteredTechniciansScreen(
-    //                                   selectedservices: selectedServices,
-    //                                 ),
-    //                               ));
-    //                         }
-    //                       : () {},
-    //                   text: 'Next');
-    //             },
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // ),
-    // Visibility(
-    //   visible: searchresult.isNotEmpty,
-    //   child: SizedBox(
-    //     height: 15,
-    //   ),
-    // ),
-    //   ]),
-    // );
   }
 }

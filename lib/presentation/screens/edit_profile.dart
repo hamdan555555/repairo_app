@@ -241,6 +241,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           var body = await response.stream.bytesToString();
 
                           if (response.statusCode == 200) {
+                            final prefs = await SharedPreferences.getInstance();
+
+                            await prefs.setString(
+                                'user_name', "${namecontroller.text}");
                             print(' تم التحديث بنجاح');
                             print(' الرد: $body');
                             Get.back();

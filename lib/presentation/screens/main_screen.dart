@@ -75,7 +75,7 @@ class _MainScreenState extends State<MainScreen> {
 
     _pages = [
       const HomeScreen(),
-      const SearchScreen(),
+      // const SearchScreen(),
       UserRequests(),
       MapScreen(),
       ProfileScreen(),
@@ -143,12 +143,12 @@ class _MainScreenState extends State<MainScreen> {
                     textStyle:
                         TextStyle(fontFamily: "Cairo", color: Colors.teal),
                   ),
-                  GButton(
-                    icon: LineIcons.search,
-                    text: 'البحث',
-                    textStyle:
-                        TextStyle(fontFamily: "Cairo", color: Colors.teal),
-                  ),
+                  // GButton(
+                  //   icon: LineIcons.search,
+                  //   text: 'البحث',
+                  //   textStyle:
+                  //       TextStyle(fontFamily: "Cairo", color: Colors.teal),
+                  // ),
                   GButton(
                     icon: LineIcons.book,
                     text: 'الحجوزات',

@@ -1,15 +1,18 @@
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
 import 'package:breaking_project/business_logic/AllTechniciansCubiit/alltechnisian_cubit.dart';
+import 'package:breaking_project/business_logic/CategoriesTreeCubit/categories_tree_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/VerifyCubit/verification_cubit.dart';
 import 'package:breaking_project/data/repository/categories_repository.dart';
+import 'package:breaking_project/data/repository/categories_tree_repository.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
 import 'package:breaking_project/data/repository/profile_repository.dart';
 import 'package:breaking_project/data/repository/login_repository.dart';
 import 'package:breaking_project/data/repository/technicians_repository.dart';
 import 'package:breaking_project/data/repository/verification_repository.dart';
+import 'package:breaking_project/data/web_services/categories_tree_webservices.dart';
 import 'package:breaking_project/data/web_services/categories_webservices.dart';
 import 'package:breaking_project/data/web_services/home_webservices.dart';
 import 'package:breaking_project/data/web_services/login_webservice.dart';
@@ -72,6 +75,17 @@ class AppRouter {
             providers: [
               BlocProvider<AllcategoriesCubit>(
                 create: (context) => allcategoriesCubit,
+              ),
+              BlocProvider<HomeCubit>(
+                create: (context) => HomeCubit(
+                    HomeRepository(homeWebservices: HomeWebservices()))
+                  ..getBannerImages(''),
+              ),
+              BlocProvider<CategoriesTreeCubit>(
+                create: (context) => CategoriesTreeCubit(
+                    CategoriesTreeRepository(
+                        categoriesTreeWebservices: CategoriesTreeWebservices()))
+                  ..getCategoriesTree(),
               ),
               BlocProvider<HomeCubit>(
                 create: (context) => HomeCubit(
