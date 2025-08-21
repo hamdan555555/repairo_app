@@ -1,13 +1,8 @@
 import 'dart:io';
 import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_states.dart';
-import 'package:breaking_project/business_logic/LoginCubit/login_cubit.dart';
 import 'package:breaking_project/data/repository/creating_order_repository.dart';
-import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CreatingOrderCubit extends Cubit<CreatingOrderStates> {

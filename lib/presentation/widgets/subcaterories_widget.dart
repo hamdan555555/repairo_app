@@ -25,7 +25,11 @@ class SubcateroriesWidget extends StatelessWidget {
             () => BlocProvider(
               create: (context) => ServiceCubit(
                   ServiceRepository(serviceWebservices: ServiceWebservices())),
-              child: ServicesScreen(id: subcategory.id.toString()),
+              child: ServicesScreen(
+                id: subcategory.id.toString(),
+                subname: subcategory.displayName.toString(),
+                videourl: "assets/videos/plumbing.mp4",
+              ),
             ),
           );
         },

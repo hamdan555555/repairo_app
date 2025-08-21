@@ -53,7 +53,11 @@ class _ServicesWidgetState extends State<SearchingServicesWidget> {
               () => BlocProvider(
                 create: (context) => ServiceCubit(ServiceRepository(
                     serviceWebservices: ServiceWebservices())),
-                child: ServicesScreen(id: widget.services.id!),
+                child: ServicesScreen(
+                  id: widget.services.id!,
+                  videourl: "assets/videos/plumbing.mp4",
+                  subname: widget.services.displayName!,
+                ),
               ),
             );
           };
