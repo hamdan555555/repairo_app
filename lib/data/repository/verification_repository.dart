@@ -11,7 +11,7 @@ class VerificationRepository {
     final name = data['data']['name'];
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('auth_token', token);
-    await prefs.setString('user_name', name);
+    await prefs.setString('user_name', name ?? "verified_user");
     return User.fromJson(data);
   }
 }

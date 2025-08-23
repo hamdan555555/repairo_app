@@ -10,6 +10,11 @@ class CartItem {
 class Cart {
   List<CartItem> items = [];
 
+  // في كلاس Cart
+  bool contains(RServiceData service) {
+    return items.any((item) => item.service.id == service.id);
+  }
+
   /// إضافة خدمة أو زيادة كميتها
   void add(RServiceData service) {
     final index = items.indexWhere((item) => item.service.id == service.id);

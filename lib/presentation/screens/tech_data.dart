@@ -194,16 +194,16 @@ class SubcategoriesStatee extends State<TechDataScreen> {
                 //     // professionalName: tech.name ?? '',
                 //     ));
 
-                Get.to(() => BlocProvider(
-                      create: (_) => ProvidedServicesCubit(
-                          ProvidedServicesRepository(
-                              ProvidedServicesWebservices())),
-                      child: ProvidedServicesScreen(
-                        techId: tech.id!,
-                        selectedServices: [],
-                        techname: tech.name!,
-                      ),
-                    ));
+                // Get.to(() => BlocProvider(
+                //       create: (_) => ProvidedServicesCubit(
+                //           ProvidedServicesRepository(
+                //               ProvidedServicesWebservices())),
+                //       child: ProvidedServicesScreen(
+                //         techId: tech.id!,
+                //         selectedServices: [],
+                //         techname: tech.name!,
+                //       ),
+                //     ));
               },
               text: 'view services'),
           Padding(
