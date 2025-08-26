@@ -7,9 +7,9 @@ import 'package:breaking_project/data/models/bank_model.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 
 class FillWallet extends StatefulWidget {
@@ -22,8 +22,6 @@ class FillWallet extends StatefulWidget {
 class _FillWalletState extends State<FillWallet> {
   final TextEditingController amountController = TextEditingController();
   RBankData? selectedBank;
-  DateTime? selectedDateTime;
-
   File? selectedImage;
 
   final ImagePicker _picker = ImagePicker();
@@ -36,34 +34,6 @@ class _FillWalletState extends State<FillWallet> {
     }
   }
 
-  Future<void> pickDateTime() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-
-    if (date != null) {
-      final time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-
-      if (time != null) {
-        setState(() {
-          selectedDateTime = DateTime(
-            date.year,
-            date.month,
-            date.day,
-            time.hour,
-            time.minute,
-          );
-        });
-      }
-    }
-  }
-
   @override
   void initState() {
     BlocProvider.of<AllbanksCubit>(context).getAllbanks();
@@ -72,567 +42,287 @@ class _FillWalletState extends State<FillWallet> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<AllbanksCubit, AllbanksStates>(
-          listener: (context, state) {
-            if (state is AllbanksLoading) {
-              Get.defaultDialog(
-                title: "...جاري التحميل ",
-                titleStyle: TextStyle(fontFamily: "Cairo"),
-                content: const Column(
-                  children: [
-                    CircularProgressIndicator(color: Colors.teal),
-                    SizedBox(height: 10),
-                    Text(
-                      "الرجاء الانتظار.",
-                      style: TextStyle(fontFamily: "Cairo"),
-                    ),
-                  ],
-                ),
-                barrierDismissible: false,
-              );
-            } else {
-              if (Get.isDialogOpen!) {
-                Get.back();
+    return Directionality(
+      textDirection: TextDirection.rtl, // RTL
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<AllbanksCubit, AllbanksStates>(
+            listener: (context, state) {
+              if (state is AllbanksLoading) {
+                _showLoadingDialog("...جاري تحميل البنوك");
+              } else {
+                if (Get.isDialogOpen!) Get.back();
               }
-            }
-            if (state is AllbanksFailed) {
-              Get.snackbar(
-                "Error",
-                state.message,
-                backgroundColor: Colors.redAccent,
-                colorText: Colors.white,
-              );
-            }
-          },
-        ),
-        BlocListener<WalletTopupCubit, WalletTopupStates>(
-          listener: (context, state) {
-            if (state is WalletTopupLoading) {
-              Get.defaultDialog(
-                title: "...جاري التحميل ",
-                titleStyle: TextStyle(fontFamily: "Cairo"),
-                content: const Column(
-                  children: [
-                    CircularProgressIndicator(color: Colors.teal),
-                    SizedBox(height: 10),
-                    Text(
-                      "الرجاء الانتظار.",
-                      style: TextStyle(fontFamily: "Cairo"),
-                    ),
-                  ],
-                ),
-                barrierDismissible: false,
-              );
-            } else if (state is WalletTopupSuccess) {
-              Get.back();
-              Get.defaultDialog(
-                title: '',
-                titlePadding:
-                    EdgeInsets.only(left: 16, right: 16, bottom: 0, top: 0),
-                content: Column(
-                  children: [
-                    Container(
-                        width: 32,
-                        height: 32,
-                        child:
-                            SvgPicture.asset("assets/images/svg/checkc.svg")),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "Your request has been sent",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Color.fromRGBO(71, 71, 71, 1)),
-                    ),
-                  ],
-                ),
-                middleText: "Enter Correct Informations",
-                backgroundColor: Colors.white,
-                middleTextStyle: TextStyle(color: Colors.black),
-                confirm: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 63, right: 63, bottom: 12),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: CustomElevatedButton(
-                        text: 'ok',
-                        onpressed: () {
-                          Get.toNamed("mainscreen");
-                        }),
-                  ),
-                ),
-                barrierDismissible: false,
-              );
-            } else {
-              if (Get.isDialogOpen!) {
-                Get.back();
+              if (state is AllbanksFailed) {
+                Get.snackbar("خطأ", state.message,
+                    backgroundColor: Colors.redAccent, colorText: Colors.white);
               }
-            }
-            if (state is WalletTopupError) {
-              Get.snackbar(
-                "Error charging wallet",
-                state.message,
-                backgroundColor: Colors.redAccent,
-                colorText: Colors.white,
-              );
-            }
-          },
-        ),
-      ],
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.only(top: 84, left: 16, right: 16),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-              width: double.infinity,
+            },
+          ),
+          BlocListener<WalletTopupCubit, WalletTopupStates>(
+            listener: (context, state) {
+              if (state is WalletTopupLoading) {
+                _showLoadingDialog("...جاري إرسال الطلب");
+              } else if (state is WalletTopupSuccess) {
+                if (Get.isDialogOpen!) Get.back();
+                _showSuccessDialog();
+              } else {
+                if (Get.isDialogOpen!) Get.back();
+              }
+              if (state is WalletTopupError) {
+                Get.snackbar("فشل شحن المحفظة", state.message,
+                    backgroundColor: Colors.redAccent, colorText: Colors.white);
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.only(top: 70, left: 16, right: 16),
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
+                  // العنوان
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Get.back();
-                            },
-                            child: Container(
-                                width: 24,
-                                height: 24,
-                                child: Icon(Icons.arrow_back_ios_new_outlined)),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "Charging Information",
-                            style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromRGBO(71, 71, 71, 1)),
-                          ),
-                        ],
+                      GestureDetector(
+                        onTap: () => Get.back(),
+                        child: const Icon(Icons.arrow_back_ios_new_outlined),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  //color: Colors.orange,
-                                  width: 48,
-                                  height: 32,
-                                  child: Image.asset(
-                                      'assets/images/png/baraka.png')),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Container(
-                                  //color: Colors.amber,
-                                  width: 48,
-                                  height: 32,
-                                  child: Image.asset(
-                                      'assets/images/png/Bemo.png')),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Container(
-                                  //color: Colors.amber,
-                                  width: 48,
-                                  height: 32,
-                                  child: Image.asset(
-                                      'assets/images/png/islamicsyrian.png')),
-                            ]),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Bank Name",
+                      const SizedBox(width: 8),
+                      const Text(
+                        "معلومات الشحن",
                         style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                            color: Color.fromRGBO(71, 71, 71, 1)),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      BlocBuilder<AllbanksCubit, AllbanksStates>(
-                        builder: (context, state) {
-                          if (state is AllbanksLoaded) {
-                            return DropdownButtonFormField<RBankData>(
-                              value: selectedBank,
-                              items: context
-                                  .read<AllbanksCubit>()
-                                  .banks
-                                  .map(
-                                    (bank) => DropdownMenuItem<RBankData>(
-                                      value: bank,
-                                      child: Text(
-                                        bank.name ?? 'choose bank',
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedBank = value!;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'choose bank',
-                                hintStyle: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w400),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      const BorderSide(color: Colors.blue),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                filled: true,
-                                fillColor: Color.fromRGBO(243, 243, 243, 1),
-                              ),
-                            );
-                          }
-                          return DropdownButtonFormField<String>(
-                            hint: Text("choose bank"),
-                            value: 'choose bank',
-                            items: [
-                              DropdownMenuItem<String>(
-                                value: 'choose bank',
-                                child: Text('choose bank'),
-                              ),
-                            ],
-                            onChanged: (val) {},
-                            decoration: InputDecoration(
-                              hintText: 'choose bank',
-                              hintStyle: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w400),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.blue),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              filled: true,
-                              fillColor: Color.fromRGBO(243, 243, 243, 1),
-                            ),
-                          );
-                        },
-                      ),
-
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Amount",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                            color: Color.fromRGBO(71, 71, 71, 1)),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        controller: amountController,
-                        cursorColor: Colors.blue,
-                        keyboardAppearance: Brightness.light,
-                        decoration: InputDecoration(
-                          hintText: 'enter amount',
-                          hintStyle: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-
-                          //suffixText: '°C',
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.blue),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          filled: true,
-                          fillColor: Color.fromRGBO(243, 243, 243, 1),
-                        ),
-                        onChanged: (value) {},
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Upload Bill Image",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                            color: Color.fromRGBO(71, 71, 71, 1)),
-                      ),
-
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: pickImages,
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(Icons.add_a_photo,
-                                  color: Colors.black54),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          if (selectedImage != null)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.file(selectedImage!,
-                                  width: 100, height: 100, fit: BoxFit.cover),
-                            ),
-                        ],
-                      ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(left: 10),
-                      //   child: Row(
-                      //     children: [
-                      //       Expanded(
-                      //           child: Text(
-                      //         "Empiry date",
-                      //         style: TextStyle(fontSize: 16),
-                      //       )),
-                      //       SizedBox(
-                      //         width: 16,
-                      //       ),
-                      //       Expanded(
-                      //           child: Text(
-                      //         "security date",
-                      //         style: TextStyle(fontSize: 16),
-                      //       )),
-                      //     ],
-                      //   ),
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     Expanded(
-                      //       child: TextFormField(
-                      //         // validator: (val){
-                      //         //   return validInput(
-                      //         //       val!, 5, 50, 'date');
-                      //         // },
-                      //         // controller: controller.empirydate,
-                      //         showCursor: false,
-
-                      //         textAlign: TextAlign.center,
-
-                      //         cursorColor: Colors.blue,
-                      //         //keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      //         keyboardAppearance: Brightness.light,
-                      //         decoration: InputDecoration(
-                      //           hintText: 'MM/YY',
-                      //           hintStyle: TextStyle(
-                      //               fontSize: 12, fontWeight: FontWeight.w400),
-
-                      //           //suffixText: '°C',
-                      //           focusedBorder: OutlineInputBorder(
-                      //             borderSide: const BorderSide(color: Colors.blue),
-                      //             borderRadius: BorderRadius.circular(16),
-                      //           ),
-                      //           border: OutlineInputBorder(
-                      //             borderRadius: BorderRadius.circular(16),
-                      //           ),
-                      //           filled: true,
-                      //           fillColor: Color.fromRGBO(243, 243, 243, 1),
-                      //         ),
-                      //         onChanged: (value) {},
-                      //       ),
-                      //     ),
-                      //     SizedBox(
-                      //       width: 5,
-                      //     ),
-                      //     Expanded(
-                      //       child: TextFormField(
-                      //         // validator: (val){
-                      //         //   return validInput(
-                      //         //       val!, 5, 50, 'date');
-                      //         // },
-                      //         // controller: controller.securitydate,
-                      //         showCursor: false,
-                      //         textAlign: TextAlign.center,
-
-                      //         cursorColor: Colors.blue,
-                      //         //keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      //         keyboardAppearance: Brightness.light,
-                      //         decoration: InputDecoration(
-                      //           hintText: 'cvv',
-                      //           hintStyle: TextStyle(
-                      //             fontSize: 12,
-                      //             fontWeight: FontWeight.w400,
-                      //           ),
-
-                      //           //suffixText: '°C',
-                      //           focusedBorder: OutlineInputBorder(
-                      //             borderSide: const BorderSide(color: Colors.blue),
-                      //             borderRadius: BorderRadius.circular(16),
-                      //           ),
-                      //           border: OutlineInputBorder(
-                      //             borderRadius: BorderRadius.circular(16),
-                      //           ),
-                      //           filled: true,
-                      //           fillColor: Color.fromRGBO(243, 243, 243, 1),
-                      //         ),
-                      //         onChanged: (value) {},
-                      //       ),
-                      //     )
-                      //   ],
-                      // ),
-                      // SizedBox(
-                      //   height: 15,
-                      // ),
-                      // Text(
-                      //   "Zip/Postal Code",
-                      //   style: TextStyle(
-                      //       fontSize: 18,
-                      //       fontWeight: FontWeight.w400,
-                      //       color: Color.fromRGBO(71, 71, 71, 1)),
-                      // ),
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
-                      // TextFormField(
-                      //   keyboardType: TextInputType.number,
-                      //   // validator: (val){
-                      //   //   return validInput(
-                      //   //       val!, 4, 4, 'zip');
-                      //   // },
-                      //   // controller: controller.zipcode,
-                      //   cursorColor: Colors.blue,
-                      //   //keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      //   keyboardAppearance: Brightness.light,
-                      //   decoration: InputDecoration(
-                      //     hintText: 'xxxx',
-                      //     hintStyle:
-                      //         TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
-
-                      //     //suffixText: '°C',
-                      //     focusedBorder: OutlineInputBorder(
-                      //       borderSide: const BorderSide(color: Colors.blue),
-                      //       borderRadius: BorderRadius.circular(16),
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(16),
-                      //     ),
-                      //     filled: true,
-                      //     fillColor: Color.fromRGBO(243, 243, 243, 1),
-                      //   ),
-                      //   onChanged: (value) {},
-                      // ),
-                      // SizedBox(
-                      //   height: 30,
-                      // ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepPurple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(16),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                          ),
-                          onPressed: () async {
-                            final now = DateTime.now();
-                            final formattedDate =
-                                '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-
-                            context.read<WalletTopupCubit>().topuprequest(
-                                bankid: selectedBank!.id!,
-                                amount: amountController.text,
-                                images: selectedImage!,
-                                date: formattedDate);
-                            // if (formData!.validate()) {
-                            //  if(ccontroller.lastprice<=sccontroller.bbalance){
-                            //    sccontroller.bbalance=sccontroller.bbalance-ccontroller.lastprice;
-                            //    controller.createnow(context);
-                            //  }
-                            //  else{
-
-                            //    Get.defaultDialog(
-                            //      title: "Payment Failed",
-                            //      middleText: "Balance is not enough",
-                            //      backgroundColor: Colors.white,
-                            //      titleStyle: const TextStyle(
-                            //          color: Colors.redAccent, fontWeight: FontWeight.bold),
-                            //      middleTextStyle: TextStyle(color: Colors.black),
-                            //      confirm:
-
-                            //      Padding(
-                            //        padding: const EdgeInsets.only(left:  63,right: 63,bottom: 12),
-                            //        child: MainButton(text: 'ok', onPressed:(){
-
-                            //          Get.back();
-                            //        }),
-                            //      ),
-
-                            //      barrierDismissible: false,
-                            //    );
-                            //  }
-                            // }else{
-
-                            //   Get.defaultDialog(
-                            //     title: "Payment Failed",
-                            //     middleText: "Enter Correct Informations",
-                            //     backgroundColor: Colors.white,
-                            //     titleStyle: const TextStyle(
-                            //         color: Colors.redAccent, fontWeight: FontWeight.bold),
-                            //     middleTextStyle: TextStyle(color: Colors.black),
-                            //     confirm:
-
-                            //     Padding(
-                            //       padding: const EdgeInsets.only(left:  63,right: 63,bottom: 12),
-                            //       child: MainButton(text: 'ok', onPressed:(){
-
-                            //         Get.back();
-                            //       }),
-                            //     ),
-
-                            //     barrierDismissible: false,
-                            //   );
-
-                            // }
-                          },
-                          child: const Text(
-                            'Add',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
+                          fontFamily: "Cairo",
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+
+                  // شعار البنوك
+                  Row(
+                    children: [
+                      Image.asset('assets/images/png/baraka.png',
+                          width: 50, height: 32),
+                      const SizedBox(width: 16),
+                      Image.asset('assets/images/png/Bemo.png',
+                          width: 50, height: 32),
+                      const SizedBox(width: 16),
+                      Image.asset('assets/images/png/islamicsyrian.png',
+                          width: 50, height: 32),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
+
+                  // اختيار البنك
+                  const Text(
+                    "اختر البنك",
+                    style: TextStyle(
+                        fontFamily: "Cairo", fontSize: 18, color: Colors.black),
+                  ),
+                  const SizedBox(height: 10),
+                  BlocBuilder<AllbanksCubit, AllbanksStates>(
+                    builder: (context, state) {
+                      if (state is AllbanksLoaded) {
+                        return DropdownButtonFormField<RBankData>(
+                          value: selectedBank,
+                          items: state.banks
+                              .map((bank) => DropdownMenuItem<RBankData>(
+                                    value: bank,
+                                    child: Text(bank.name ?? 'اختر البنك',
+                                        style: const TextStyle(
+                                            fontFamily: "Cairo")),
+                                  ))
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => selectedBank = value),
+                          decoration: _inputDecoration("اختر البنك"),
+                        );
+                      }
+                      return DropdownButtonFormField<String>(
+                        hint: const Text("اختر البنك",
+                            style: TextStyle(fontFamily: "Cairo")),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'اختر البنك',
+                            child: Text('اختر البنك'),
+                          ),
+                        ],
+                        onChanged: (_) {},
+                        decoration: _inputDecoration("اختر البنك"),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 25),
+
+                  // المبلغ
+                  const Text(
+                    "المبلغ",
+                    style: TextStyle(
+                        fontFamily: "Cairo", fontSize: 18, color: Colors.black),
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: amountController,
+                    keyboardType: TextInputType.number,
+                    decoration: _inputDecoration("ادخل المبلغ"),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // صورة الفاتورة
+                  const Text(
+                    "رفع صورة الوصل",
+                    style: TextStyle(
+                        fontFamily: "Cairo", fontSize: 18, color: Colors.black),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: pickImages,
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child:
+                              const Icon(Icons.add_a_photo, color: Colors.teal),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // if (selectedImage != null)
+                      //   ClipRRect(
+                      //     borderRadius: BorderRadius.circular(8),
+                      //     child: Image.file(
+                      //       selectedImage!,
+                      //       width: 100,
+                      //       height: 100,
+                      //       fit: BoxFit.cover,
+                      //     ),
+                      //   ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  if (selectedImage != null)
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        child: Image.file(
+                          selectedImage!,
+                          width: double.infinity,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+
+                  // زر الإرسال
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                      ),
+                      onPressed: () {
+                        final now = DateTime.now();
+                        final formattedDate =
+                            "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                        if (selectedBank != null &&
+                            selectedImage != null &&
+                            amountController.text.isNotEmpty) {
+                          context.read<WalletTopupCubit>().topuprequest(
+                              bankid: selectedBank!.id!,
+                              amount: amountController.text,
+                              images: selectedImage!,
+                              date: formattedDate);
+                        } else {
+                          Get.snackbar("خطأ", "يرجى إدخال جميع الحقول",
+                              backgroundColor: Colors.redAccent,
+                              colorText: Colors.white);
+                        }
+                      },
+                      child: const Text(
+                        "شحن",
+                        style: TextStyle(
+                          fontFamily: "Cairo",
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(fontFamily: "Cairo", fontSize: 14),
+      filled: true,
+      fillColor: const Color.fromRGBO(243, 243, 243, 1),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.teal),
+      ),
+    );
+  }
+
+  void _showLoadingDialog(String msg) {
+    Get.defaultDialog(
+      title: msg,
+      titleStyle: const TextStyle(fontFamily: "Cairo"),
+      content: const Padding(
+        padding: EdgeInsets.all(12.0),
+        child: CircularProgressIndicator(color: Colors.teal),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  void _showSuccessDialog() {
+    Get.defaultDialog(
+      title: '',
+      content: Column(
+        children: [
+          SvgPicture.asset("assets/images/svg/checkc.svg", width: 40),
+          const SizedBox(height: 10),
+          const Text(
+            "تم إرسال طلبك بنجاح",
+            style: TextStyle(
+                fontFamily: "Cairo", fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+      confirm: CustomElevatedButton(
+        text: "موافق",
+        onpressed: () => Get.toNamed("mainscreen"),
+      ),
+      barrierDismissible: false,
     );
   }
 }

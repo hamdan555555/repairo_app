@@ -1,9 +1,18 @@
 import 'dart:convert';
+import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_cubit.dart';
+import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_states.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_states.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:breaking_project/data/models/bank_model.dart';
 import 'package:breaking_project/data/models/userprofile_model.dart';
+import 'package:breaking_project/data/repository/bank_repository.dart';
+import 'package:breaking_project/data/repository/profile_repository.dart';
+import 'package:breaking_project/data/web_services/banks_webservices.dart';
+import 'package:breaking_project/data/web_services/profile_webservices.dart';
+import 'package:breaking_project/presentation/screens/banks.dart';
 import 'package:breaking_project/presentation/screens/edit_profile.dart';
+import 'package:breaking_project/presentation/screens/wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -215,13 +224,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
           ),
+          settingsTile(
+            Icons.wallet,
+            "محفظتي",
+            onTap: () {
+              Get.to(
+                () => BlocProvider(
+                  create: (_) =>
+                      ProfileCubit(ProfileRepository(ProfileWebservices())),
+                  child: WalletPage(),
+                ),
+              );
+            },
+          ),
           settingsTile(Icons.language, "لغة التطبيق"),
           settingsTile(Icons.location_on_outlined, "العناوين"),
           settingsTile(Icons.favorite_border, "التفضيلات"),
           settingsTile(Icons.star_border, "قم بتقييمنا"),
           sectionTitle("حول التطبيق"),
           settingsTile(Icons.privacy_tip_outlined, "سياسة الخصوصية"),
-          settingsTile(Icons.money, "طرق الدفع"),
+          settingsTile(Icons.money, "البنوك المتاحة ", onTap: () {
+            Get.to(() => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => AllbanksCubit(
+                          BanksRepository(bankWebservices: BankWebservices())),
+                    ),
+                  ],
+                  child: BanksScreen(),
+                ));
+          }),
           settingsTile(Icons.article_outlined, "الشروط والأحكام"),
           settingsTile(
             Icons.help_outline,

@@ -30,12 +30,12 @@ class ProvidedServicesCubit extends Cubit<ProvidedServicesStates> {
   // }
 
   Future<void> fetchProvidedServices(
-      String techId, List<String> selectedServiceIds) async {
+      String techId, List<String>? selectedServiceIds) async {
     emit(ProvidedServicesLoading());
 
     try {
       final services = await providedServicesRepository.getThisTechServices(
-          techId, selectedServiceIds);
+          techId, selectedServiceIds ?? []);
 
       emit(ProvidedServicesSuccess(services));
     } catch (e) {

@@ -15,7 +15,7 @@ class CreatingOrderCubit extends Cubit<CreatingOrderStates> {
       : super(CreatingOrderInitial());
 
   void createOrder(
-      {required String technicianId,
+      {String? technicianId,
       required List<String> selectedServiceIds,
       required String location,
       required List<File> images,
@@ -29,6 +29,9 @@ class CreatingOrderCubit extends Cubit<CreatingOrderStates> {
       String lng = prefs.getString('lng')!;
       print("///////////////////////////////");
       print(lat);
+      print("///////////////////////////////");
+      print("///////////////////////////////");
+      print(lng);
       print("///////////////////////////////");
 
       await creatingOrderRepository.createOrder(

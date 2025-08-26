@@ -14,8 +14,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class FilteredTechniciansScreen extends StatefulWidget {
   final List<String> selectedservices;
   final Cart? cart;
+  final String? date;
+  final String? time;
   const FilteredTechniciansScreen(
-      {super.key, required this.selectedservices, required this.cart});
+      {super.key,
+      required this.selectedservices,
+      required this.cart,
+      required this.time,
+      required this.date});
 
   @override
   State<FilteredTechniciansScreen> createState() =>
@@ -90,6 +96,8 @@ class _FilteredTechniciansScreenState extends State<FilteredTechniciansScreen> {
                                           ProvidedServicesRepository(
                                               ProvidedServicesWebservices())),
                                       child: ProvidedServicesScreen(
+                                          time: widget.time!,
+                                          date: widget.date!,
                                           cart: widget.cart!,
                                           techId: techh.id!,
                                           selectedServices:
@@ -213,6 +221,8 @@ class _FilteredTechniciansScreenState extends State<FilteredTechniciansScreen> {
                 create: (_) => ProvidedServicesCubit(
                     ProvidedServicesRepository(ProvidedServicesWebservices())),
                 child: ProvidedServicesScreen(
+                    date: widget.date!,
+                    time: widget.time!,
                     cart: widget.cart!,
                     techId: tech.id!,
                     selectedServices: widget.selectedservices,

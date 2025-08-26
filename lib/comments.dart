@@ -212,24 +212,24 @@
         //                     left: 300,
         //                     right: 0,
         //                     child: GestureDetector(
-        //                       onTap: () {
-        //                         Get.to(() => MultiBlocProvider(
-        //                               providers: [
-        //                                 BlocProvider(
-        //                                   create: (context) => AllWalletRequestsCubit(
-        //                                       AllWalletRequestsRepository(
-        //                                           allWalletRequestsWebservice:
-        //                                               AllWalletRequestsWebservice())),
-        //                                 ),
-        //                                 BlocProvider(
-        //                                   create: (context) => AllbanksCubit(
-        //                                       BanksRepository(
-        //                                           bankWebservices:
-        //                                               BankWebservices())),
-        //                                 ),
-        //                               ],
-        //                               child: AllWalletRequestsScreen(),
-        //                             ));
+                              // onTap: () {
+                              //   Get.to(() => MultiBlocProvider(
+                              //         providers: [
+                              //           BlocProvider(
+                              //             create: (context) => AllWalletRequestsCubit(
+                              //                 AllWalletRequestsRepository(
+                              //                     allWalletRequestsWebservice:
+                              //                         AllWalletRequestsWebservice())),
+                              //           ),
+                              //           BlocProvider(
+                              //             create: (context) => AllbanksCubit(
+                              //                 BanksRepository(
+                              //                     bankWebservices:
+                              //                         BankWebservices())),
+                              //           ),
+                              //         ],
+                              //         child: AllWalletRequestsScreen(),
+                              //       ));
         //                         // Get.to(ShipmentRequestsScreen());
         //                       },
         //                       child: CircleAvatar(

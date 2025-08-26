@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CreatingOrderWebservice {
   Future<Map<String, dynamic>> creteOrder(
-      {required String technicianId,
+      {String? technicianId,
       required List<String> selectedServiceIds,
       required String latitude,
       required String longtude,
@@ -25,8 +25,9 @@ class CreatingOrderWebservice {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('auth_token');
     request.headers['Authorization'] = 'Bearer $token';
-
-    request.fields['technician_account_id'] = technicianId;
+    if (technicianId != null) {
+      request.fields['technician_account_id'] = technicianId;
+    }
     request.fields['location'] = location;
     request.fields['lat'] = latitude;
     request.fields['lng'] = longtude;

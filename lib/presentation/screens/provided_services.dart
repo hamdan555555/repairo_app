@@ -18,17 +18,22 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:line_icons/line_icon.dart';
 
 class ProvidedServicesScreen extends StatefulWidget {
-  final List<String> selectedServices;
+  final List<String>? selectedServices;
   final String techId;
   final String techname;
+  final String? date;
+  final String? time;
   final Cart cart;
 
-  const ProvidedServicesScreen(
-      {super.key,
-      required this.selectedServices,
-      required this.techId,
-      required this.techname,
-      required this.cart});
+  ProvidedServicesScreen({
+    super.key,
+    this.selectedServices,
+    required this.techId,
+    required this.techname,
+    this.date,
+    this.time,
+    Cart? cart, // استقبل nullable
+  }) : cart = cart ?? Cart();
 
   @override
   State<ProvidedServicesScreen> createState() => _ProvidedServicesScreenState();
@@ -42,20 +47,44 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
   void initState() {
     context
         .read<ProvidedServicesCubit>()
-        .fetchProvidedServices(widget.techId, widget.selectedServices);
+        .fetchProvidedServices(widget.techId, widget.selectedServices ?? []);
     super.initState();
   }
 
-  void toggleServiceSelection(String serviceId, bool selected) {
-    setState(() {
-      if (selected) {
-        selectedServices.add(serviceId);
-        print(selectedServices);
-      } else {
-        selectedServices.remove(serviceId);
-        print(selectedServices);
-      }
-    });
+  // void toggleServiceSelection(String serviceId, bool selected) {
+  //   setState(() {
+  //     if (selected) {
+  //       selectedServices.add(serviceId);
+  //       print(selectedServices);
+  //     } else {
+  //       selectedServices.remove(serviceId);
+  //       print(selectedServices);
+  //     }
+  //   });
+  // }
+
+  RProvidedServices convertToProvidedService(RServiceData service) {
+    return RProvidedServices(
+      minPrice: service.minPrice,
+      maxPrice: service.maxPrice,
+      image: service.image,
+      id: service.id,
+      serviceName: service.name,
+      // description: service.description,
+      servicePrice: service.price, // أو service.basePrice إذا عندك هيك
+      // إذا في حقول إضافية بـ RProvidedService مو موجودة بـ RService
+      // ممكن تحط قيم افتراضية أو تجيبها من مكان تاني
+      // professionalId: "", // هون عبيها حسب الحاجة
+    );
+  }
+
+  void addToCart(dynamic service) {
+    if (service is RServiceData) {
+      final providedService = convertToProvidedService(service);
+      widget.cart.add(providedService);
+    } else if (service is RProvidedServices) {
+      widget.cart.add(service);
+    }
   }
 
   void showCartBottomSheet(BuildContext context, Cart cart) {
@@ -132,7 +161,7 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
                               final item = cart.items[index];
                               return ListTile(
                                 title: Text(
-                                  item.service.displayName!,
+                                  item.service.name ?? "خدمة",
                                   style: TextStyle(fontFamily: "Cairo"),
                                 ),
                                 subtitle: Text(
@@ -194,7 +223,7 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
           builder: (context, state) {
             if (state is ProvidedServicesSuccess) {
               services = (state).providedservices;
-              selectedServices = widget.selectedServices;
+              selectedServices = widget.selectedServices ?? [];
               print(selectedServices);
               return Padding(
                 padding: const EdgeInsets.only(top: 60),
@@ -302,13 +331,13 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
                                                   ),
                                                 ),
                                                 Spacer(),
-                                                !widget.cart.contains(
-                                                        service as RServiceData)
+                                                !widget.cart.contains(service)
                                                     ? GestureDetector(
                                                         onTap: () {
                                                           setState(() {
-                                                            widget.cart.add(service
-                                                                as RServiceData);
+                                                            addToCart(service);
+                                                            // widget.cart
+                                                            //     .add(service);
                                                           });
                                                           showCartBottomSheet(
                                                               context,
@@ -383,8 +412,8 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
                                                                         () {
                                                                       widget
                                                                           .cart
-                                                                          .decrement(service
-                                                                              as RServiceData);
+                                                                          .decrement(
+                                                                              service);
                                                                     });
                                                                     showCartBottomSheet(
                                                                         context,
@@ -416,7 +445,7 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
                                                                       horizontal:
                                                                           4),
                                                                   child: Text(
-                                                                    "${widget.cart.getQuantity(service as RServiceData)}",
+                                                                    "${widget.cart.getQuantity(service)}",
                                                                     style:
                                                                         TextStyle(
                                                                       color: Colors
@@ -432,10 +461,12 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
                                                                   onTap: () {
                                                                     setState(
                                                                         () {
-                                                                      widget
-                                                                          .cart
-                                                                          .add(service
-                                                                              as RServiceData);
+                                                                      addToCart(
+                                                                          service);
+                                                                      // widget
+                                                                      //     .cart
+                                                                      //     .add(
+                                                                      //         service);
                                                                     });
                                                                     showCartBottomSheet(
                                                                         context,
@@ -500,24 +531,108 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: CustomElevatedButton(
-                          onpressed: () {
-                            Get.to(() => BlocProvider(
-                                  create: (context) => CreatingOrderCubit(
-                                      CreatingOrderRepository(
-                                          CreatingOrderWebservice())),
-                                  child: CreateRequestScreen(
-                                    id: widget.techId,
-                                    services: widget.selectedServices,
+                      Container(
+                        color: Colors.grey.shade200,
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                // showCartBottomSheet(context, widget.cart);
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "المجموع: 1200 ليرة",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        decoration: TextDecoration.lineThrough,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: "Cairo"),
                                   ),
-                                ));
-                          },
-                          text: "Next",
-                          active: selectedServices.isNotEmpty,
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "المجموع: ${widget.cart.total.toStringAsFixed(2)} ليرة",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: "Cairo"),
+                                      ),
+                                      SizedBox(
+                                        width: 5.w,
+                                      ),
+                                      Icon(Icons.keyboard_arrow_up_rounded),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => BlocProvider(
+                                      create: (context) => CreatingOrderCubit(
+                                          CreatingOrderRepository(
+                                              CreatingOrderWebservice())),
+                                      child: CreateRequestScreen(
+                                        time: widget.time,
+                                        date: widget.date,
+                                        id: widget.techId,
+                                        servicesids: widget.cart.items
+                                            .map((item) => item.service.id!)
+                                            .toList(),
+                                        servicesquantities: widget.cart.items
+                                            .map((item) =>
+                                                item.quantity.toString())
+                                            .toList(),
+                                      ),
+                                    ));
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.teal,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(16)),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0, horizontal: 24),
+                                  child: Text(
+                                    "التالي",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Cairo",
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       )
+                      // Padding(
+                      //   padding: const EdgeInsets.all(16.0),
+                      //   child: CustomElevatedButton(
+                      //     onpressed: () {
+                      //       Get.to(() => BlocProvider(
+                      //             create: (context) => CreatingOrderCubit(
+                      //                 CreatingOrderRepository(
+                      //                     CreatingOrderWebservice())),
+                      //             child: CreateRequestScreen(
+                      //               id: widget.techId,
+                      //               services: widget.selectedServices,
+                      //             ),
+                      //           ));
+                      //     },
+                      //     text: "Next",
+                      //     active: selectedServices.isNotEmpty,
+                      //   ),
+                      // )
                     ]),
               );
             } else if (state is ProvidedServicesLoading) {

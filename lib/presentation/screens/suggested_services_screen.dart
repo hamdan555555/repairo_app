@@ -1,8 +1,13 @@
+import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
+import 'package:breaking_project/data/models/base_service_model.dart';
 import 'package:breaking_project/data/models/service_model.dart';
+import 'package:breaking_project/data/repository/creating_order_repository.dart';
+import 'package:breaking_project/data/web_services/creating_order_webservice.dart';
 import 'package:breaking_project/presentation/screens/creating_order.dart';
 import 'package:breaking_project/presentation/widgets/cart_item_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -10,10 +15,16 @@ import 'package:line_icons/line_icon.dart';
 
 class SuggestedServicesScreen extends StatefulWidget {
   final Cart cart;
-  final List<RServiceData> suggestion_list;
+  final List<BaseService> suggestion_list;
+  final String? date;
+  final String? time;
 
   const SuggestedServicesScreen(
-      {super.key, required this.cart, required this.suggestion_list});
+      {super.key,
+      required this.cart,
+      required this.suggestion_list,
+      required this.date,
+      required this.time});
 
   @override
   State<SuggestedServicesScreen> createState() =>
@@ -63,7 +74,22 @@ class _SuggestedServicesScreenState extends State<SuggestedServicesScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                // Get.to(RecommendedServices());
+                                Get.to(() => BlocProvider(
+                                      create: (context) => CreatingOrderCubit(
+                                          CreatingOrderRepository(
+                                              CreatingOrderWebservice())),
+                                      child: CreateRequestScreen(
+                                        time: widget.time,
+                                        date: widget.date,
+                                        servicesids: widget.cart.items
+                                            .map((item) => item.service.id!)
+                                            .toList(),
+                                        servicesquantities: widget.cart.items
+                                            .map((item) =>
+                                                item.quantity.toString())
+                                            .toList(),
+                                      ),
+                                    ));
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -93,7 +119,7 @@ class _SuggestedServicesScreenState extends State<SuggestedServicesScreen> {
                               final item = cart.items[index];
                               return ListTile(
                                 title: Text(
-                                  item.service.displayName!,
+                                  item.service.name!,
                                   style: TextStyle(fontFamily: "Cairo"),
                                 ),
                                 subtitle: Text(
@@ -216,8 +242,7 @@ class _SuggestedServicesScreenState extends State<SuggestedServicesScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      widget
-                                          .suggestion_list[index].displayName!,
+                                      widget.suggestion_list[index].name!,
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -237,7 +262,7 @@ class _SuggestedServicesScreenState extends State<SuggestedServicesScreen> {
                                     Row(
                                       children: [
                                         Text(
-                                          "${widget.suggestion_list[index].maxPrice} ليرة",
+                                          "${widget.suggestion_list[index].price} ليرة",
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
@@ -470,10 +495,32 @@ class _SuggestedServicesScreenState extends State<SuggestedServicesScreen> {
                     Spacer(),
                     GestureDetector(
                       onTap: () {
-                        Get.to(CreateRequestScreen(
-                          id: 'fgffg',
-                          services: [],
-                        ));
+                        Get.to(() => BlocProvider(
+                              create: (context) => CreatingOrderCubit(
+                                  CreatingOrderRepository(
+                                      CreatingOrderWebservice())),
+                              child: CreateRequestScreen(
+                                time: widget.time,
+                                date: widget.date,
+                                servicesids: widget.cart.items
+                                    .map((item) => item.service.id!)
+                                    .toList(),
+                                servicesquantities: widget.cart.items
+                                    .map((item) => item.quantity.toString())
+                                    .toList(),
+                              ),
+                            ));
+                        // Get.to(CreateRequestScreen(
+                        //   date: widget.date,
+                        //   time: widget.time,
+                        //   id: '',
+                        //   servicesids: widget.cart.items
+                        //       .map((item) => item.service.id!)
+                        //       .toList(),
+                        //   servicesquantities: widget.cart.items
+                        //       .map((item) => item.quantity.toString())
+                        //       .toList(),
+                        // ));
                       },
                       child: Container(
                         decoration: BoxDecoration(

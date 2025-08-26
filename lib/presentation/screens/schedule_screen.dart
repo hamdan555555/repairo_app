@@ -27,6 +27,8 @@ class _SchedulePageState extends State<SchedulePage> {
   int? selectedIndex; // <-- لتخزين العنصر المختار
   double _hourValue = 12; // القيمة الافتراضية للساعة
   DateTime _time = DateTime.now();
+  String? formattedDate;
+  String? formattedTime;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +98,10 @@ class _SchedulePageState extends State<SchedulePage> {
                     onSelectionChanged:
                         (DateRangePickerSelectionChangedArgs args) {
                       final DateTime selectedDate = args.value;
-                      debugPrint("اليوم المختار: $selectedDate");
+                      formattedDate =
+                          intl.DateFormat('yyyy-MM-dd').format(selectedDate);
+
+                      debugPrint("اليوم المختار: $formattedDate");
                     },
                   ),
                 ),
@@ -116,6 +121,8 @@ class _SchedulePageState extends State<SchedulePage> {
                   onTimeChange: (time) {
                     setState(() {
                       _time = time;
+                      formattedTime = intl.DateFormat('HH:mm').format(time);
+                      debugPrint("الوقت المختار: $formattedTime");
                     });
                   },
                 ),
@@ -201,6 +208,8 @@ class _SchedulePageState extends State<SchedulePage> {
                                       homeWebservices: HomeWebservices()),
                                 ),
                                 child: FilteredTechniciansScreen(
+                                  date: formattedDate,
+                                  time: formattedTime,
                                   cart: widget.cart,
                                   selectedservices: widget.cart.items
                                       .map((item) => item.service.id)
@@ -212,6 +221,8 @@ class _SchedulePageState extends State<SchedulePage> {
                           } else {
                             Get.to(
                               () => SuggestedServicesScreen(
+                                date: formattedDate,
+                                time: formattedTime,
                                 cart: widget.cart,
                                 suggestion_list: widget.cart.items
                                     .map((item) => item.service)

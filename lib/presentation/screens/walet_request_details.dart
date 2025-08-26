@@ -14,190 +14,191 @@ import 'package:get/get.dart';
 class WalletRequestDetailsScreen extends StatelessWidget {
   final RWalletRequestsData request;
   const WalletRequestDetailsScreen({super.key, required this.request});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('TopUp Request Details'),
-        backgroundColor: Colors.deepPurpleAccent,
-        foregroundColor: Colors.white,
-        elevation: 4,
-        leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+    return Directionality(
+      textDirection: TextDirection.rtl, // من اليمين لليسار
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'تفاصيل طلب التعبئة',
+            style: TextStyle(
+              fontFamily: "Cairo",
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (request.bank!.image!.isNotEmpty)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(15.0),
-                        child: Image.network(
-                          request.bank!.image!,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(Icons.account_balance,
-                                size: 80, color: Colors.grey);
-                          },
+          backgroundColor: Colors.teal,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () => Get.back(),
+            icon: const Icon(Icons.arrow_back_ios_new),
+          ),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // رأس البطاقة
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (request.bank?.image?.isNotEmpty ?? false)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            request.bank!.image!,
+                            width: 55,
+                            height: 55,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.account_balance,
+                                    size: 55, color: Colors.grey),
+                          ),
                         ),
-                      ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                request.bank!.name!,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              request.bank?.name ?? 'بنك غير معروف',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Cairo",
+                                color: Colors.teal,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: _getStatusColor(request.status ?? ''),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                _getStatusText(request.status ?? ''),
                                 style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple,
+                                  fontSize: 13,
+                                  fontFamily: "Cairo",
+                                  color: Colors.white,
                                 ),
                               ),
-                              SizedBox(
-                                width: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Get.to(MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                create: (context) => AllbanksCubit(
+                                    BanksRepository(
+                                        bankWebservices: BankWebservices())),
                               ),
-                              IconButton(
-                                  onPressed: () {
-                                    Get.to(MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider(
-                                          create: (context) => AllbanksCubit(
-                                              BanksRepository(
-                                                  bankWebservices:
-                                                      BankWebservices())),
-                                        ),
-                                        BlocProvider(
-                                          create: (context) =>
-                                              WalletRequestEditCubit(
-                                                  WalletRequestEditRepository(
-                                                      WalletRequestEditWebservice())),
-                                        ),
-                                      ],
-                                      child: EditWalletRequestScreen(
-                                        request: request,
-                                      ),
-                                    ));
-                                  },
-                                  icon: Icon(Icons.edit))
+                              BlocProvider(
+                                create: (context) => WalletRequestEditCubit(
+                                    WalletRequestEditRepository(
+                                        WalletRequestEditWebservice())),
+                              ),
                             ],
+                            child: EditWalletRequestScreen(request: request),
+                          ));
+                        },
+                        icon: const Icon(Icons.edit, color: Colors.grey),
+                      )
+                    ],
+                  ),
+
+                  const Divider(height: 30, thickness: 1),
+
+                  // مبلغ التعبئة
+                  _buildDetailsRow(
+                    'مبلغ التعبئة',
+                    '${request.amount} ل.س',
+                    Icons.monetization_on,
+                    Colors.green,
+                  ),
+
+                  const SizedBox(height: 15),
+                  const Text(
+                    'تفاصيل الحساب البنكي',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Cairo",
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  _buildDetailsRow(
+                    'اسم الحساب',
+                    request.bank?.accountName ?? 'غير متوفر',
+                    Icons.account_circle,
+                    Colors.teal,
+                  ),
+                  _buildDetailsRow(
+                    'رقم الحساب',
+                    request.bank?.accountNumber ?? 'غير متوفر',
+                    Icons.credit_card,
+                    Colors.indigo,
+                  ),
+                  _buildDetailsRow(
+                    'رقم IBAN',
+                    request.bank?.iban ?? 'غير متوفر',
+                    Icons.account_balance_wallet,
+                    Colors.orange,
+                  ),
+
+                  // صورة الإيصال
+                  if (request.image != null && request.image!.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Row(
+                      children: const [
+                        Icon(Icons.receipt, size: 22, color: Colors.grey),
+                        SizedBox(width: 8),
+                        Text(
+                          'صورة الإيصال',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "Cairo",
+                            color: Colors.black87,
                           ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(request.status!),
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            child: Text(
-                              _getStatusText(request.status!),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          request.image!.replaceFirst(
+                              '127.0.0.1', AppConstants.baseaddress),
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Text('تعذّر تحميل الصورة'),
+                        ),
                       ),
                     ),
                   ],
-                ),
-                const Divider(height: 30, thickness: 1.5, color: Colors.grey),
-                _buildDetailsRow(
-                  ' charging amount',
-                  '${request.amount} s.p',
-                  Icons.monetization_on,
-                  Colors.green,
-                ),
-
-                const SizedBox(height: 15),
-                const Text(
-                  'Bank Account Details',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _buildDetailsRow(
-                  ' Account Name',
-                  request.bank!.accountName!,
-                  Icons.account_circle,
-                  Colors.teal,
-                ),
-                _buildDetailsRow(
-                  'Account Number',
-                  request.bank!.accountNumber!,
-                  Icons.credit_card,
-                  Colors.indigo,
-                ),
-                _buildDetailsRow(
-                  'IBAN Number',
-                  request.bank!.iban!,
-                  Icons.account_balance_wallet,
-                  Colors.orange,
-                ),
-                // لو فيه صورة إيصال
-                if (request.image != null && request.image!.isNotEmpty) ...[
-                  const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.receipt,
-                        size: 28,
-                      ),
-                      SizedBox(
-                        width: 14,
-                      ),
-                      Text(
-                        'receipt image',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        request.image!.replaceFirst(
-                            '127.0.0.1', AppConstants.baseaddress),
-                        height: 200,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Text('image could not be loaded');
-                        },
-                      ),
-                    ),
-                  ),
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -205,38 +206,38 @@ class WalletRequestDetailsScreen extends StatelessWidget {
     );
   }
 
-  // دالة مساعدة لبناء صفوف التفاصيل
+  // عنصر صف التفاصيل
   Widget _buildDetailsRow(
       String label, String value, IconData icon, Color iconColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: iconColor, size: 28),
-          const SizedBox(width: 15),
+          Icon(icon, color: iconColor, size: 20),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: const TextStyle(
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
+                    fontFamily: "Cairo",
+                    color: Colors.grey,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
+                    fontFamily: "Cairo",
                     color: Colors.black87,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
                 ),
               ],
             ),
@@ -246,27 +247,27 @@ class WalletRequestDetailsScreen extends StatelessWidget {
     );
   }
 
-  // دالة لتحديد لون الحالة
-  Color _getStatusColor(String status) {
+  // لون حالة الطلب
+  static Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'accepted':
-        return Colors.green.shade700;
+        return Colors.green;
       case 'pending':
-        return Colors.orange.shade700;
+        return Colors.orange;
       case 'rejected':
-        return Colors.red.shade700;
+        return Colors.red;
       default:
-        return Colors.grey.shade700;
+        return Colors.grey;
     }
   }
 
-  // دالة لتحويل نص الحالة للعربية
-  String _getStatusText(String status) {
+  // ترجمة حالة الطلب
+  static String _getStatusText(String status) {
     switch (status.toLowerCase()) {
       case 'accepted':
         return 'مقبول';
       case 'pending':
-        return 'معلّق';
+        return 'قيد المراجعة';
       case 'rejected':
         return 'مرفوض';
       default:

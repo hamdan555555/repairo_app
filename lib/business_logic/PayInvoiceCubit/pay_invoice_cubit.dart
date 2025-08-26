@@ -1,7 +1,6 @@
 import 'package:breaking_project/business_logic/PayInvoiceCubit/pay_invoice_states.dart';
 import 'package:breaking_project/data/repository/pay_invoice_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PayInvoiceCubit extends Cubit<PayInvoiceStates> {
   final PayInvoiceRepository payInvoiceRepository;
@@ -14,10 +13,16 @@ class PayInvoiceCubit extends Cubit<PayInvoiceStates> {
   }) async {
     emit(PayInvoiceLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final result = await payInvoiceRepository.payinvoice(
+        id: id,
+        paymenttype: paymenttype,
+      );
 
-      await payInvoiceRepository.payinvoice(id: id, paymenttype: paymenttype);
-      emit(PayInvoiceSuccess());
+      if (result['success'] == true) {
+        emit(PayInvoiceSuccess(result['message'] ?? "تم الدفع بنجاح"));
+      } else {
+        emit(PayInvoiceError(result['message'] ?? "فشل الدفع"));
+      }
     } catch (e) {
       emit(PayInvoiceError(e.toString()));
     }

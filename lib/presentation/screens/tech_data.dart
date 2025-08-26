@@ -7,7 +7,7 @@ import 'package:breaking_project/data/repository/provided_services_repository.da
 import 'package:breaking_project/data/web_services/provided_services_webservices.dart';
 import 'package:breaking_project/presentation/screens/map.dart';
 import 'package:breaking_project/presentation/screens/provided_services.dart';
-import 'package:breaking_project/presentation/widgets/Provided_service_card.dart';
+import 'package:breaking_project/presentation/screens/tech_prevwork_details.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,208 +16,246 @@ import 'package:get/get.dart';
 class TechDataScreen extends StatefulWidget {
   final String id;
   TechDataScreen({Key? key, required this.id}) : super(key: key);
+
   @override
-  State<TechDataScreen> createState() => SubcategoriesStatee();
+  State<TechDataScreen> createState() => _TechDataScreenState();
 }
 
-class SubcategoriesStatee extends State<TechDataScreen> {
+class _TechDataScreenState extends State<TechDataScreen> {
   late RTecPData tech;
+
   @override
   void initState() {
-    print('this is idddd');
-    // print(widget.id);
-    BlocProvider.of<TechDataCubit>(context).getTechData(widget.id);
-
     super.initState();
+    BlocProvider.of<TechDataCubit>(context).getTechData(widget.id);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(Icons.arrow_back_ios_new)),
-        title: Text("technician profile"),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.teal,
+          elevation: 0,
+          title: const Text(
+            "الملف الشخصي للمهني",
+            style: TextStyle(
+                fontFamily: "Cairo", color: Colors.white, fontSize: 18),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+            onPressed: () => Get.back(),
+          ),
+        ),
+        body: BlocBuilder<TechDataCubit, TechDataStates>(
+          builder: (context, state) {
+            if (state is TechDataLoaded) {
+              tech = state.techdata;
+              return buildProfileContent();
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.teal),
+              );
+            }
+          },
+        ),
       ),
-      body: Container(color: Colors.white10, child: buildBlocWidget()),
     );
   }
 
-  Widget buildBlocWidget() {
-    return BlocBuilder<TechDataCubit, TechDataStates>(
-        builder: (context, state) {
-      if (state is TechDataLoaded) {
-        tech = (state).techdata;
-        return buildLoadedListWidget();
-      } else {
-        return showloadingindicator();
-      }
-    });
-  }
-
-  Widget buildLoadedListWidget() {
-    return builditemsList();
-  }
-
-  Widget showloadingindicator() {
-    return const Center(
-        child: CircularProgressIndicator(
-      color: Colors.teal,
-    ));
-  }
-
-  // Widget builditemsList() {
-  //   return Padding(
-  //       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //       child: ListView.builder(
-  //         itemCount: context.read<SubcategoryCubit>().subcategories.length,
-  //         itemBuilder: (ctx, index) {
-  //           return SubcateroriesWidget(
-  //             subcategory:
-  //                 context.read<SubcategoryCubit>().subcategories[index],
-  //           );
-  //         },
-  //       )
-  //       );
-  // }
-
-  Widget builditemsList() {
+  Widget buildProfileContent() {
     final displayImage =
         tech.image?.replaceFirst("127.0.0.1", AppConstants.baseaddress) ?? "";
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // صورة الفني
-          // Center(
-          //   child: CircleAvatar(
-          //     radius: 50,
-          //     backgroundImage: tech.image != null
-          //         ? NetworkImage(
-          //             tech.image!
-          //                 .replaceFirst("127.0.0.1", AppConstants.baseaddress),
-          //           )
-          //         : const AssetImage('assets/images/jpg/hamdan.jpg')
-          //             as ImageProvider,
-          //     // tech.image != null
-          //     //     ? NetworkImage(tech.image!
-          //     //         .replaceFirst("127.0.0.1", AppConstants.baseaddress))
-          //     //     : AssetImage('assets/images/jpg/hamdan.jpg')
-          //   ),
-          // ),
-
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                print(tech.image!
-                    .replaceFirst('127.0.0.1', AppConstants.baseaddress));
-
-                print(tech.previousWorks![0].image);
-              },
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: tech.image!.isNotEmpty
-                    ? NetworkImage(
-                        tech.image!.replaceFirst(
-                            '127.0.0.1', AppConstants.baseaddress),
-                      )
-                    : const AssetImage('assets/images/jpg/hamdan.jpg'),
+          // Card معلومات المهني
+          Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            elevation: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage:
+                        tech.image != null && tech.image!.isNotEmpty
+                            ? NetworkImage(displayImage)
+                            : const AssetImage('assets/images/jpg/hamdan.jpg')
+                                as ImageProvider,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    tech.name ?? '',
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Cairo"),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        color: Colors.teal,
+                        size: 16,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text("العنوان :  ${tech.place ?? "غير معروف"}",
+                          style: const TextStyle(fontFamily: "Cairo")),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.star_rounded,
+                        color: Colors.teal,
+                        size: 16,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text("التقييم :  ${tech.rating ?? "0.0"}",
+                          style: const TextStyle(fontFamily: "Cairo")),
+                      // const SizedBox(width: 4),
+                      // const Icon(Icons.star, color: Colors.amber, size: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.settings,
+                        color: Colors.teal,
+                        size: 16,
+                      ),
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Text("التخصص :  ${tech.category?.displayName ?? ''}",
+                          style: const TextStyle(fontFamily: "Cairo")),
+                    ],
+                  ),
+                ],
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // الاسم والتقييم والموقع
-          Center(
-            child: Column(
-              children: [
-                Text(
-                  tech.name ?? '',
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text("📍 ${tech.place ?? 'غير معروف'}"),
-                const SizedBox(height: 8),
-                Text("⭐ ${tech.rating ?? '0.0'}"),
-                const SizedBox(height: 8),
-                Text("التخصص: ${tech.category?.displayName ?? ''}"),
-              ],
             ),
           ),
 
           const SizedBox(height: 24),
 
-          // عنوان الأعمال السابقة
-          // عنوان الأعمال السابقة
+          // الأعمال السابقة (بورتفوليو)
           if ((tech.previousWorks?.isNotEmpty ?? false)) ...[
-            Text(
-              "الأعمال السابقة",
-              textDirection: TextDirection.rtl,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-
-            // Scrollable Row مرة وحدة فقط
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: tech.previousWorks!.map((work) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: SizedBox(
-                      width: 300, // عرض الكارد
-                      child: ProvidedServiceCard(
-                        title: work.title,
-                        description: work.description,
-                        images: work.image,
-                      ),
-                    ),
-                  );
-                }).toList(),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "الأعمال السابقة",
+                style: const TextStyle(
+                  fontFamily: "Cairo",
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
+            const SizedBox(height: 12),
+            Column(
+              children: tech.previousWorks!.map((work) {
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  elevation: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(work.title!,
+                            style: const TextStyle(
+                                fontFamily: "Cairo",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16)),
+                        const SizedBox(height: 8),
+                        Text(
+                          work.description ?? '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontFamily: "Cairo"),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 80,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: work.image!.map((imgUrl) {
+                              final fixedUrl = imgUrl.replaceFirst(
+                                  "127.0.0.1", AppConstants.baseaddress);
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(fixedUrl,
+                                      width: 100,
+                                      height: 80,
+                                      fit: BoxFit.cover),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                            onPressed: () {
+                              Get.to(() => WorkDetailsPage(work: work));
+                            },
+                            child: const Text("عرض التفاصيل",
+                                style: TextStyle(
+                                    fontFamily: "Cairo", color: Colors.teal)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
           ] else ...[
-            const Text("لا يوجد أعمال سابقة"),
+            const Text("لا يوجد أعمال سابقة",
+                style: TextStyle(fontFamily: "Cairo")),
           ],
 
+          const SizedBox(height: 24),
+
+          // الأزرار
           CustomElevatedButton(
               onpressed: () {
-                // Get.to(MapScreen(
-                //     // latitude: 35.5308,
-                //     // longitude: 35.7906,
-                //     // professionalName: tech.name ?? '',
-                //     ));
-
-                // Get.to(() => BlocProvider(
-                //       create: (_) => ProvidedServicesCubit(
-                //           ProvidedServicesRepository(
-                //               ProvidedServicesWebservices())),
-                //       child: ProvidedServicesScreen(
-                //         techId: tech.id!,
-                //         selectedServices: [],
-                //         techname: tech.name!,
-                //       ),
-                //     ));
+                Get.to(() => BlocProvider(
+                      create: (_) => ProvidedServicesCubit(
+                          ProvidedServicesRepository(
+                              ProvidedServicesWebservices())),
+                      child: ProvidedServicesScreen(
+                          techId: tech.id!, techname: tech.name!),
+                    ));
               },
-              text: 'view services'),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            child: CustomElevatedButton(
-                onpressed: () {
-                  Get.to(MapScreen(
-                      // latitude: 35.5308,
-                      // longitude: 35.7906,
-                      // professionalName: tech.name ?? '',
-                      ));
-                },
-                text: 'view on map'),
-          )
+              text: 'عرض الخدمات'),
+          // const SizedBox(height: 12),
+          // CustomElevatedButton(
+          //     onpressed: () {
+          //       Get.to(MapScreen());
+          //     },
+          //     text: 'عرض على الخريطة'),
         ],
       ),
     );

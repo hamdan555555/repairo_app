@@ -47,20 +47,29 @@ class _ServicesWidgetState extends State<SearchingServicesWidget> {
             ),
           );
         } else if (widget.services.type == 'sub_category') {
-          onTap:
-          () {
-            Get.to(
-              () => BlocProvider(
-                create: (context) => ServiceCubit(ServiceRepository(
-                    serviceWebservices: ServiceWebservices())),
-                child: ServicesScreen(
-                  id: widget.services.id!,
-                  videourl: "assets/videos/plumbing.mp4",
-                  subname: widget.services.displayName!,
-                ),
+          Get.to(
+            () => BlocProvider(
+              create: (context) => ServiceCubit(
+                  ServiceRepository(serviceWebservices: ServiceWebservices())),
+              child: ServicesScreen(
+                id: widget.services.id!,
+                videourl: "assets/videos/plumbing.mp4",
+                subname: widget.services.displayName!,
               ),
-            );
-          };
+            ),
+          );
+        } else {
+          // Get.to(
+          //   () => BlocProvider(
+          //     create: (context) => ServiceCubit(
+          //         ServiceRepository(serviceWebservices: ServiceWebservices())),
+          //     child: ServicesScreen(
+          //       id: widget.,
+          //       videourl: "assets/videos/plumbing.mp4",
+          //       subname: widget.services.displayName!,
+          //     ),
+          //   ),
+          // );
         }
       },
       child: Column(

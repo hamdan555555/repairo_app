@@ -5,16 +5,20 @@ import 'package:breaking_project/business_logic/CategoriesTreeCubit/categories_t
 import 'package:breaking_project/business_logic/CategoriesTreeCubit/categories_tree_states.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
+import 'package:breaking_project/business_logic/ServiceCubit/service_cubit.dart';
 import 'package:breaking_project/business_logic/SubCategoryCubit/subcategory_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/banner_image_model.dart';
 import 'package:breaking_project/data/repository/categories_tree_repository.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
+import 'package:breaking_project/data/repository/services_repository.dart';
 import 'package:breaking_project/data/repository/subcategory_repository.dart';
 import 'package:breaking_project/data/web_services/categories_tree_webservices.dart';
 import 'package:breaking_project/data/web_services/home_webservices.dart';
+import 'package:breaking_project/data/web_services/services_webservices.dart';
 import 'package:breaking_project/data/web_services/subcategories_webservice.dart';
 import 'package:breaking_project/presentation/screens/search.dart';
+import 'package:breaking_project/presentation/screens/services_screen.dart';
 import 'package:breaking_project/presentation/screens/subcategories.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:flutter/material.dart';
@@ -387,13 +391,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
         //               Future.delayed(Duration(seconds: 1), () {
         //                 // Get.toNamed('providers');
-        //                 Get.to(() => BlocProvider(
-        //                       create: (context) => UserRequestsCubit(
-        //                           UserRequestsRepository(
-        //                               userRequestsWebservices:
-        //                                   UserRequestsWebservices())),
-        //                       child: UserRequests(),
-        //                     ));
+        // Get.to(() => BlocProvider(
+        //       create: (context) => UserRequestsCubit(
+        //           UserRequestsRepository(
+        //               userRequestsWebservices:
+        //                   UserRequestsWebservices())),
+        //       child: UserRequests(),
+        //     ));
         //               });
         //             },
         //             child: Row(
@@ -1031,33 +1035,48 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: category.subcategories?.length ?? 0,
                           itemBuilder: (context, subIndex) {
                             final sub = category.subcategories![subIndex];
-                            return Stack(
-                                alignment: Alignment.bottomRight,
-                                children: [
-                                  Container(
-                                    width: 150,
-                                    height: 130,
-                                    margin: const EdgeInsets.only(right: 12),
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      child: Image.asset(
-                                        "assets/images/jpg/worker0.jpg",
-                                        fit: BoxFit.cover,
+                            return GestureDetector(
+                              onTap: () {
+                                Get.to(() => BlocProvider(
+                                      create: (context) => ServiceCubit(
+                                          ServiceRepository(
+                                              serviceWebservices:
+                                                  ServiceWebservices())),
+                                      child: ServicesScreen(
+                                        id: sub.id!,
+                                        subname: sub.displayName!,
+                                        videourl: "assets/videos/plumbing.mp4",
+                                      ),
+                                    ));
+                              },
+                              child: Stack(
+                                  alignment: Alignment.bottomRight,
+                                  children: [
+                                    Container(
+                                      width: 150,
+                                      height: 130,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        child: Image.asset(
+                                          "assets/images/jpg/worker0.jpg",
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Positioned(
-                                    right: 20.w,
-                                    bottom: 8.h,
-                                    child: Text(sub.displayName ?? "",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontFamily: "Cairo",
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold)),
-                                  )
-                                ]);
+                                    Positioned(
+                                      right: 20.w,
+                                      bottom: 8.h,
+                                      child: Text(sub.displayName ?? "",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: "Cairo",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold)),
+                                    )
+                                  ]),
+                            );
                           },
                         ),
                       ),

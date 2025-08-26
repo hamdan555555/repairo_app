@@ -456,23 +456,27 @@ class UserRequestsState extends State<UserRequests>
                                     ? Colors.red
                                     : request.status == "ongoing"
                                         ? Colors.blueGrey
-                                        : request.status == "pending"
-                                            ? Colors.grey
-                                            : Colors.amber,
+                                        : request.status == "ended"
+                                            ? Colors.deepOrangeAccent
+                                            : request.status == "pending"
+                                                ? Colors.grey
+                                                : Colors.amber,
                             borderRadius: BorderRadius.all(Radius.circular(5))),
                         child: Center(
                           child: Text(
                             request.status == "accepted"
                                 ? "مقبول"
-                                : request.status == "rejected"
-                                    ? "مرفوض"
-                                    : request.status == "ongoing"
-                                        ? "جاري"
-                                        : request.status == "pending"
-                                            ? "معلّق"
-                                            : request.status == "cancelled"
-                                                ? "ملغي"
-                                                : "${request.status}",
+                                : request.status == "ended"
+                                    ? "منهي"
+                                    : request.status == "rejected"
+                                        ? "مرفوض"
+                                        : request.status == "ongoing"
+                                            ? "جاري"
+                                            : request.status == "pending"
+                                                ? "معلّق"
+                                                : request.status == "canceled"
+                                                    ? "ملغي"
+                                                    : "${request.status}",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: "Cairo",

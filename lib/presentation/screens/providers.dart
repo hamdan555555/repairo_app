@@ -2,7 +2,6 @@ import 'package:breaking_project/business_logic/AllCategoriesCubit/allcategories
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
 import 'package:breaking_project/business_logic/AllTechniciansCubiit/alltechnisian_cubit.dart';
 import 'package:breaking_project/business_logic/AllTechniciansCubiit/alltechnisian_states.dart';
-import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/category_model.dart';
@@ -12,6 +11,7 @@ import 'package:breaking_project/data/web_services/technician_data_webservices.d
 import 'package:breaking_project/presentation/screens/tech_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class FilterScreen extends StatefulWidget {
@@ -22,7 +22,7 @@ class FilterScreen extends StatefulWidget {
 class _FilterScreenState extends State<FilterScreen> {
   double? selectedRating;
   RCategoryData? selelectedcat;
-  String searchKeyword = ''; // <-- متغير البحث
+  String searchKeyword = '';
 
   @override
   void initState() {
@@ -33,112 +33,109 @@ class _FilterScreenState extends State<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: Text("Service Providers", style: TextStyle(color: Colors.white)),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.teal,
+          elevation: 0,
+          title: const Text(
+            "جميع المهنيين",
+            style: TextStyle(
+              fontFamily: "Cairo",
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
         ),
-      ),
-      body: Column(
-        children: [
-          buildFilterOptions(),
-          Expanded(child: buildBlocWidget()),
-        ],
+        body: Column(
+          children: [
+            buildFilterOptions(),
+            Expanded(child: buildBlocWidget()),
+          ],
+        ),
       ),
     );
   }
 
   Widget buildFilterOptions() {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                BlocBuilder<AllcategoriesCubit, AllcategoriesStates>(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: BlocBuilder<AllcategoriesCubit, AllcategoriesStates>(
                   builder: (context, state) {
                     if (state is AllcategoriesLoaded) {
-                      return DropdownButton<RCategoryData>(
-                        hint: Text("All"),
-                        value: selelectedcat,
-                        items: context
-                            .read<AllcategoriesCubit>()
-                            .categories
-                            .map((category) => DropdownMenuItem<RCategoryData>(
-                                  value: category,
-                                  child: Text(category.displayName ?? 'All'),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selelectedcat = value!;
-                          });
-
-                          context.read<AlltechnisianCubit>().getAlltechnisians(
-                                jobCategoryId: selelectedcat!.id,
-                                rating: selectedRating,
-                              );
-                        },
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.teal, width: 1),
+                        ),
+                        child: DropdownButton<RCategoryData>(
+                          dropdownColor: Colors.white,
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          hint: const Text("كل الفئات",
+                              style: TextStyle(fontFamily: "Cairo")),
+                          value: selelectedcat,
+                          items: context
+                              .read<AllcategoriesCubit>()
+                              .categories
+                              .map(
+                                  (category) => DropdownMenuItem<RCategoryData>(
+                                        value: category,
+                                        child: Text(
+                                            category.displayName ?? 'غير محدد',
+                                            style: const TextStyle(
+                                                fontFamily: "Cairo")),
+                                      ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() => selelectedcat = value!);
+                            context
+                                .read<AlltechnisianCubit>()
+                                .getAlltechnisians(
+                                  jobCategoryId: selelectedcat!.id,
+                                  rating: selectedRating,
+                                );
+                          },
+                        ),
                       );
                     }
-                    return DropdownButton<String>(
-                      hint: Text("All"),
-                      value: 'All',
-                      items: [
-                        DropdownMenuItem<String>(
-                          value: 'All',
-                          child: Text('All'),
-                        )
-                      ],
-                      onChanged: (val) {},
-                    );
+                    return const SizedBox();
                   },
                 ),
-                DropdownButton<double>(
-                  hint: Text("Rating"),
-                  value: selectedRating,
-                  items: [null, 5.0, 4.0, 3.0, 2.0, 1.0].map((rate) {
-                    return DropdownMenuItem(
-                      value: rate,
-                      child: Text(rate == null ? "All" : rate.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedRating = value;
-                    });
-                    BlocProvider.of<AlltechnisianCubit>(context)
-                        .getAlltechnisians(
-                      jobCategoryId: selelectedcat?.id,
-                      rating: selectedRating,
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search by name...",
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    searchKeyword = value.toLowerCase();
-                  });
-                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            decoration: InputDecoration(
+              hintText: "ابحث بالاسم...",
+              hintStyle: const TextStyle(fontFamily: "Cairo"),
+              prefixIcon: const Icon(Icons.search, color: Colors.teal),
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.teal, width: 2),
               ),
             ),
-          ],
-        ));
+            onChanged: (value) {
+              setState(() => searchKeyword = value.toLowerCase());
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildBlocWidget() {
@@ -146,15 +143,31 @@ class _FilterScreenState extends State<FilterScreen> {
       builder: (context, state) {
         if (state is AllAlltechnisiansLoaded) {
           final allTechs = state.technicians;
-
-          // فلترة حسب الاسم
           final filteredTechs = allTechs.where((tech) {
             final name = tech.name?.toLowerCase() ?? '';
             return name.contains(searchKeyword);
           }).toList();
 
           if (filteredTechs.isEmpty) {
-            return Center(child: Text("No technicians found."));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      height: 50,
+                      width: 50,
+                      child: Image.asset(
+                        "assets/images/png/notfound.png",
+                        fit: BoxFit.cover,
+                      )),
+                  SizedBox(
+                    height: 4.h,
+                  ),
+                  Text("لا يوجد مهنيين مطابقين",
+                      style: TextStyle(fontFamily: "Cairo")),
+                ],
+              ),
+            );
           }
 
           return ListView.builder(
@@ -163,8 +176,8 @@ class _FilterScreenState extends State<FilterScreen> {
             itemBuilder: (ctx, index) => buildTechCard(filteredTechs[index]),
           );
         } else {
-          return Center(
-              child: CircularProgressIndicator(color: Colors.deepPurple));
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.teal));
         }
       },
     );
@@ -172,12 +185,11 @@ class _FilterScreenState extends State<FilterScreen> {
 
   Widget buildTechCard(RTechData tech) {
     return Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         onTap: () {
-          print("hereeeee is ${tech.id}");
           Get.to(() => BlocProvider(
                 create: (context) => TechDataCubit(TechnicianDataRepository(
                     technicianDataWebservices: TechnicianDataWebservices())),
@@ -185,23 +197,44 @@ class _FilterScreenState extends State<FilterScreen> {
               ));
         },
         leading: CircleAvatar(
-          backgroundImage: tech.image!.isNotEmpty
+          radius: 28,
+          backgroundImage: tech.image != null && tech.image!.isNotEmpty
               ? NetworkImage(
                   tech.image!
                       .replaceFirst('127.0.0.1', AppConstants.baseaddress),
                 )
-              : const AssetImage('assets/images/jpg/hamdan.jpg'),
+              : const AssetImage('assets/images/jpg/hamdan.jpg')
+                  as ImageProvider,
         ),
-        title: Text(tech.name ?? ""),
+        title: Text(
+          tech.name ?? "بدون اسم",
+          style: const TextStyle(
+            fontFamily: "Cairo",
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4),
-            Text("Category: ${tech.name ?? "Unknown"}"),
-            if (tech.rating != null) Text("Rating: ${tech.rating!.toString()}"),
+            const SizedBox(height: 4),
+            Text(
+              tech.category!.displayName ?? "فئة غير محددة",
+              style: const TextStyle(fontFamily: "Cairo", fontSize: 13),
+            ),
+            if (tech.rating != null)
+              Row(
+                children: [
+                  const Icon(Icons.star, color: Colors.amber, size: 18),
+                  const SizedBox(width: 4),
+                  Text(
+                    tech.rating!.toString(),
+                    style: const TextStyle(fontFamily: "Cairo", fontSize: 13),
+                  ),
+                ],
+              ),
           ],
         ),
-        trailing: Icon(Icons.arrow_forward_ios),
+        trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.teal),
       ),
     );
   }

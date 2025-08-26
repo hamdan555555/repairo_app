@@ -155,7 +155,7 @@ class ServicesScreenStatee extends State<ServicesScreen> {
                               final item = cart.items[index];
                               return ListTile(
                                 title: Text(
-                                  item.service.displayName!,
+                                  item.service.name!,
                                   style: TextStyle(fontFamily: "Cairo"),
                                 ),
                                 subtitle: Text(
@@ -722,7 +722,7 @@ class ServicesScreenStatee extends State<ServicesScreen> {
                         Row(
                           children: [
                             Text(
-                              "${service.maxPrice} ليرة",
+                              "${service.pricee} ليرة",
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

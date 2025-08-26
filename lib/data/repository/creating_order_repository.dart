@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'package:breaking_project/data/web_services/creating_order_webservice.dart';
+
 class CreatingOrderRepository {
   final CreatingOrderWebservice creatingOrderWebservice;
 
   CreatingOrderRepository(this.creatingOrderWebservice);
 
   Future<void> createOrder(
-      {required String technicianId,
+      {String? technicianId,
       required List<String> selectedServiceIds,
       required String latitude,
       required String longtude,
@@ -16,6 +17,7 @@ class CreatingOrderRepository {
       required String time,
       required String details}) async {
     final data = await creatingOrderWebservice.creteOrder(
+        technicianId: technicianId,
         date: date,
         details: details,
         images: images,
@@ -23,7 +25,6 @@ class CreatingOrderRepository {
         location: location,
         longtude: longtude,
         selectedServiceIds: selectedServiceIds,
-        technicianId: technicianId,
         time: time);
     print(data);
   }

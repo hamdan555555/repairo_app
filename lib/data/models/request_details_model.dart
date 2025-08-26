@@ -33,10 +33,16 @@ class RRequestDetailsData {
   String? location;
   String? details;
   String? status;
+  BookingHistory? bookingHistory;
+  String? createdAt;
+  String? statusCancellation;
   User? user;
   User? technicianAccount;
   List<Services>? services;
-  List<String>? image; // <== هنا التعديل
+  List<Services>? customServices;
+  dynamic review;
+  dynamic report;
+  List<String>? image;
 
   RRequestDetailsData({
     this.id,
@@ -47,9 +53,15 @@ class RRequestDetailsData {
     this.location,
     this.details,
     this.status,
+    this.bookingHistory,
+    this.createdAt,
+    this.statusCancellation,
     this.user,
     this.technicianAccount,
     this.services,
+    this.customServices,
+    this.review,
+    this.report,
     this.image,
   });
 
@@ -62,6 +74,11 @@ class RRequestDetailsData {
     location = json['location'];
     details = json['details'];
     status = json['status'];
+    bookingHistory = json['booking_history'] != null
+        ? BookingHistory.fromJson(json['booking_history'])
+        : null;
+    createdAt = json['created_at'];
+    statusCancellation = json['status_cancellation'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
     technicianAccount = json['technician_account'] != null
         ? User.fromJson(json['technician_account'])
@@ -72,6 +89,14 @@ class RRequestDetailsData {
         services!.add(Services.fromJson(v));
       });
     }
+    if (json['custom_services'] != null) {
+      customServices = <Services>[];
+      json['custom_services'].forEach((v) {
+        customServices!.add(Services.fromJson(v));
+      });
+    }
+    review = json['review'];
+    report = json['report'];
     if (json['image'] != null) {
       image = List<String>.from(json['image']);
     }
@@ -87,6 +112,11 @@ class RRequestDetailsData {
     data['location'] = location;
     data['details'] = details;
     data['status'] = status;
+    if (bookingHistory != null) {
+      data['booking_history'] = bookingHistory!.toJson();
+    }
+    data['created_at'] = createdAt;
+    data['status_cancellation'] = statusCancellation;
     if (user != null) {
       data['user'] = user!.toJson();
     }
@@ -96,9 +126,39 @@ class RRequestDetailsData {
     if (services != null) {
       data['services'] = services!.map((v) => v.toJson()).toList();
     }
+    if (customServices != null) {
+      data['custom_services'] = customServices!.map((v) => v.toJson()).toList();
+    }
+    data['review'] = review;
+    data['report'] = report;
     if (image != null) {
       data['image'] = image;
     }
+    return data;
+  }
+}
+
+class BookingHistory {
+  String? pending;
+  String? accepted;
+  String? ongoing;
+  String? ended;
+
+  BookingHistory({this.pending, this.accepted, this.ongoing, this.ended});
+
+  BookingHistory.fromJson(Map<String, dynamic> json) {
+    pending = json['pending'];
+    accepted = json['accepted'];
+    ongoing = json['ongoing'];
+    ended = json['ended'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['pending'] = pending;
+    data['accepted'] = accepted;
+    data['ongoing'] = ongoing;
+    data['ended'] = ended;
     return data;
   }
 }

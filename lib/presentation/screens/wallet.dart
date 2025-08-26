@@ -1,16 +1,19 @@
 import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_cubit.dart';
+import 'package:breaking_project/business_logic/AllWalletRequestsCubit/all_wallet_requests_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_states.dart';
 import 'package:breaking_project/business_logic/WalletTopupCubit/wallet_topup_cubit.dart';
+import 'package:breaking_project/data/repository/all_wallet_requests_repository.dart';
 import 'package:breaking_project/data/repository/bank_repository.dart';
 import 'package:breaking_project/data/repository/wallet_topup_request_repository.dart';
+import 'package:breaking_project/data/web_services/all_wallet_requests_webservice.dart';
 import 'package:breaking_project/data/web_services/banks_webservices.dart';
 import 'package:breaking_project/data/web_services/wallet_topup_request_webservice.dart';
+import 'package:breaking_project/presentation/screens/all_wallet_requests_screen.dart';
 import 'package:breaking_project/presentation/screens/fill_wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class WalletPage extends StatefulWidget {
   @override
@@ -26,177 +29,233 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<ProfileCubit, ProfileStates>(
-        builder: (context, state) {
-          if (state is ProfileSuccess) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 65, left: 16, right: 16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: Container(
-                            width: 24, height: 24, child: Icon(Icons.arrow_back)
-                            // SvgPicture.asset(AppImages.arrowback)
-
-                            ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        "Wallet",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                            color: Color.fromRGBO(71, 71, 71, 1)),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Get.to(Scanner());
-                        },
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 130),
-                              child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  child: Icon(Icons.qr_code_scanner_outlined)
-                                  // SvgPicture.asset(AppImages.scanner)
-                                  ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              "Scan & Charge",
-                              style: TextStyle(
-                                  color: Colors.blueAccent,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 21,
-                  ),
-                  // Wallet Balance Card
-                  Container(
-                    height: 239,
-                    width: double.infinity,
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.deepPurpleAccent,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+    return Directionality(
+      textDirection: TextDirection.rtl, // 🔥 RTL
+      child: Scaffold(
+        body: BlocBuilder<ProfileCubit, ProfileStates>(
+          builder: (context, state) {
+            if (state is ProfileSuccess) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 65, left: 16, right: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // العنوان + الرجوع
+                    Row(
                       children: [
-                        Text("Balance",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-                        SizedBox(height: 8),
-                        Text("${(state).userdata.wallet}\$",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold)),
-                        SizedBox(height: 100),
+                        GestureDetector(
+                          onTap: () => Get.back(),
+                          child: const Icon(Icons.arrow_back_ios_new, size: 24),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          "المحفظة",
+                          style: TextStyle(
+                            fontFamily: "Cairo",
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            Get.to(() => MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider(
-                                      create: (context) => AllbanksCubit(
-                                          BanksRepository(
-                                              bankWebservices:
-                                                  BankWebservices())),
-                                    ),
-                                    BlocProvider(
-                                      create: (context) => WalletTopupCubit(
-                                          WalletTopupRequestRepository(
-                                              WalletTopupRequestWebservice())),
-                                    ),
-                                  ],
-                                  child: FillWallet(),
-                                ));
+                            // ممكن نفتح ماسح QR
                           },
-                          child: Column(
-                            children: [
-                              Icon(Icons.add, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text("Top Up",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
+                          child: Row(
+                            children: const [
+                              Icon(Icons.qr_code_scanner_outlined,
+                                  size: 22, color: Colors.teal),
+                              SizedBox(width: 6),
+                              Text(
+                                "مسح وشحن",
+                                style: TextStyle(
+                                  fontFamily: "Cairo",
+                                  color: Colors.teal,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                  ),
 
-                  SizedBox(height: 16),
+                    const SizedBox(height: 25),
 
-                  // Payment Methods Card
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(16),
+                    // بطاقة الرصيد
+                    Container(
+                      height: 200,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Colors.teal, Colors.tealAccent],
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "الرصيد الحالي",
+                            style: TextStyle(
+                              fontFamily: "Cairo",
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "${state.userdata.wallet} \$",
+                            style: const TextStyle(
+                              fontFamily: "Cairo",
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(
+                                        create: (context) => AllbanksCubit(
+                                          BanksRepository(
+                                              bankWebservices:
+                                                  BankWebservices()),
+                                        ),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => WalletTopupCubit(
+                                          WalletTopupRequestRepository(
+                                              WalletTopupRequestWebservice()),
+                                        ),
+                                      ),
+                                    ],
+                                    child: FillWallet(),
+                                  ));
+                            },
+                            child: Row(
+                              children: const [
+                                Icon(Icons.add_circle,
+                                    color: Colors.white, size: 26),
+                                SizedBox(width: 6),
+                                Text(
+                                  "شحن المحفظة",
+                                  style: TextStyle(
+                                    fontFamily: "Cairo",
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        _buildListItem(Icons.credit_card, "Payment Methods"),
-                        _buildListItem(Icons.access_time, "Transactions"),
-                        _buildListItem(Icons.savings, "Default Tips",
-                            trailingText: "No Tip"),
-                      ],
+
+                    const SizedBox(height: 20),
+
+                    // قائمة الخيارات
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildListItem(Icons.credit_card, "طرق الدفع"),
+                          _divider(),
+                          _buildListItem(
+                            Icons.access_time,
+                            "المعاملات",
+                            onTap: () {
+                              print("llllllllllllllllllll");
+                              Get.to(() => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(
+                                        create: (context) => AllWalletRequestsCubit(
+                                            AllWalletRequestsRepository(
+                                                allWalletRequestsWebservice:
+                                                    AllWalletRequestsWebservice())),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => AllbanksCubit(
+                                            BanksRepository(
+                                                bankWebservices:
+                                                    BankWebservices())),
+                                      ),
+                                    ],
+                                    child: AllWalletRequestsScreen(),
+                                  ));
+                            },
+                          ),
+                          _divider(),
+                          _buildListItem(Icons.savings, "الإكراميات الافتراضية",
+                              trailingText: "لا يوجد"),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return showloadingindicator();
-          }
-        },
+                  ],
+                ),
+              );
+            } else {
+              return showLoadingIndicator();
+            }
+          },
+        ),
       ),
     );
   }
 
-  Widget showloadingindicator() {
+  Widget showLoadingIndicator() {
     return const Center(
-        child: CircularProgressIndicator(
-      color: Colors.teal,
-    ));
+      child: CircularProgressIndicator(color: Colors.teal),
+    );
   }
 
-  Widget _buildListItem(IconData icon, String title, {String? trailingText}) {
+  Widget _divider() {
+    return Divider(height: 1, color: Colors.grey.shade300);
+  }
+
+  Widget _buildListItem(IconData icon, String title,
+      {String? trailingText, void Function()? onTap}) {
     return ListTile(
-      leading: Icon(icon, color: Colors.deepPurpleAccent),
-      title: Text(title,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-      trailing: trailingText != null
-          ? Text(trailingText,
-              style: TextStyle(color: Colors.grey, fontSize: 14))
-          : Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-      onTap: () {
-        print("kdfkjdfkjdkfjdkfjkdjfkdjfkjdfjkdjf");
-      },
-    );
+        leading: Icon(icon, color: Colors.teal),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontFamily: "Cairo",
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: trailingText != null
+            ? Text(
+                trailingText,
+                style: const TextStyle(
+                  fontFamily: "Cairo",
+                  color: Colors.grey,
+                  fontSize: 14,
+                ),
+              )
+            : const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        onTap: onTap);
   }
 }

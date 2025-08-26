@@ -1,18 +1,22 @@
 import 'package:breaking_project/business_logic/AllCategoriesCubit/allcaterories_cubit.dart';
+import 'package:breaking_project/business_logic/AllTechniciansCubiit/alltechnisian_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/UserRequestsCubit/user_requests_cubit.dart';
 import 'package:breaking_project/data/repository/categories_repository.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
 import 'package:breaking_project/data/repository/profile_repository.dart';
+import 'package:breaking_project/data/repository/technicians_repository.dart';
 import 'package:breaking_project/data/repository/user_requests_repository.dart';
 import 'package:breaking_project/data/web_services/categories_webservices.dart';
 import 'package:breaking_project/data/web_services/home_webservices.dart';
 import 'package:breaking_project/data/web_services/profile_webservices.dart';
+import 'package:breaking_project/data/web_services/technicians_webservices.dart';
 import 'package:breaking_project/data/web_services/user_requests_webservices.dart';
 import 'package:breaking_project/presentation/screens/home_screen.dart';
 import 'package:breaking_project/presentation/screens/map.dart';
 import 'package:breaking_project/presentation/screens/profile.dart';
+import 'package:breaking_project/presentation/screens/providers.dart';
 import 'package:breaking_project/presentation/screens/search.dart';
 import 'package:breaking_project/presentation/screens/user_requests.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +79,8 @@ class _MainScreenState extends State<MainScreen> {
 
     _pages = [
       const HomeScreen(),
+      FilterScreen(),
+
       // const SearchScreen(),
       UserRequests(),
       MapScreen(),
@@ -93,6 +99,10 @@ class _MainScreenState extends State<MainScreen> {
         BlocProvider(
           create: (_) => AllcategoriesCubit(CategoriesRepository(
               categoriesWebservices: CategoriesWebservices())),
+        ),
+        BlocProvider(
+          create: (_) => AlltechnisianCubit(TechniciansRepository(
+              techniciansWebservices: TechniciansWebservices())),
         ),
         BlocProvider(
           create: (_) =>
@@ -140,6 +150,13 @@ class _MainScreenState extends State<MainScreen> {
                     hoverColor: Colors.tealAccent,
                     icon: LineIcons.home,
                     text: 'الرئيسية',
+                    textStyle:
+                        TextStyle(fontFamily: "Cairo", color: Colors.teal),
+                  ),
+                  GButton(
+                    hoverColor: Colors.tealAccent,
+                    icon: LineIcons.businessTime,
+                    text: 'المهنيون',
                     textStyle:
                         TextStyle(fontFamily: "Cairo", color: Colors.teal),
                   ),

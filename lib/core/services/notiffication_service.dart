@@ -1,40 +1,39 @@
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-// class NotificationService {
-//   static final _notifications = FlutterLocalNotificationsPlugin();
+class NotificationService {
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-//   static Future<void> init() async {
-//     const AndroidInitializationSettings androidSettings =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
+  Future<void> initNotifications() async {
+    // طلب صلاحيات (مهم خصوصاً بالـ iOS)
+    NotificationSettings settings = await _messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
-//     const InitializationSettings initSettings = InitializationSettings(
-//       android: androidSettings,
-//     );
+    print('User granted permission: ${settings.authorizationStatus}');
 
-//     await _notifications.initialize(initSettings);
-//   }
+    // الحصول على الـ Token لحتى رفيقك يبث عليه
+    String? token = await _messaging.getToken();
+    print("FCM Token: $token");
 
-//   static Future<void> showNotification({
-//     required int id,
-//     required String title,
-//     required String body,
-//   }) async {
-//     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-//       'main_channel', // channel ID
-//       'Main Channel', // channel name
-//       importance: Importance.high,
-//       priority: Priority.high,
-//     );
+    // الاستماع للرسائل وقت التطبيق مفتوح
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("رسالة جديدة: ${message.notification?.title}");
+      // هون بتعرض اشعار محلي
+    });
 
-//     const NotificationDetails notificationDetails = NotificationDetails(
-//       android: androidDetails,
-//     );
+    // وقت يضغط على الاشعار ويفتح التطبيق
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("تم الضغط على الاشعار: ${message.notification?.title}");
+      // ممكن تفتح صفحة معينة
+    });
 
-//     await _notifications.show(
-//       id,
-//       title,
-//       body,
-//       notificationDetails,
-//     );
-//   }
-// }
+    // وقت يكون التطبيق مغلق وفتح بسبب اشعار
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      print("اشعار فتح التطبيق: ${initialMessage.notification?.title}");
+    }
+  }
+}

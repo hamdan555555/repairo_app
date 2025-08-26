@@ -32,10 +32,10 @@ class CartBottomSheet extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = cart.items[index];
                 return ListTile(
-                  title: Text(item.service.displayName!),
+                  title: Text(item.service.name!),
                   subtitle: Text("x${item.quantity}"),
                   trailing: Text(
-                      "${double.parse(item.service.maxPrice!) * item.quantity} درهم"),
+                      "${double.parse(item.service.price.toString()) * item.quantity} درهم"),
                 );
               },
             ),

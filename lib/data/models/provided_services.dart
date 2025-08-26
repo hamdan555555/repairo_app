@@ -1,96 +1,145 @@
-class ProvidedServices {
-  bool? success;
-  String? message;
-  RProvidedServicesData? data;
+// class ProvidedServices {
+//   bool? success;
+//   String? message;
+//   RProvidedServicesData? data;
 
-  ProvidedServices({this.success, this.message, this.data});
+//   ProvidedServices({this.success, this.message, this.data});
 
-  ProvidedServices.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    message = json['message'];
-    data = json['data'] != null
-        ? new RProvidedServicesData.fromJson(json['data'])
-        : null;
-  }
+//   ProvidedServices.fromJson(Map<String, dynamic> json) {
+//     success = json['success'];
+//     message = json['message'];
+//     data = json['data'] != null
+//         ? new RProvidedServicesData.fromJson(json['data'])
+//         : null;
+//   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    data['message'] = this.message;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    return data;
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['success'] = this.success;
+//     data['message'] = this.message;
+//     if (this.data != null) {
+//       data['data'] = this.data!.toJson();
+//     }
+//     return data;
+//   }
+// }
 
-class RProvidedServicesData {
-  List<RProvidedServices>? services;
-  int? selectedCount;
-  int? selectedTotalPrice;
+// class RProvidedServicesData {
+//   List<RProvidedServices>? services;
+//   int? selectedCount;
+//   int? selectedTotalPrice;
 
-  RProvidedServicesData(
-      {this.services, this.selectedCount, this.selectedTotalPrice});
+//   RProvidedServicesData(
+//       {this.services, this.selectedCount, this.selectedTotalPrice});
 
-  RProvidedServicesData.fromJson(Map<String, dynamic> json) {
-    if (json['services'] != null) {
-      services = <RProvidedServices>[];
-      json['services'].forEach((v) {
-        services!.add(new RProvidedServices.fromJson(v));
-      });
-    }
-    selectedCount = json['selected_count'];
-    selectedTotalPrice = json['selected_total_price'];
-  }
+//   RProvidedServicesData.fromJson(Map<String, dynamic> json) {
+//     if (json['services'] != null) {
+//       services = <RProvidedServices>[];
+//       json['services'].forEach((v) {
+//         services!.add(new RProvidedServices.fromJson(v));
+//       });
+//     }
+//     selectedCount = json['selected_count'];
+//     selectedTotalPrice = json['selected_total_price'];
+//   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.services != null) {
-      data['services'] = this.services!.map((v) => v.toJson()).toList();
-    }
-    data['selected_count'] = this.selectedCount;
-    data['selected_total_price'] = this.selectedTotalPrice;
-    return data;
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     if (this.services != null) {
+//       data['services'] = this.services!.map((v) => v.toJson()).toList();
+//     }
+//     data['selected_count'] = this.selectedCount;
+//     data['selected_total_price'] = this.selectedTotalPrice;
+//     return data;
+//   }
+// }
 
-class RProvidedServices {
+// class RProvidedServices {
+//   String? id;
+//   String? name;
+//   String? minPrice;
+//   String? maxPrice;
+//   bool? selected;
+//   int? price;
+//   String? image;
+
+//   RProvidedServices(
+//       {this.id,
+//       this.name,
+//       this.minPrice,
+//       this.maxPrice,
+//       this.selected,
+//       this.price,
+//       this.image});
+
+//   RProvidedServices.fromJson(Map<String, dynamic> json) {
+//     id = json['id'];
+//     name = json['display_name'];
+//     minPrice = json['min_price'];
+//     maxPrice = json['max_price'];
+//     selected = json['selected'];
+//     price = json['price'];
+//     image = json['image'];
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['id'] = this.id;
+//     data['display_name'] = this.name;
+//     data['min_price'] = this.minPrice;
+//     data['max_price'] = this.maxPrice;
+//     data['selected'] = this.selected;
+//     data['price'] = this.price;
+//     data['image'] = this.image;
+//     return data;
+//   }
+// }
+
+import 'package:breaking_project/data/models/base_service_model.dart';
+
+class RProvidedServices implements BaseService {
   String? id;
-  String? name;
+  String? serviceName;
   String? minPrice;
   String? maxPrice;
   bool? selected;
-  int? price;
+  int? servicePrice;
   String? image;
 
-  RProvidedServices(
-      {this.id,
-      this.name,
-      this.minPrice,
-      this.maxPrice,
-      this.selected,
-      this.price,
-      this.image});
+  RProvidedServices({
+    this.id,
+    this.serviceName,
+    this.minPrice,
+    this.maxPrice,
+    this.selected,
+    this.servicePrice,
+    this.image,
+  });
 
   RProvidedServices.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['display_name'];
+    serviceName = json['display_name'];
     minPrice = json['min_price'];
     maxPrice = json['max_price'];
     selected = json['selected'];
-    price = json['price'];
+    servicePrice = json['price'];
     image = json['image'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['display_name'] = this.name;
-    data['min_price'] = this.minPrice;
-    data['max_price'] = this.maxPrice;
-    data['selected'] = this.selected;
-    data['price'] = this.price;
-    data['image'] = this.image;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'display_name': serviceName,
+        'min_price': minPrice,
+        'max_price': maxPrice,
+        'selected': selected,
+        'price': servicePrice,
+        'image': image,
+      };
+
+  // BaseService implementation
+  @override
+  String? get name => serviceName;
+
+  @override
+  int get price => servicePrice!;
 }

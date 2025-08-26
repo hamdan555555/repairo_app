@@ -35,13 +35,13 @@ class ProvidedServicesRepository {
 
   Future<List<RProvidedServices>> getThisTechServices(
     String techid,
-    List<String> services,
+    List<String>? services,
   ) async {
     print("provided services Searching Started");
 
     final response = await providedServicesWebservices.getthisTechServices(
       technicianId: techid,
-      selectedServiceIds: services,
+      selectedServiceIds: services ?? [],
     );
 
     print("this inside repo response ===> $response");
