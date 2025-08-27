@@ -1,14 +1,13 @@
 import 'dart:convert';
-
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AllLocationsWebservice {
-  Future<Map<String, dynamic>> getlocations(String id) async {
+class ShowChatWebservice {
+  Future<Map<String, dynamic>> showChat(String requestid) async {
     final prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('auth_token');
-    final url = Uri.parse('${AppConstants.baseUrl}/user/saved-location');
+    final url = Uri.parse('${AppConstants.baseUrl}/user/chat/$requestid');
 
     final response = await http.get(
       url,
@@ -19,12 +18,15 @@ class AllLocationsWebservice {
     );
 
     if (response.statusCode == 200) {
-      print('locations info: ${response.body}');
+      print('chat  info: ${response.body}');
       final dataa = jsonDecode(response.body);
-      return dataa; // رجّع الـ response كامل
+      final Map<String, dynamic> data =
+          Map<String, dynamic>.from(dataa['data']);
+      print(data.toString());
+      return data;
     } else {
-      print('Failed to get locations info: ${response.statusCode}');
-      throw Exception('locations info failed');
+      print('Failed to get chatting info: ${response.statusCode}');
+      throw Exception('getting chatting info failed');
     }
   }
 }

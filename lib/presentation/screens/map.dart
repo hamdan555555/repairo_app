@@ -75,11 +75,11 @@ class _MapScreenState extends State<MapScreen> {
         FlutterMap(
           mapController: mapController,
           options: MapOptions(
-            // onPositionChanged: (MapCamera cam, bool ischanged) {
-            //   setState(() {
-            //     currentpos = cam.center;
-            //   });
-            // },
+            onPositionChanged: (MapCamera cam, bool ischanged) {
+              setState(() {
+                currentpos = cam.center;
+              });
+            },
             initialCenter: currentLocation == null
                 ? LatLng(latitude, longitude)
                 : LatLng(
@@ -127,17 +127,6 @@ class _MapScreenState extends State<MapScreen> {
                       child: IconButton(
                         onPressed: () async {
                           setState(() async {
-                            // print("here is stsssss $_permissionGranted");
-                            // print(currentLocation!.latitude!);
-                            // if (_permissionGranted ==
-                            //     PermissionStatus.granted) {
-                            //   print("dfdfdfd");
-                            //   mapController.move(
-                            //       LatLng(currentLocation!.latitude!,
-                            //           currentLocation!.longitude!),
-                            //       15);
-                            // }
-
                             final prefs = await SharedPreferences.getInstance();
                             String lat = prefs.getString('lat')!;
                             String lng = prefs.getString('lng')!;

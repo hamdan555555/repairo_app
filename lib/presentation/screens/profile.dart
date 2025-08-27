@@ -3,15 +3,19 @@ import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_cubit.da
 import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_states.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_states.dart';
+import 'package:breaking_project/business_logic/UserLocationsCubit/user_locations_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/bank_model.dart';
 import 'package:breaking_project/data/models/userprofile_model.dart';
+import 'package:breaking_project/data/repository/all_locations_repository.dart';
 import 'package:breaking_project/data/repository/bank_repository.dart';
 import 'package:breaking_project/data/repository/profile_repository.dart';
+import 'package:breaking_project/data/web_services/all_locations_webservice.dart';
 import 'package:breaking_project/data/web_services/banks_webservices.dart';
 import 'package:breaking_project/data/web_services/profile_webservices.dart';
 import 'package:breaking_project/presentation/screens/banks.dart';
 import 'package:breaking_project/presentation/screens/edit_profile.dart';
+import 'package:breaking_project/presentation/screens/user_locations.dart';
 import 'package:breaking_project/presentation/screens/wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -238,7 +242,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
           ),
           settingsTile(Icons.language, "لغة التطبيق"),
-          settingsTile(Icons.location_on_outlined, "العناوين"),
+          settingsTile(
+            Icons.location_on_outlined,
+            "العناوين",
+            onTap: () {
+              Get.to(
+                () => BlocProvider(
+                  create: (_) => UserLocationsCubit(AllLocationsRepository(
+                      allLocationsWebservice: AllLocationsWebservice())),
+                  child: UserLocationsScreen(id: userdata.id!),
+                ),
+              );
+            },
+          ),
           settingsTile(Icons.favorite_border, "التفضيلات"),
           settingsTile(Icons.star_border, "قم بتقييمنا"),
           sectionTitle("حول التطبيق"),

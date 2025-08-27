@@ -3,17 +3,21 @@ import 'package:breaking_project/business_logic/InvoiceCubit/invoice_cubit.dart'
 import 'package:breaking_project/business_logic/PayInvoiceCubit/pay_invoice_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_states.dart';
+import 'package:breaking_project/business_logic/ShowChatCubit/show_chat_cubit.dart';
 import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/repository/cancel_order_repository.dart';
 import 'package:breaking_project/data/repository/invoice_repository.dart';
 import 'package:breaking_project/data/repository/pay_invoice_repository.dart';
+import 'package:breaking_project/data/repository/show_chat_repository.dart';
 import 'package:breaking_project/data/repository/technician_data_repository.dart';
 import 'package:breaking_project/data/web_services/cancel_order_webservice.dart';
 import 'package:breaking_project/data/web_services/invoice_web_services.dart';
 import 'package:breaking_project/data/web_services/pay_invoice_webservices.dart';
+import 'package:breaking_project/data/web_services/show_chat_webservice.dart';
 import 'package:breaking_project/data/web_services/technician_data_webservices.dart';
 import 'package:breaking_project/presentation/screens/cancellation_reasons.dart';
+import 'package:breaking_project/presentation/screens/chatting_screen.dart';
 import 'package:breaking_project/presentation/screens/invoice_details.dart';
 import 'package:breaking_project/presentation/screens/report_screen.dart';
 import 'package:breaking_project/presentation/screens/service_rating_screen.dart';
@@ -48,6 +52,20 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
+          // actions: [
+          //   GestureDetector(
+          //     onTap: () {
+          //       Get.to(() => BlocProvider(
+          //                       create: (context) => ShowChatCubit(
+          //                           ShowChatRepository(
+          //                               ShowChatWebservice())),
+          //                       child: ChattingScreen(
+          //                         requestId: widget.r,
+          //                           ),
+          //                     ));
+          //     },
+
+          //   child: Icon(Icons.chat))],
           title: const Text(
             'تفاصيل الطلب',
             style: TextStyle(fontFamily: 'Cairo'),
@@ -156,6 +174,47 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                 child: Column(
                   children: [
                     _buildUserSection(),
+                    Visibility(
+                      visible: requestdetails.status == "accepted",
+                      child: GestureDetector(
+                          onTap: () {
+                            Get.to(() => BlocProvider(
+                                  create: (context) => ShowChatCubit(
+                                      ShowChatRepository(ShowChatWebservice())),
+                                  child: ChattingScreen(
+                                    requestId: requestdetails.id!,
+                                    currentUser: "user",
+                                  ),
+                                ));
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            elevation: 1.5,
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            child: ListTile(
+                              leading: Icon(Icons.chat, color: Colors.teal),
+                              title: Text(
+                                "الذهاب إلى المحادثة",
+                                style: TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              subtitle: Text(
+                                "إبدأ محادثتك مع المهني",
+                                style: TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontSize: 14,
+                                ),
+                              ),
+                              trailing: Icon(Icons.arrow_forward_ios,
+                                  color: Colors.grey), // هون الإضافة
+                            ),
+                          )),
+                    ),
                     _buildInfoCard('موقع التنفيذ', requestdetails.location!,
                         icon: Icons.location_on),
                     _buildInfoCard(
@@ -290,7 +349,7 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                             );
 
                             if (response.statusCode == 200) {
-                              Get.offAllNamed("mainscreen");
+                              Get.back();
                               Get.defaultDialog(
                                 title: '',
                                 titlePadding: EdgeInsets.zero,

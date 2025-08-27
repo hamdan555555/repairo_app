@@ -7,12 +7,15 @@ import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
 import 'package:breaking_project/business_logic/ServiceCubit/service_cubit.dart';
 import 'package:breaking_project/business_logic/SubCategoryCubit/subcategory_cubit.dart';
+import 'package:breaking_project/business_logic/UserLocationsCubit/user_locations_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/models/banner_image_model.dart';
+import 'package:breaking_project/data/repository/all_locations_repository.dart';
 import 'package:breaking_project/data/repository/categories_tree_repository.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
 import 'package:breaking_project/data/repository/services_repository.dart';
 import 'package:breaking_project/data/repository/subcategory_repository.dart';
+import 'package:breaking_project/data/web_services/all_locations_webservice.dart';
 import 'package:breaking_project/data/web_services/categories_tree_webservices.dart';
 import 'package:breaking_project/data/web_services/home_webservices.dart';
 import 'package:breaking_project/data/web_services/services_webservices.dart';
@@ -20,6 +23,7 @@ import 'package:breaking_project/data/web_services/subcategories_webservice.dart
 import 'package:breaking_project/presentation/screens/search.dart';
 import 'package:breaking_project/presentation/screens/services_screen.dart';
 import 'package:breaking_project/presentation/screens/subcategories.dart';
+import 'package:breaking_project/presentation/screens/user_locations.dart';
 import 'package:breaking_project/presentation/widgets/Items_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentPage = 0;
   late List<RBannerImageData> bannerimages;
   String? username;
+  String? userlocation;
   final List<String> hints = ["صيانة", "تنظيف", "دهان"];
   int currentHintIndex = 0;
   Timer? hintTimer;
@@ -78,6 +83,17 @@ class _HomeScreenState extends State<HomeScreen> {
     print('user name: $username');
   }
 
+  void _getUserLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    var ulocation = prefs.getString('user_current_location');
+    if (ulocation != null) {
+      setState(() {
+        userlocation = ulocation;
+      });
+    }
+    print('user name: $username');
+  }
+
   @override
   void initState() {
     hintTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
@@ -91,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //BlocProvider.of<AllcategoriesCubit>(context).getAllCategories();
     BlocProvider.of<CategoriesTreeCubit>(context).getCategoriesTree();
     _getUserName();
+    _getUserLocation();
 
     Timer.periodic(
       Duration(seconds: 3),
@@ -572,23 +589,41 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {
                             _showLocationBottomSheet(context);
                           },
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.location_pin,
-                                color: Colors.white,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                '$current_location',
-                                style: TextStyle(
-                                    color: Colors.white, fontFamily: "Cairo"),
-                              ),
-                              Icon(
-                                Icons.expand_more,
-                                color: Colors.white,
-                              ),
-                            ],
+                          child: GestureDetector(
+                            onTap: () {
+                              //                  Get.to(
+                              //   () => BlocProvider(
+                              //     create: (_) => UserLocationsCubit(AllLocationsRepository(
+                              //         allLocationsWebservice: AllLocationsWebservice())),
+                              //     child: UserLocationsScreen(id: userdata.id!),
+                              //   ),
+                              // );
+                            },
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.location_pin,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    userlocation.isNull
+                                        ? "دمشق"
+                                        : "$userlocation",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: "Cairo"),
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.expand_more,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(
