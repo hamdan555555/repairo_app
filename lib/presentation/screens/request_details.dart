@@ -3,18 +3,18 @@ import 'package:breaking_project/business_logic/InvoiceCubit/invoice_cubit.dart'
 import 'package:breaking_project/business_logic/PayInvoiceCubit/pay_invoice_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_cubit.dart';
 import 'package:breaking_project/business_logic/RequestDetailsCubit/request_details_states.dart';
-import 'package:breaking_project/business_logic/ShowChatCubit/show_chat_cubit.dart';
+import 'package:breaking_project/business_logic/ChatCubit/chat_cubit.dart';
 import 'package:breaking_project/business_logic/TechDataCubit/tech_data_cubit.dart';
 import 'package:breaking_project/core/constants/app_constants.dart';
 import 'package:breaking_project/data/repository/cancel_order_repository.dart';
 import 'package:breaking_project/data/repository/invoice_repository.dart';
 import 'package:breaking_project/data/repository/pay_invoice_repository.dart';
-import 'package:breaking_project/data/repository/show_chat_repository.dart';
+import 'package:breaking_project/data/repository/chat_repository.dart';
 import 'package:breaking_project/data/repository/technician_data_repository.dart';
 import 'package:breaking_project/data/web_services/cancel_order_webservice.dart';
 import 'package:breaking_project/data/web_services/invoice_web_services.dart';
 import 'package:breaking_project/data/web_services/pay_invoice_webservices.dart';
-import 'package:breaking_project/data/web_services/show_chat_webservice.dart';
+import 'package:breaking_project/data/web_services/chat_webservice.dart';
 import 'package:breaking_project/data/web_services/technician_data_webservices.dart';
 import 'package:breaking_project/presentation/screens/cancellation_reasons.dart';
 import 'package:breaking_project/presentation/screens/chatting_screen.dart';
@@ -179,9 +179,14 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                       child: GestureDetector(
                           onTap: () {
                             Get.to(() => BlocProvider(
-                                  create: (context) => ShowChatCubit(
-                                      ShowChatRepository(ShowChatWebservice())),
+                                  create: (context) => ChatCubit(
+                                      ChatRepository(ChatWebservice())),
                                   child: ChattingScreen(
+                                    techname:
+                                        requestdetails.technicianAccount!.name!,
+                                    techimage: requestdetails
+                                        .technicianAccount!.image!,
+                                    user_id: requestdetails.user!.id!,
                                     requestId: requestdetails.id!,
                                     currentUser: "user",
                                   ),

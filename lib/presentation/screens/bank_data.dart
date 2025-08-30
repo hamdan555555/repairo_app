@@ -22,6 +22,7 @@ class BankDataScreenStatee extends State<BankDataScreen> {
     BlocProvider.of<BankDataCubit>(context).getBankData(widget.id);
     super.initState();
   }
+  
 
   @override
   Widget build(BuildContext context) {
