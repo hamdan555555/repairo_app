@@ -141,7 +141,7 @@
 //               child: Image.network(
 //                 request.service!.image
 //                     .toString()
-//                     .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+//                     .  ('127.0.0.1', AppConstants.baseaddress),
 //                 width: double.infinity,
 //                 height: 180,
 //                 fit: BoxFit.cover,
@@ -657,7 +657,7 @@ class UserRequestsState extends State<UserRequests>
         //           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         //           child: Image.network(
         //             request.service!.image!
-        //                 .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+        //                 .  ('127.0.0.1', AppConstants.baseaddress),
         //             width: double.infinity,
         //             height: 180,
         //             fit: BoxFit.cover,

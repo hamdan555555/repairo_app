@@ -190,24 +190,30 @@ class _FilterScreenState extends State<FilterScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         onTap: () {
-          Get.to(() => BlocProvider(
-                create: (context) => TechDataCubit(TechnicianDataRepository(
-                    technicianDataWebservices: TechnicianDataWebservices())),
-                child: TechDataScreen(id: tech.id!),
-              ));
+          if (tech.id != null) {
+            Get.to(() => BlocProvider(
+                  create: (context) => TechDataCubit(
+                    TechnicianDataRepository(
+                      technicianDataWebservices: TechnicianDataWebservices(),
+                    ),
+                  ),
+                  child: TechDataScreen(id: tech.id!),
+                ));
+          } else {
+            // إذا الـ id = null ما نعمل انتقال
+            Get.snackbar("خطأ", "المهني غير صالح لعرض التفاصيل",
+                backgroundColor: Colors.redAccent, colorText: Colors.white);
+          }
         },
         leading: CircleAvatar(
           radius: 28,
-          backgroundImage: tech.image != null && tech.image!.isNotEmpty
-              ? NetworkImage(
-                  tech.image!
-                      .replaceFirst('127.0.0.1', AppConstants.baseaddress),
-                )
-              : const AssetImage('assets/images/jpg/hamdan.jpg')
-                  as ImageProvider,
+          backgroundImage: (tech.image != null && tech.image!.isNotEmpty)
+              ? NetworkImage(tech.image!
+                  .replaceFirst("127.0.0.1", AppConstants.baseaddress))
+              : const AssetImage("assets/images/png/default_avatar.png"),
         ),
         title: Text(
-          tech.name ?? "بدون اسم",
+          tech.name?.isNotEmpty == true ? tech.name! : "بدون اسم",
           style: const TextStyle(
             fontFamily: "Cairo",
             fontWeight: FontWeight.w600,
@@ -218,23 +224,25 @@ class _FilterScreenState extends State<FilterScreen> {
           children: [
             const SizedBox(height: 4),
             Text(
-              tech.category!.displayName ?? "فئة غير محددة",
+              tech.category?.displayName?.isNotEmpty == true
+                  ? tech.category!.displayName!
+                  : "فئة غير محددة",
               style: const TextStyle(fontFamily: "Cairo", fontSize: 13),
             ),
-            if (tech.rating != null)
-              Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.amber, size: 18),
-                  const SizedBox(width: 4),
-                  Text(
-                    tech.rating!.toString(),
-                    style: const TextStyle(fontFamily: "Cairo", fontSize: 13),
-                  ),
-                ],
-              ),
+            Row(
+              children: [
+                const Icon(Icons.star, color: Colors.amber, size: 18),
+                const SizedBox(width: 4),
+                Text(
+                  tech.rating?.toString() ?? "0.0",
+                  style: const TextStyle(fontFamily: "Cairo", fontSize: 13),
+                ),
+              ],
+            ),
           ],
         ),
-        trailing: Icon(Icons.arrow_forward_ios_outlined, color: Colors.teal),
+        trailing:
+            const Icon(Icons.arrow_forward_ios_outlined, color: Colors.teal),
       ),
     );
   }

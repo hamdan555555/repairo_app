@@ -1,7 +1,11 @@
+import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_cubit.dart';
 import 'package:breaking_project/business_logic/HomeCubit/home_states.dart';
+import 'package:breaking_project/data/repository/creating_order_repository.dart';
 import 'package:breaking_project/data/repository/home_repository.dart';
+import 'package:breaking_project/data/web_services/creating_order_webservice.dart';
 import 'package:breaking_project/data/web_services/home_webservices.dart';
+import 'package:breaking_project/presentation/screens/creating_order.dart';
 import 'package:breaking_project/presentation/screens/servicesProviders.dart';
 import 'package:breaking_project/presentation/screens/suggested_services_screen.dart';
 import 'package:breaking_project/presentation/widgets/cart_item_widget.dart';
@@ -200,6 +204,22 @@ class _SchedulePageState extends State<SchedulePage> {
                       Spacer(),
                       GestureDetector(
                         onTap: () {
+                          if (selectedIndex == null) {
+                            Get.snackbar("تنبيه", "يرجى اختيار نوع المهني");
+                            return;
+                          }
+
+                          if (formattedDate == null) {
+                            Get.snackbar("تنبيه", "يرجى اختيار اليوم");
+                            return;
+                          }
+
+                          if (formattedTime == null) {
+                            Get.snackbar("تنبيه", "يرجى اختيار الوقت");
+                            return;
+                          }
+
+                          /// إذا كل الشروط تمام
                           if (selectedIndex == 0) {
                             Get.to(
                               () => BlocProvider(
@@ -213,31 +233,38 @@ class _SchedulePageState extends State<SchedulePage> {
                                   cart: widget.cart,
                                   selectedservices: widget.cart.items
                                       .map((item) => item.service.id)
-                                      .whereType<String>() // يتأكد انها Strings
+                                      .whereType<String>()
                                       .toList(),
                                 ),
                               ),
                             );
                           } else {
-                            Get.to(
-                              () => SuggestedServicesScreen(
-                                date: formattedDate,
-                                time: formattedTime,
-                                cart: widget.cart,
-                                suggestion_list: widget.cart.items
-                                    .map((item) => item.service)
-                                    .toList(),
-                              ),
-                            );
+                            Get.to(() => BlocProvider(
+                                  create: (context) => CreatingOrderCubit(
+                                      CreatingOrderRepository(
+                                          CreatingOrderWebservice())),
+                                  child: CreateRequestScreen(
+                                    date: formattedDate,
+                                    time: formattedTime,
+                                    id: '',
+                                    servicesids: widget.cart.items
+                                        .map((item) => item.service.id!)
+                                        .toList(),
+                                    servicesquantities: widget.cart.items
+                                        .map((item) => item.quantity.toString())
+                                        .toList(),
+                                  ),
+                                ));
                           }
                         },
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.teal,
-                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(16)),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
                                 vertical: 16.0, horizontal: 24),
                             child: Text(
                               "التالي",

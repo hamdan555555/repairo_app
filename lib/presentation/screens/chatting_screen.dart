@@ -191,7 +191,7 @@
 //               CircleAvatar(
 //                 radius: 20,
 //                 backgroundImage: NetworkImage(
-//                   _chat?.userImage?.replaceFirst(
+//                   _chat?.userImage?.  (
 //                           "127.0.0.1", AppConstants.baseaddress) ??
 //                       "https://i.pravatar.cc/150?img=3", // صورة المستخدم الآخر
 //                 ),
@@ -643,7 +643,7 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   SizedBox(
                     width: 2,
                   ),
-                  
+
                   Expanded(
                     child: TextField(
                       controller: _controller,
@@ -670,6 +670,36 @@ class _ChattingScreenState extends State<ChattingScreen> {
                   //     }
                   //   },
                   // ),
+                  // IconButton(
+                  //   icon: const Icon(Icons.send, color: Colors.teal),
+                  //   onPressed: () async {
+                  //     if (_chat == null) return;
+
+                  //     final text = _controller.text.trim();
+
+                  //     if (currentSelectedImage != null) {
+                  //       //   // ✨ هون ترفع الصورة على السيرفر وترجع الرابط
+                  //       //  ChatCubit.get(context)
+                  //       //       .sendmessage(_chat!.chatId!, null,currentSelectedImage.toString());
+
+                  //       //   // بعدها تبعت رسالة صورة
+                  //       context.read<ChatCubit>().sendmessage(
+                  //           _chat!.chatId!,
+                  //           null,
+                  //           currentSelectedImage // مميز للرسائل يلي هي صور
+                  //           );
+
+                  //       setState(
+                  //           () => currentSelectedImage = null); // مسح المعاينة
+                  //     } else if (text.isNotEmpty) {
+                  //       // رسالة نصية
+                  //       context.read<ChatCubit>().sendmessage(
+                  //           _chat!.chatId!, _controller.text, null);
+                  //       _controller.clear();
+                  //     }
+                  //   },
+                  // ),
+
                   IconButton(
                     icon: const Icon(Icons.send, color: Colors.teal),
                     onPressed: () async {
@@ -678,25 +708,47 @@ class _ChattingScreenState extends State<ChattingScreen> {
                       final text = _controller.text.trim();
 
                       if (currentSelectedImage != null) {
-                        //   // ✨ هون ترفع الصورة على السيرفر وترجع الرابط
-                        //  ChatCubit.get(context)
-                        //       .sendmessage(_chat!.chatId!, null,currentSelectedImage.toString());
-
-                        //   // بعدها تبعت رسالة صورة
+                        // ١. بعت رسالة صورة
                         context.read<ChatCubit>().sendmessage(
-                            _chat!.chatId!,
-                            null,
-                            currentSelectedImage // مميز للرسائل يلي هي صور
+                              _chat!.chatId!,
+                              null,
+                              currentSelectedImage,
                             );
 
-                        setState(
-                            () => currentSelectedImage = null); // مسح المعاينة
+                        // ٢. أضف نسخة محلية للـ messages حتى تبين فوراً
+                        setState(() {
+                          _chat!.messages!.add(
+                            Messages(
+                              sender: widget.currentUser,
+                              content: currentSelectedImage!
+                                  .path, // مؤقتاً المسار، أو خليه "..."
+                              createdAt: DateTime.now().toString(),
+                            ),
+                          );
+                          currentSelectedImage = null;
+                        });
                       } else if (text.isNotEmpty) {
-                        // رسالة نصية
+                        // ١. بعت رسالة نصية
                         context.read<ChatCubit>().sendmessage(
-                            _chat!.chatId!, _controller.text, null);
-                        _controller.clear();
+                              _chat!.chatId!,
+                              text,
+                              null,
+                            );
+
+                        // ٢. أضف نسخة محلية للـ messages
+                        setState(() {
+                          _chat!.messages!.add(
+                            Messages(
+                              sender: widget.currentUser,
+                              content: text,
+                              createdAt: DateTime.now().toString(),
+                            ),
+                          );
+                          _controller.clear();
+                        });
                       }
+
+                      _scrollToBottom();
                     },
                   ),
                 ],
@@ -745,8 +797,7 @@ class MessageBubble extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  message.content!.replaceFirst(
-                      "127.0.0.1", AppConstants.baseaddress), // تصحيح الرابط
+                  message.content!, // تصحيح الرابط
                   width: 200,
                   height: 200,
                   fit: BoxFit.cover,

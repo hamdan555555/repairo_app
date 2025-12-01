@@ -16,13 +16,12 @@ class PusherConfig {
   String SECRET = "84689456454188f40d01";
   String API_CLUSTER = "eu";
 
-  Future<void> initPusher(onEvent,
-      {channelName = "private-chat.9f683cd6-78ca-46a9-9b3a-a08bfb7f2dca",
-      roomId}) async {
+  Future<void> initPusher(onEvent, {roomId}) async {
     print("11111111111");
     _pusher = PusherChannelsFlutter.getInstance();
 
     try {
+      final channelName = "chat";
       await _pusher.init(
         apiKey: API_KEY,
         cluster: API_CLUSTER,
@@ -35,7 +34,7 @@ class PusherConfig {
         onMemberAdded: onMemberAdded,
         onMemberRemoved: onMemberRemoved,
         //authEndpoint: "${ApiEndPoints.baseUrlPusher}/broadcasting/auth",
-        onAuthorizer: onAuthorizer,
+        //onAuthorizer: onAuthorizer,
       );
 
       try {

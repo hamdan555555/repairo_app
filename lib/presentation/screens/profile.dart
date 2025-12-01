@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_cubit.dart';
 import 'package:breaking_project/business_logic/AllBanksCubit/all_banks_states.dart';
+import 'package:breaking_project/business_logic/CopounsCubit/copouns_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_cubit.dart';
 import 'package:breaking_project/business_logic/ProfileCubit/profile_states.dart';
 import 'package:breaking_project/business_logic/UserLocationsCubit/user_locations_cubit.dart';
@@ -9,11 +10,14 @@ import 'package:breaking_project/data/models/bank_model.dart';
 import 'package:breaking_project/data/models/userprofile_model.dart';
 import 'package:breaking_project/data/repository/all_locations_repository.dart';
 import 'package:breaking_project/data/repository/bank_repository.dart';
+import 'package:breaking_project/data/repository/copouns_repository.dart';
 import 'package:breaking_project/data/repository/profile_repository.dart';
 import 'package:breaking_project/data/web_services/all_locations_webservice.dart';
 import 'package:breaking_project/data/web_services/banks_webservices.dart';
 import 'package:breaking_project/data/web_services/profile_webservices.dart';
+import 'package:breaking_project/data/web_services/user_copuns_webservice.dart';
 import 'package:breaking_project/presentation/screens/banks.dart';
+import 'package:breaking_project/presentation/screens/copuns_screen.dart';
 import 'package:breaking_project/presentation/screens/edit_profile.dart';
 import 'package:breaking_project/presentation/screens/user_locations.dart';
 import 'package:breaking_project/presentation/screens/wallet.dart';
@@ -87,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         uaddress = userdata.address;
         uphone = userdata.phone;
         uimage =
-            userdata.image!.replaceFirst('127.0.0.1', AppConstants.baseaddress);
+            userdata.image!.replaceFirst("127.0.0.1", AppConstants.baseaddress);
         print(uname);
         print(uaddress);
         print(uimage);
@@ -141,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           //   radius: 35,
                           //   backgroundImage: userdata.image!.isNotEmpty
                           //       ? NetworkImage(
-                          //           userdata.image!.replaceFirst(
+                          //           userdata.image!.  (
                           //               '127.0.0.1', AppConstants.baseaddress),
                           //         )
                           //       : const AssetImage(
@@ -152,7 +156,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   radius: 35,
                                   backgroundImage: NetworkImage(
                                     userdata.image!.replaceFirst(
-                                        '127.0.0.1', AppConstants.baseaddress),
+                                        "127.0.0.1", AppConstants.baseaddress),
                                   ),
                                 )
                               : Shimmer.fromColors(
@@ -258,7 +262,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           settingsTile(Icons.favorite_border, "التفضيلات"),
           settingsTile(Icons.star_border, "قم بتقييمنا"),
           sectionTitle("حول التطبيق"),
-          settingsTile(Icons.privacy_tip_outlined, "سياسة الخصوصية"),
+          settingsTile(Icons.privacy_tip_outlined, "كوبوناتي ", onTap: () {
+            Get.to(() => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => CopounsCubit(CopounsRepository(
+                          copunsWebservice: UserCopunsWebservice())),
+                    ),
+                  ],
+                  child: CouponsPage(),
+                ));
+          }),
           settingsTile(Icons.money, "البنوك المتاحة ", onTap: () {
             Get.to(() => MultiBlocProvider(
                   providers: [

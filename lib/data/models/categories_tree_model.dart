@@ -33,8 +33,9 @@ class RCategoryTreeData {
   String? createdAt;
   String? updatedAt;
   dynamic deletedAt;
-  List<Subcategories>? subcategories;
+  String? image;
   String? type;
+  List<Subcategories>? subcategories;
 
   RCategoryTreeData({
     this.id,
@@ -42,8 +43,9 @@ class RCategoryTreeData {
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
-    this.subcategories,
+    this.image,
     this.type,
+    this.subcategories,
   });
 
   RCategoryTreeData.fromJson(Map<String, dynamic> json) {
@@ -52,13 +54,14 @@ class RCategoryTreeData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
+    image = json['image'];
+    type = json['type'];
     if (json['subcategories'] != null) {
       subcategories = <Subcategories>[];
       json['subcategories'].forEach((v) {
         subcategories!.add(Subcategories.fromJson(v));
       });
     }
-    type = json['type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -68,10 +71,11 @@ class RCategoryTreeData {
     map['created_at'] = createdAt;
     map['updated_at'] = updatedAt;
     map['deleted_at'] = deletedAt;
+    map['image'] = image;
+    map['type'] = type;
     if (subcategories != null) {
       map['subcategories'] = subcategories!.map((v) => v.toJson()).toList();
     }
-    map['type'] = type;
     return map;
   }
 }
@@ -84,9 +88,10 @@ class Subcategories {
   String? createdAt;
   String? updatedAt;
   dynamic deletedAt;
+  String? image;
   String? type;
-  List<Subcategories>? subcategories; // Nested subcategories
-  List<Services>? services;
+  List<Subcategories>? subcategories;
+  List<Service>? services;
 
   Subcategories({
     this.id,
@@ -96,6 +101,7 @@ class Subcategories {
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
+    this.image,
     this.type,
     this.subcategories,
     this.services,
@@ -109,6 +115,7 @@ class Subcategories {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     deletedAt = json['deleted_at'];
+    image = json['image'];
     type = json['type'];
 
     if (json['subcategories'] != null) {
@@ -119,9 +126,9 @@ class Subcategories {
     }
 
     if (json['services'] != null) {
-      services = <Services>[];
+      services = <Service>[];
       json['services'].forEach((v) {
-        services!.add(Services.fromJson(v));
+        services!.add(Service.fromJson(v));
       });
     }
   }
@@ -135,6 +142,7 @@ class Subcategories {
     map['created_at'] = createdAt;
     map['updated_at'] = updatedAt;
     map['deleted_at'] = deletedAt;
+    map['image'] = image;
     map['type'] = type;
     if (subcategories != null) {
       map['subcategories'] = subcategories!.map((v) => v.toJson()).toList();
@@ -146,48 +154,64 @@ class Subcategories {
   }
 }
 
-class Services {
+class Service {
   String? id;
   String? subCategoryId;
   String? displayName;
-  String? minPrice;
-  String? maxPrice;
+  double? minPrice;
+  double? maxPrice;
+  int? expectedTime;
+  String? description;
   String? createdAt;
   String? updatedAt;
-  dynamic deletedAt;
+  String? deletedAt;
+  String? image;
 
-  Services({
+  Service({
     this.id,
     this.subCategoryId,
     this.displayName,
     this.minPrice,
     this.maxPrice,
+    this.expectedTime,
+    this.description,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
+    this.image,
   });
 
-  Services.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    subCategoryId = json['sub_category_id'];
-    displayName = json['display_name'];
-    minPrice = json['min_price'];
-    maxPrice = json['max_price'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
+  factory Service.fromJson(Map<String, dynamic> json) {
+    return Service(
+      id: json['id']?.toString(),
+      subCategoryId: json['sub_category_id']?.toString(),
+      displayName: json['display_name']?.toString(),
+      minPrice: double.tryParse(json['min_price']?.toString() ?? '0'),
+      maxPrice: double.tryParse(json['max_price']?.toString() ?? '0'),
+      expectedTime: json['expected_time'] is int
+          ? json['expected_time']
+          : int.tryParse(json['expected_time']?.toString() ?? '0'),
+      description: json['description']?.toString(),
+      createdAt: json['created_at']?.toString(),
+      updatedAt: json['updated_at']?.toString(),
+      deletedAt: json['deleted_at']?.toString(),
+      image: json['image']?.toString(),
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['id'] = id;
-    map['sub_category_id'] = subCategoryId;
-    map['display_name'] = displayName;
-    map['min_price'] = minPrice;
-    map['max_price'] = maxPrice;
-    map['created_at'] = createdAt;
-    map['updated_at'] = updatedAt;
-    map['deleted_at'] = deletedAt;
-    return map;
+    return {
+      'id': id,
+      'sub_category_id': subCategoryId,
+      'display_name': displayName,
+      'min_price': minPrice,
+      'max_price': maxPrice,
+      'expected_time': expectedTime,
+      'description': description,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'deleted_at': deletedAt,
+      'image': image,
+    };
   }
 }

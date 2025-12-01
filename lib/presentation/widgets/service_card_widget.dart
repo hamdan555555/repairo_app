@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 //           radius: 30,
 //           backgroundImage: NetworkImage(
 //             widget.service.image!
-//                 .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+//                 .  ('127.0.0.1', AppConstants.baseaddress),
 //           ),
 //         ),
 //         title: Text(
@@ -84,10 +84,7 @@ class _ServiceCardState extends State<ServiceCard> {
         contentPadding: const EdgeInsets.all(12),
         leading: CircleAvatar(
           radius: 30,
-          backgroundImage: NetworkImage(
-            widget.service.image!
-                .replaceFirst('127.0.0.1', AppConstants.baseaddress),
-          ),
+          backgroundImage: NetworkImage(widget.service.image!),
         ),
         title: Text(
           "الخدمة: ${widget.service.name}",

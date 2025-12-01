@@ -186,8 +186,7 @@ class WalletRequestDetailsScreen extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
-                          request.image!.replaceFirst(
-                              '127.0.0.1', AppConstants.baseaddress),
+                          request.image!,
                           height: 200,
                           width: double.infinity,
                           fit: BoxFit.cover,

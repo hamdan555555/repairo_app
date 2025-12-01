@@ -53,8 +53,7 @@ class CategoriesWidget extends StatelessWidget {
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        category.image!.replaceFirst(
-                            '127.0.0.1', AppConstants.baseaddress),
+                        category.image!,
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,

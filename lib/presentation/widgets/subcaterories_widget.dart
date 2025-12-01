@@ -44,7 +44,7 @@ class SubcateroriesWidget extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(15)),
                 child: Image.network(
                   subcategory.image!
-                      .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+                      .replaceFirst("127.0.0.1", AppConstants.baseaddress),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Icon(
                     Icons.image_not_supported_outlined,
@@ -89,7 +89,7 @@ class SubcateroriesWidget extends StatelessWidget {
         //         child: subcategory.image != null && subcategory.image!.isNotEmpty
         //             ? Image.network(
         //                 subcategory.image!
-        //                     .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+        //                     .  ('127.0.0.1', AppConstants.baseaddress),
         //                 width: 70,
         //                 height: 70,
         //                 fit: BoxFit.cover,

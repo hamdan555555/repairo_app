@@ -22,7 +22,6 @@ class BankDataScreenStatee extends State<BankDataScreen> {
     BlocProvider.of<BankDataCubit>(context).getBankData(widget.id);
     super.initState();
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +78,7 @@ class BankDataScreenStatee extends State<BankDataScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  bank.image!
-                      .replaceFirst("127.0.0.1", AppConstants.baseaddress),
+                  bank.image!,
                   width: 80,
                   height: 80,
                   fit: BoxFit.cover,

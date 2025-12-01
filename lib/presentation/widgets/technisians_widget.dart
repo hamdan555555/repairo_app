@@ -55,8 +55,7 @@ class TechnisiansWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(50),
                 child: technisians.account!.image!.isNotEmpty
                     ? Image.network(
-                        technisians.account!.image!.replaceFirst(
-                            '127.0.0.1', AppConstants.baseaddress),
+                        technisians.account!.image!,
                         width: 60,
                         height: 60,
                         fit: BoxFit.cover,

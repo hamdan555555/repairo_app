@@ -60,7 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           children: [
             Image.network(
-              imagePath.replaceFirst('127.0.0.1', AppConstants.baseaddress),
+              imagePath,
               fit: BoxFit.cover,
               height: 50,
             ),
@@ -317,9 +317,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                   ? "furniture"
                                                                   : "";
                                               return CategoryCard(
-                                                "http://127.0.0.1:8000/storage/images/defaults/$type.png",
                                                 state.categoriesTree[index]
-                                                    .displayName!,
+                                                        .image
+                                                        ?.replaceFirst(
+                                                            "127.0.0.1",
+                                                            AppConstants
+                                                                .baseaddress) ??
+                                                    "",
+                                                state.categoriesTree[index]
+                                                        .displayName ??
+                                                    "",
                                                 () {
                                                   Get.to(
                                                     () => BlocProvider(

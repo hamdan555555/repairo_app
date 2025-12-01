@@ -50,9 +50,9 @@
 //                 borderRadius: BorderRadius.all(Radius.circular(15)),
 //                 child: Image.network(
 //                   widget.services.image!
-//                       .replaceFirst(widget.services.image!.toString(),
+//                       .  (widget.services.image!.toString(),
 //                           "http://127.0.0.1:8000/storage/images/defaults/service.png")
-//                       .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+//                       .  ('127.0.0.1', AppConstants.baseaddress),
 //                   fit: BoxFit.cover,
 //                   errorBuilder: (context, error, stackTrace) => Icon(
 //                     Icons.image_not_supported_outlined,
@@ -97,7 +97,7 @@
 //         //         child: subcategory.image != null && subcategory.image!.isNotEmpty
 //         //             ? Image.network(
 //         //                 subcategory.image!
-//         //                     .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+//         //                     .  ('127.0.0.1', AppConstants.baseaddress),
 //         //                 width: 70,
 //         //                 height: 70,
 //         //                 fit: BoxFit.cover,
@@ -148,7 +148,7 @@
 //     //             ),
 //     //             child: Image.network(
 //     //               widget.services.image!
-//     //                   .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+//     //                   .  ('127.0.0.1', AppConstants.baseaddress),
 //     //               width: 100,
 //     //               height: 100,
 //     //               fit: BoxFit.cover,
@@ -285,10 +285,7 @@ class ServiceItemCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.network(
-              service.image!
-                  .replaceFirst(service.image!.toString(),
-                      "http://127.0.0.1:8000/storage/images/defaults/service.png")
-                  .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+              service.image!,
               width: 80,
               height: 80,
               fit: BoxFit.cover,

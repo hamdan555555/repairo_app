@@ -231,13 +231,10 @@ class _FilteredTechniciansScreenState extends State<FilteredTechniciansScreen> {
         },
         leading: CircleAvatar(
           backgroundImage: tech.image!.isNotEmpty
-              ? NetworkImage(
-                  tech.image!
-                      .replaceFirst('127.0.0.1', AppConstants.baseaddress),
-                )
+              ? NetworkImage(tech.image!)
               : const AssetImage('assets/images/jpg/hamdan.jpg'),
 
-          // Image.network(tech.image!.replaceFirst("127.0", to)) as ImageProvider,
+          // Image.network(tech.image!.  ("127.0", to)) as ImageProvider,
         ),
         title: Text(tech.name ?? ""),
         subtitle: Column(

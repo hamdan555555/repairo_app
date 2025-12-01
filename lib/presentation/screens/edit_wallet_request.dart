@@ -274,8 +274,7 @@ class _EditWalletRequestScreenState extends State<EditWalletRequestScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        widget.request.image!.replaceFirst(
-                            '127.0.0.1', AppConstants.baseaddress),
+                        widget.request.image!,
                         width: double.infinity,
                         height: 200,
                         fit: BoxFit.cover,

@@ -2,7 +2,7 @@ class AppConstants {
   // static const baseaddress = 'repairo.icu';
   // static const baseUrl = 'https://$baseaddress/api';
 
-  static const baseaddress = '192.168.243.20';
+  static const baseaddress = '192.168.1.35';
   static const baseUrl = 'http://$baseaddress:8000/api';
   static const Duration connectionTimeout = Duration(seconds: 15);
   static const Duration receiveTimeout = Duration(seconds: 15);

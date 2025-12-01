@@ -287,7 +287,7 @@ class _ProvidedServicesScreenState extends State<ProvidedServicesScreen> {
                                               BorderRadius.circular(8),
                                           child: Image.network(
                                             service.image!.replaceFirst(
-                                                '127.0.0.1',
+                                                "127.0.0.1",
                                                 AppConstants.baseaddress),
                                             fit: BoxFit.cover,
                                           ),

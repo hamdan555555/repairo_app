@@ -210,7 +210,7 @@ class ServicesScreenStatee extends State<ServicesScreen> {
       widget.videourl,
     )..initialize().then((_) {
         setState(() {});
-        // videoPlayerController.setLooping(true);
+        videoPlayerController.setLooping(true);
         videoPlayerController.play();
       });
 
@@ -377,118 +377,18 @@ class ServicesScreenStatee extends State<ServicesScreen> {
                             Divider(),
                             builditemsGrid(),
                             Divider(),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 8, top: 4, bottom: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "عرض حصري لأجلك !",
-                                    style: TextStyle(
-                                      fontFamily: "Cairo",
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 12.h,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 100),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8)),
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                            width: 0.3,
-                                          )),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                LineIcon(
-                                                  Icons.local_offer_outlined,
-                                                  size: 14,
-                                                ),
-                                                SizedBox(
-                                                  width: 8.w,
-                                                ),
-                                                Text(
-                                                  "خصم 20.000 ",
-                                                  style: TextStyle(
-                                                      fontFamily: "Cairo"),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 10.h,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 4),
-                                                  child: Text(
-                                                    "الكود :  100REP",
-                                                    style: TextStyle(
-                                                        fontFamily: "Cairo",
-                                                        fontSize: 14,
-                                                        color: Colors.grey),
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                GestureDetector(
-                                                  onTap: () {},
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 4),
-                                                    child: Container(
-                                                      width: 50.w,
-                                                      height: 25,
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.teal,
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          5))),
-                                                      child: Center(
-                                                        child: Text(
-                                                          "تطبيق",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontFamily:
-                                                                  "Cairo",
-                                                              fontSize: 13,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                ],
-                              ),
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 12.h,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [],
+                                ),
+                              ],
                             ),
                             Row(
                               children: [
@@ -685,11 +585,8 @@ class ServicesScreenStatee extends State<ServicesScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
-                        service.image!
-                            .replaceFirst(services[index].image!.toString(),
-                                "http://127.0.0.1:8000/storage/images/defaults/service.png")
-                            .replaceFirst(
-                                '127.0.0.1', AppConstants.baseaddress),
+                        service.image!.replaceFirst(
+                            "127.0.0.1", AppConstants.baseaddress),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -890,9 +787,9 @@ class ServicesScreenStatee extends State<ServicesScreen> {
         //             borderRadius: BorderRadius.all(Radius.circular(10)),
         //             child: Image.network(
         //               service.image!
-        // .replaceFirst(services[index].image!.toString(),
+        // .  (services[index].image!.toString(),
         //     "http://127.0.0.1:8000/storage/images/defaults/service.png")
-        // .replaceFirst(
+        // .  (
         //     '127.0.0.1', AppConstants.baseaddress),
         //               fit: BoxFit.cover,
         //             ),
@@ -960,9 +857,8 @@ class ServicesScreenStatee extends State<ServicesScreen> {
                   child: Image.network(
                     services[index]
                         .image!
-                        .replaceFirst(services[index].image!.toString(),
-                            "http://127.0.0.1:8000/storage/images/defaults/service.png")
-                        .replaceFirst('127.0.0.1', AppConstants.baseaddress),
+                        .replaceFirst("127.0.0.1", AppConstants.baseaddress),
+
                     fit: BoxFit.cover,
                     height: 60, // يمكنك جعل الارتفاع ثابتاً هنا أيضاً
                   ),

@@ -59,17 +59,17 @@ class _ServicesWidgetState extends State<SearchingServicesWidget> {
             ),
           );
         } else {
-          // Get.to(
-          //   () => BlocProvider(
-          //     create: (context) => ServiceCubit(
-          //         ServiceRepository(serviceWebservices: ServiceWebservices())),
-          //     child: ServicesScreen(
-          //       id: widget.,
-          //       videourl: "assets/videos/plumbing.mp4",
-          //       subname: widget.services.displayName!,
-          //     ),
-          //   ),
-          // );
+          Get.to(
+            () => BlocProvider(
+              create: (context) => ServiceCubit(
+                  ServiceRepository(serviceWebservices: ServiceWebservices())),
+              child: ServicesScreen(
+                id: widget.services.subCategoryId!,
+                videourl: "assets/videos/plumbing.mp4",
+                subname: widget.services.displayName!,
+              ),
+            ),
+          );
         }
       },
       child: Column(

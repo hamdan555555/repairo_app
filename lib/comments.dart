@@ -132,7 +132,7 @@
         //                     if (state is BannerImagesSuccess) {
         //                       print("this is your image path");
         //                       bannerimages = (state).bannerimages;
-        //                       var thisimage = bannerimages[0].image!.replaceFirst(
+        //                       var thisimage = bannerimages[0].image!.  (
         //                           '127.0.0.1', AppConstants.baseaddress);
         //                       print(thisimage.toString());
         //                       return SizedBox(
@@ -155,7 +155,7 @@
         //                               ),
         //                               child: Image.network(
         //                                 // 'http://172.20.10.5:8000/storage/images/defaults/banner.png'
-        //                                 bannerimages[index].image!.replaceFirst(
+        //                                 bannerimages[index].image!.  (
         //                                     '127.0.0.1',
         //                                     AppConstants.baseaddress),
         //                                 fit: BoxFit.cover,

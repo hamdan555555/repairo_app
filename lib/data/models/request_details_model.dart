@@ -33,7 +33,7 @@ class RRequestDetailsData {
   String? location;
   String? details;
   String? status;
-  BookingHistory? bookingHistory;
+  Map<String, String>? bookingHistory; // 👈 مفتاح - قيمة
   String? createdAt;
   String? statusCancellation;
   User? user;
@@ -74,9 +74,9 @@ class RRequestDetailsData {
     location = json['location'];
     details = json['details'];
     status = json['status'];
-    bookingHistory = json['booking_history'] != null
-        ? BookingHistory.fromJson(json['booking_history'])
-        : null;
+    if (json['booking_history'] != null) {
+      bookingHistory = Map<String, String>.from(json['booking_history']);
+    }
     createdAt = json['created_at'];
     statusCancellation = json['status_cancellation'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
@@ -113,7 +113,7 @@ class RRequestDetailsData {
     data['details'] = details;
     data['status'] = status;
     if (bookingHistory != null) {
-      data['booking_history'] = bookingHistory!.toJson();
+      data['booking_history'] = bookingHistory;
     }
     data['created_at'] = createdAt;
     data['status_cancellation'] = statusCancellation;

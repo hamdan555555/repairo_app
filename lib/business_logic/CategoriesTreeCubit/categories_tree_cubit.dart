@@ -11,10 +11,16 @@ class CategoriesTreeCubit extends Cubit<CategoriesTreeStates> {
   late List<RCategoryTreeData> categoriestree = [];
 
   Future<List<RCategoryTreeData>> getCategoriesTree() async {
-    categoriesTreeRepository.getCategoriesTree().then((thecategoriestree) {
-      emit(CategoriesTreeLoaded(categoriesTree: thecategoriestree));
+    try {
+      final thecategoriestree =
+          await categoriesTreeRepository.getCategoriesTree();
       categoriestree = thecategoriestree;
-    });
+      emit(CategoriesTreeLoaded(categoriesTree: categoriestree));
+      print("/////////////////545454545454///");
+      print(categoriestree);
+    } catch (e) {
+      print(e.toString());
+    }
     return categoriestree;
   }
 }

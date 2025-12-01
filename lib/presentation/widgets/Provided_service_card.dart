@@ -37,8 +37,7 @@ class ProvidedServiceCard extends StatelessWidget {
                   ),
                   items: images!.map((imageUrl) {
                     return Image.network(
-                      imageUrl.replaceFirst(
-                          "127.0.0.1", AppConstants.baseaddress),
+                      imageUrl,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       errorBuilder: (context, error, stackTrace) => Container(

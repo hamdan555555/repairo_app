@@ -285,7 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             Image.network(
-              imagePath.replaceFirst('127.0.0.1', AppConstants.baseaddress),
+              imagePath,
               fit: BoxFit.cover,
               height: 50,
             ),
@@ -790,12 +790,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       borderRadius: BorderRadius.circular(
                                           8.0), // يمكنك تعديل القيمة حسب الحاجة
                                       child: Image.network(
-                                        bannerimages[index]
-                                            .image!
-                                            .replaceFirst('127.0.0.1',
-                                                AppConstants.baseaddress)
-                                            .replaceFirst(
-                                                "banner", "banner$index"),
+                                        bannerimages[index].image!.replaceFirst(
+                                            "127.0.0.1",
+                                            AppConstants.baseaddress),
+
+                                        // .  (
+                                        //     "banner", "banner$index"),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -846,6 +846,7 @@ class _HomeScreenState extends State<HomeScreen> {
               BlocBuilder<CategoriesTreeCubit, CategoriesTreeStates>(
                 builder: (context, state) {
                   if (state is CategoriesTreeLoaded) {
+                    print("categoriesssssss trreeeeeeeee loadeeeeeed00");
                     return Container(
                       height: 90,
                       color: Colors.white,
@@ -855,29 +856,32 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ListView.builder(
                             itemCount: state.categoriesTree.length,
                             itemBuilder: (context, index) {
-                              String type = state
-                                          .categoriesTree[index].displayName ==
-                                      "أدوات سباكة"
-                                  ? "plumbing"
-                                  : state.categoriesTree[index].displayName ==
-                                          "أدوات يدوية"
-                                      ? "handy"
-                                      : state.categoriesTree[index]
-                                                  .displayName ==
-                                              "أدوات منزلية"
-                                          ? "home"
-                                          : state.categoriesTree[index]
-                                                      .displayName ==
-                                                  "أدوات كهربائية"
-                                              ? "electricity"
-                                              : state.categoriesTree[index]
-                                                          .displayName ==
-                                                      "أثاث"
-                                                  ? "furniture"
-                                                  : "";
+                              // String type = state
+                              //             .categoriesTree[index].displayName ==
+                              //         "أدوات سباكة"
+                              //     ? "plumbing"
+                              //     : state.categoriesTree[index].displayName ==
+                              //             "أدوات يدوية"
+                              //         ? "handy"
+                              //         : state.categoriesTree[index]
+                              //                     .displayName ==
+                              //                 "أدوات منزلية"
+                              //             ? "home"
+                              //             : state.categoriesTree[index]
+                              //                         .displayName ==
+                              //                     "أدوات كهربائية"
+                              //                 ? "electricity"
+                              //                 : state.categoriesTree[index]
+                              //                             .displayName ==
+                              //                         "أثاث"
+                              //                     ? "furniture"
+                              //                     : "";
                               return CategoryCard(
-                                "http://127.0.0.1:8000/storage/images/defaults/$type.png",
-                                state.categoriesTree[index].displayName!,
+                                state.categoriesTree[index].image?.replaceFirst(
+                                        "127.0.0.1",
+                                        AppConstants.baseaddress) ??
+                                    "",
+                                state.categoriesTree[index].displayName ?? "",
                                 () {
                                   Get.to(
                                     () => BlocProvider(
@@ -908,7 +912,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     baseColor: Colors.grey.shade300,
                     highlightColor: Colors.grey.shade100,
                     child: Container(
-                      width: 100,
+                      width: double.infinity,
                       height: 100,
                       decoration: BoxDecoration(
                         color: Colors.grey,
@@ -936,7 +940,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           if (state is BannerImagesSuccess) {
                             //print("this is your image path");
                             bannerimages = (state).bannerimages;
-                            // var thisimage = bannerimages[0].image!.replaceFirst(
+                            // var thisimage = bannerimages[0].image!.  (
                             //     '127.0.0.1', AppConstants.baseaddress);
                             print(bannerimages.toString());
                             return Container(
@@ -1094,7 +1098,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10)),
-                                        child: Image.asset(
+                                        child:
+
+                                            //  Image.network(
+                                            //   sub.image ?? "",
+                                            //   fit: BoxFit.cover,
+                                            // )
+                                            Image.asset(
                                           "assets/images/jpg/worker0.jpg",
                                           fit: BoxFit.cover,
                                         ),

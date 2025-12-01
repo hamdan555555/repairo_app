@@ -1,5 +1,6 @@
 import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_cubit.dart';
 import 'package:breaking_project/business_logic/CreatingOrderCubit/creating_order_states.dart';
+import 'package:breaking_project/core/services/firebase_api.dart';
 import 'package:breaking_project/presentation/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +45,7 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
   DateTime _time = DateTime.now();
   String? formattedDate;
   String? formattedTime;
+  bool _isSearchingTechnician = false;
 
   Future<void> pickImages() async {
     final pickedFiles = await _picker.pickMultiImage();
@@ -54,51 +56,24 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
     }
   }
 
-  // Future<void> pickDateTime() async {
-  //   final date = await showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.now(),
-  //     firstDate: DateTime.now(),
-  //     lastDate: DateTime(2100),
-  //   );
-
-  //   if (date != null) {
-  //     final time = await showTimePicker(
-  //       context: context,
-  //       initialTime: TimeOfDay.now(),
-  //     );
-
-  //     if (time != null) {
-  //       setState(() {
-  //         selectedDateTime = DateTime(
-  //           date.year,
-  //           date.month,
-  //           date.day,
-  //           time.hour,
-  //           time.minute,
-  //         );
-  //       });
-  //     }
-  //   }
-  // }
+  @override
+  void initState() {
+    super.initState();
+    FirebaseApi.onTechnicianAccepted = () {
+      if (_isSearchingTechnician) {
+        _isSearchingTechnician = false;
+        if (Get.isDialogOpen!) Get.back();
+        Get.snackbar("مبروك 🎉", "تم العثور على مهني وافق على طلبك",
+            backgroundColor: Colors.green, colorText: Colors.white);
+      }
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        // appBar: AppBar(
-        //   title: Text(
-        //     "إنشاء طلب",
-        //     style: TextStyle(fontFamily: "Cairo"),
-        //   ),
-        //   backgroundColor: Colors.teal,
-        //   elevation: 0,
-        //   leading: IconButton(
-        //     icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
-        //     onPressed: () => Get.back(),
-        //   ),
-        // ),
         body: BlocListener<CreatingOrderCubit, CreatingOrderStates>(
           listener: (context, state) {
             if (state is CreatingOrderLoading) {
@@ -116,36 +91,70 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
                 barrierDismissible: false,
               );
             } else if (state is CreatingOrderSuccess) {
-              Get.back();
-              Get.defaultDialog(
-                title: '',
-                content: Column(
-                  children: [
-                    Container(
-                        width: 40,
-                        height: 40,
-                        child: Image.asset("assets/images/png/check.png")),
-                    SizedBox(height: 10),
-                    Text(
-                      "تم إنشاء الطلب بنجاح",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Cairo",
-                          color: Colors.black),
-                    ),
-                  ],
-                ),
-                confirm: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 60, vertical: 12),
-                  child: CustomElevatedButton(
-                    text: 'حسناً',
-                    onpressed: () => Get.toNamed("mainscreen"),
+              if (widget.id != "") {
+                Get.back();
+                Get.defaultDialog(
+                  title: '',
+                  content: Column(
+                    children: [
+                      Container(
+                          width: 40,
+                          height: 40,
+                          child: Image.asset("assets/images/png/check.png")),
+                      SizedBox(height: 10),
+                      Text(
+                        "تم إنشاء الطلب بنجاح",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Cairo",
+                            color: Colors.black),
+                      ),
+                    ],
                   ),
-                ),
-                barrierDismissible: false,
-              );
+                  confirm: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 60, vertical: 12),
+                    child: CustomElevatedButton(
+                      text: 'حسناً',
+                      onpressed: () => Get.toNamed("mainscreen"),
+                    ),
+                  ),
+                  barrierDismissible: false,
+                );
+              } else {
+                Get.back();
+                // إذا الطلب عن طريق النظام (بحث عن مهني)
+                setState(() => _isSearchingTechnician = true);
+                // عرض شاشة البحث
+                Get.defaultDialog(
+                  title: "جاري البحث...",
+                  content: Column(
+                    children: [
+                      CircularProgressIndicator(color: Colors.teal),
+                      SizedBox(height: 12),
+                      Text("نبحث عن مهني مناسب لطلبك",
+                          style: TextStyle(fontFamily: "Cairo")),
+                    ],
+                  ),
+                  barrierDismissible: false,
+                );
+
+                // بدء العداد (لو ما اجا رد خلال دقيقة)
+                Future.delayed(Duration(minutes: 2), () {
+                  if (_isSearchingTechnician) {
+                    _isSearchingTechnician = false;
+                    if (Get.isDialogOpen!) Get.back();
+                    Get.snackbar(
+                      "عذراً",
+                      "لم يتم العثور على مهني متاح الآن",
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                    );
+                  }
+                });
+                // Get.offAllNamed("mainscreen")
+              }
             } else if (state is CreatingOrderError) {
               if (Get.isDialogOpen!) Get.back();
               Get.snackbar("خطأ", state.message,
@@ -310,26 +319,6 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
                     ),
                     SizedBox(height: 20),
 
-                    // الوقت
-                    // Text("الوقت المطلوب", style: _titleStyle),
-                    // SizedBox(height: 8),
-                    // InkWell(
-                    //   onTap: pickDateTime,
-                    //   child: InputDecorator(
-                    //     decoration: _inputDecoration("اختر الوقت"),
-                    //     child: Text(
-                    //       selectedDateTime != null
-                    //           ? "${selectedDateTime!.toLocal()}".split('.')[0]
-                    //           : 'اضغط لاختيار الوقت',
-                    //       style: TextStyle(fontFamily: "Cairo"),
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(height: 20),
-
-                    // // الوصف
-                    // Text("شرح تفصيلي", style: _titleStyle),
-                    // SizedBox(height: 8),
                     Text("وصف المشكلة", style: _titleStyle),
                     SizedBox(height: 16),
                     TextField(
@@ -346,29 +335,29 @@ class _CreateRequestScreenState extends State<CreateRequestScreen> {
                       child: Center(
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            // if (selectedDateTime == null) {
-                            //   Get.snackbar("خطأ", "الرجاء اختيار الوقت",
-                            //       backgroundColor: Colors.redAccent,
-                            //       colorText: Colors.white);
-                            //   return;
-                            // }
-                            // final hour =
-                            //     selectedDateTime!.hour.toString().padLeft(2, '0');
-                            // final minute = selectedDateTime!.minute
-                            //     .toString()
-                            //     .padLeft(2, '0');
-
-                            context.read<CreatingOrderCubit>().createOrder(
-                                  technicianId: widget.id,
-                                  selectedServiceIds: widget.servicesids,
-                                  details: descriptionController.text,
-                                  images: selectedImages,
-                                  location: locationcontroller.text,
-                                  date: widget.date ?? formattedDate!,
-                                  time: widget.time ?? formattedTime!,
-                                );
+                            // إذا كان الطلب موجّه لمهني معيّن
+                            if (widget.id != "") {
+                              context.read<CreatingOrderCubit>().createOrder(
+                                    technicianId: widget.id,
+                                    selectedServiceIds: widget.servicesids,
+                                    details: descriptionController.text,
+                                    images: selectedImages,
+                                    location: locationcontroller.text,
+                                    date: widget.date ?? formattedDate!,
+                                    time: widget.time ?? formattedTime!,
+                                  );
+                            } else {
+                              context.read<CreatingOrderCubit>().createOrder(
+                                    technicianId: null,
+                                    selectedServiceIds: widget.servicesids,
+                                    details: descriptionController.text,
+                                    images: selectedImages,
+                                    location: locationcontroller.text,
+                                    date: widget.date ?? formattedDate!,
+                                    time: widget.time ?? formattedTime!,
+                                  );
+                            }
                           },
-                          // icon: Icon(Icons.send, color: Colors.white),
                           label: Text('إرسال الطلب',
                               style: TextStyle(
                                   fontFamily: "Cairo",

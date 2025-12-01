@@ -96,8 +96,7 @@ class BanksScreenState extends State<BanksScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  bank.image!
-                      .replaceFirst("127.0.0.1", AppConstants.baseaddress),
+                  bank.image!,
                   width: 70,
                   height: 70,
                   fit: BoxFit.cover,

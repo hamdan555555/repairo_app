@@ -45,6 +45,218 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
     super.initState();
   }
 
+  // يستقبل الـ bookingHistory كـ Map<String, dynamic> (أو Map<String, String>)
+  Widget _buildBookingHistoryList(Map<String, dynamic>? bookingHistory) {
+    if (bookingHistory == null || bookingHistory.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: Text(
+            "لا يوجد سجل للحجوزات",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
+    // نجهز لستة من العناصر مع محاولة تحويل التاريخ إلى DateTime
+    final entries = bookingHistory.entries.map((e) {
+      final key = e.key.toString();
+      final raw = e.value?.toString() ?? '';
+
+      DateTime? dt;
+      try {
+        // بعض APIs يرجّع "2025-08-30 00:57:25" -> نحول المسافة لـ T حتى يقبل DateTime.parse
+        final iso = raw.replaceFirst(' ', 'T');
+        dt = DateTime.parse(iso);
+      } catch (_) {
+        dt = null;
+      }
+
+      return {'status': key, 'raw': raw, 'dt': dt};
+    }).toList();
+
+    // نرتب حسب التاريخ إذا متوفر (من الأقدم للأحدث)
+    entries.sort((a, b) {
+      final da = a['dt'] as DateTime?;
+      final db = b['dt'] as DateTime?;
+      if (da == null && db == null) return 0;
+      if (da == null) return 1;
+      if (db == null) return -1;
+      return da.compareTo(db);
+    });
+
+    // نعرض داخل ListView مقيد الارتفاع حتى الـ BottomSheet يظل قابلاً للتمرير
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.55,
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        itemCount: entries.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final item = entries[index];
+          final status = (item['status'] as String);
+          final raw = (item['raw'] as String);
+          final dt = item['dt'] as DateTime?;
+
+          // عرض تاريخ ووقت بصيغة بسيطة (fallback إلى النص الخام إن لم نستطع التحويل)
+          final displayDate = dt != null
+              ? "${dt.day.toString().padLeft(2, '0')}-${dt.month.toString().padLeft(2, '0')}-${dt.year}"
+              : (raw.split(' ').isNotEmpty ? raw.split(' ').first : raw);
+          final displayTime = dt != null
+              ? "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}"
+              : (raw.split(' ').length > 1
+                  ? raw.split(' ').sublist(1).join(' ')
+                  : '');
+
+          final color = _statusColor(status);
+          final title = _statusTitle(status);
+          final desc = _statusDescription(status, raw);
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // العمود الصغير: الوقت - التاريخ - خط عمودي
+              Column(
+                children: [
+                  Text(
+                    displayTime,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(displayDate),
+                  const SizedBox(height: 6),
+                  // خط عمودي يصل للأحداث التالية (لا نطوّله عند آخر عنصر)
+                  if (index != entries.length - 1)
+                    Container(
+                      width: 2,
+                      height: 40,
+                      color: color.withOpacity(0.5),
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                    )
+                  else
+                    const SizedBox(height: 4),
+                ],
+              ),
+
+              const SizedBox(width: 12),
+
+              // الدائرة الملونة
+              Container(
+                width: 12,
+                height: 12,
+                margin: const EdgeInsets.only(top: 6),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+
+              const SizedBox(width: 12),
+
+              // العنوان والوصف
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(desc),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  // ترجمة اسم الحالة إلى عنوان عرضي (تقدر تضيف حالات أخرى هنا)
+  String _statusTitle(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'مُعلّق';
+      case 'accepted':
+        return 'مقبول';
+      case 'assigned':
+        return 'تم التعيين';
+      case 'ongoing':
+        return 'جاري التنفيذ';
+      case 'completed':
+        return 'مكتمل';
+      case 'rejected':
+        return 'مرفوض';
+      case 'canceled':
+        return 'ملغي';
+      default:
+        // إذا الحالة غير معروفة نعرضها كما هي (بدون تعديل)
+        return status;
+    }
+  }
+
+  // لون لكل حالة (تقدر تغيّر الألوان هنا)
+  Color _statusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return Colors.orange;
+      case 'accepted':
+        return Colors.teal;
+      case 'assigned':
+        return Colors.blue;
+      case 'ongoing':
+        return Colors.purple;
+      case 'completed':
+        return Colors.green;
+      case 'rejected':
+        return Colors.red;
+      case 'canceled':
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // وصف مبسّط لكل حالة؛ إذا كنت عندك وصفات مفصّلة في الـ API استبدل raw بها
+  String _statusDescription(String status, String rawDate) {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'تم إنشاء الطلب';
+      case 'accepted':
+        return 'تم قبول الطلب';
+      case 'assigned':
+        return 'تم تعيين الفني للطلب';
+      case 'ongoing':
+        return 'تم بدء التنفيذ';
+      case 'completed':
+        return 'انتهى التنفيذ';
+      case 'rejected':
+        return 'تم رفض الطلب';
+      case 'canceled':
+        return 'تم إلغاء الطلب';
+      default:
+        return rawDate; // fallback: نعرض التاريخ/البيانات الخام لو ما في وصف
+    }
+  }
+
+  Color _getColorFromString(String color) {
+    switch (color) {
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'orange':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -85,10 +297,8 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                   children: [
                     CircleAvatar(
                       radius: 35,
-                      backgroundImage: NetworkImage(
-                        imageUrl.replaceFirst(
-                            "127.0.0.1", AppConstants.baseaddress),
-                      ),
+                      backgroundImage: NetworkImage(imageUrl.replaceFirst(
+                          "127.0.0.1", AppConstants.baseaddress)),
                     ),
                     const SizedBox(height: 8),
                     Text(name,
@@ -247,6 +457,95 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                         icon: Icons.flag),
                     _buildInfoCard('تفاصيل إضافية', requestdetails.details!,
                         icon: Icons.notes),
+
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled:
+                              true, // لتوفير مساحة أكبر إذا كان المحتوى طويلاً
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(25.0),
+                            ),
+                          ),
+                          builder: (BuildContext context) {
+                            return Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // رأس الـ BottomSheet
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "سجل عملية طلب الخدمة",
+                                          style: TextStyle(
+                                            fontFamily: 'Cairo',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        // Text(
+                                        //   "ID : ${request.id}",
+                                        //   style: TextStyle(
+                                        //     fontFamily: 'Cairo',
+                                        //     fontWeight: FontWeight.bold,
+                                        //     fontSize: 18,
+                                        //     color: Colors.deepPurple,
+                                        //   ),
+                                        // ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+
+                                    // هنا تضاف قائمة تاريخ الطلبات
+                                    // استخدمنا List of Maps لتسهيل عرض البيانات
+                                    _buildBookingHistoryList(
+                                      requestdetails.bookingHistory,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        elevation: 1.5,
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        child: ListTile(
+                          leading: Icon(Icons.history, color: Colors.teal),
+                          title: Text(
+                            "تاريخ الطلب",
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: Text(
+                            "رؤية حالات طلب الخدمة",
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 14,
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey,
+                          ), // هون الإضافة
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 20),
 
                     // زر عرض الفاتورة
